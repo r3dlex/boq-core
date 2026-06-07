@@ -7,7 +7,7 @@ Scope: protected-main delivery of the certification-grade MVP plan for a Rust GA
 ## Goal and success criteria
 
 - Goal: shape all requested work into issues and pull requests, protect `main`, keep every merged PR green, preserve the paid-certification boundary, and leave a release-readiness evidence trail.
-- Stop condition: all implementation PRs merged through protected `main`, GitHub required check `Rust quality gates` green, issue #8 closed by this report PR, and paid BVBS certification issue #7 still open until explicit paid submission authorization.
+- Stop condition: all implementation PRs merged through protected `main`, PR and post-merge GitHub required check `Rust quality gates` observed green in the UltraQA transcript, issue #8 closed by this report PR, and paid BVBS certification issue #7 still open until explicit paid submission authorization.
 - Safety bounds applied: no force-pushes, no broad resets, no paid external certification submission, no credential disclosure, no overwriting unrelated workspace changes outside `boq-core`.
 
 ## Delivered issue and PR map
@@ -64,10 +64,10 @@ Representative commands used during the delivery and QA loop:
 
 ## Fixes applied
 
-- `.github/workflows/rust.yml`: stable Rust quality gate including retry-safe tool installation and strict checks.
-- `.prek.toml`: pre-commit hook suite for fmt, clippy, tests, coverage, fixture verification, and Archgate.
-- `.archgate/rules.yml`: architecture constraints for a modular Rust GAEB parser.
-- `src/model.rs`, `src/obra_adapter.rs`: loss-aware BoQ hierarchy model and Obra adapter boundary.
+- `.github/workflows/ci.yml`: stable Rust quality gate including retry-safe tool installation and strict checks.
+- `prek.toml`: pre-commit hook suite for fmt, clippy, tests, coverage, fixture verification, and Archgate.
+- `.archgate/adrs/*.rules.ts` plus `.archgate/rules.d.ts`: architecture constraints for a modular Rust GAEB parser.
+- `src/model.rs`, `src/adapter/obra.rs`: loss-aware BoQ hierarchy model and Obra adapter boundary.
 - `gaeb/manifest.toml`, `gaeb/**/.gitkeep`, `xtask`: secure fixture acquisition and verification structure.
 - `src/gaeb_xml/mod.rs`, `src/gaeb90.rs`, `src/format.rs`: MVP parser paths for GAEB XML AVA and GAEB 90 D81/D83.
 - `tests/**`: synthetic and real-fixture integration coverage.
@@ -91,4 +91,4 @@ Representative commands used during the delivery and QA loop:
 - Merged green PRs: #9, #10, #11, #12.
 - Closed implementation issues: #1, #2, #3, #4, #5, #6.
 - Gated paid certification issue: #7 remains open.
-- Final readiness issue: #8 is closed only by this report PR after green CI.
+- Final readiness issue: #8 is closed by this report PR after its PR CI passes; the final UltraQA transcript records the post-merge main CI result.
