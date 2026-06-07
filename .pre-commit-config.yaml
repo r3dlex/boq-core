@@ -1,3 +1,4 @@
+# Compatible with prek/pre-commit style runners.
 repos:
   - repo: local
     hooks:
@@ -16,8 +17,18 @@ repos:
         entry: cargo test --all-features
         language: system
         pass_filenames: false
+      - id: archgate
+        name: archgate check
+        entry: archgate check --ci
+        language: system
+        pass_filenames: false
       - id: fixture-verify
         name: fixture manifest verify
         entry: cargo run --bin xtask -- fixtures verify
+        language: system
+        pass_filenames: false
+      - id: cargo-coverage
+        name: cargo coverage thresholds
+        entry: cargo llvm-cov --all-features --summary-only --ignore-filename-regex 'src/bin/xtask.rs' --fail-under-lines 95 --fail-under-functions 95 --fail-under-regions 95
         language: system
         pass_filenames: false

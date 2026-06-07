@@ -18,14 +18,26 @@ jobs:
         with:
           components: rustfmt, clippy, llvm-tools-preview
       - name: Install quality tools
-        run: cargo install prek --locked
+        run: |
+          cargo install cargo-llvm-cov --locked
+          cargo install prek --locked
+          npm install -g archgate
       - name: Format
         run: cargo fmt --check
       - name: Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Test
         run: cargo test --all-features
+      - name: Coverage threshold
+        run: |
+          cargo llvm-cov --all-features --summary-only \
+            --ignore-filename-regex 'src/bin/xtask.rs' \
+            --fail-under-lines 95 \
+            --fail-under-functions 95 \
+            --fail-under-regions 95
       - name: Fixture manifest
         run: cargo run --bin xtask -- fixtures verify
+      - name: Archgate
+        run: archgate check --ci
       - name: Prek hooks
         run: prek run --all-files
