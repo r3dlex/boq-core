@@ -1,0 +1,19 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "answer": "both-integrated",
+      "settled": "Rustdoc API/reference plus mdBook guides/manuals with cross-links and CI validation."
+    },
+    {
+      "round": 2,
+      "answer": "docs-milestone",
+      "settled": "Represent docs as a small dedicated documentation milestone with focused issues."
+    },
+    {
+      "round": 3,
+      "answer": "generate-docs-mvp",
+      "settled": "Next work is authorized to create specs/issues and implement an initial mdBook plus crate docs with starter guides and validated build checks."
+    }
+  ]
+}
