@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rust-quality:
+    name: Rust quality gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy, llvm-tools-preview
+      - name: Install quality tools
+        run: cargo install prek --locked
+      - name: Format
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Test
+        run: cargo test --all-features
+      - name: Fixture manifest
+        run: cargo run --bin xtask -- fixtures verify
+      - name: Prek hooks
+        run: prek run --all-files
