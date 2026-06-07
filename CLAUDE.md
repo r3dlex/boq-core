@@ -11,7 +11,7 @@
 
 1. **Loss-aware first** (ARCH-001). Parser modules must not map directly into Obra DTOs.
 2. **Support-status honesty** (ARCH-002). `supported` requires failing tests, implementation, fixture verify, and review evidence.
-3. **No Obra backend coupling in MVP** (ARCH-003). Do not modify `../obra/backend`.
+3. **No Obra backend coupling in MVP** (ARCH-003). Do not modify the sibling ERP backend (see binding ADR WS-005).
 4. **Certification boundary** (ARCH-004). Paid BVBS submission is a user-confirmation-gated external action; never auto-claim or auto-submit.
 5. **Deterministic artifacts.** Cargo.lock, gaeb/manifest.toml, gaeb/fixtures.lock are versioned and checksum-verified.
 6. **No new dependencies without explicit request** (per `ai-sdlc-init`).

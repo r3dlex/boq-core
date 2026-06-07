@@ -24,8 +24,8 @@ export const backend: Rule[] = [
   {
     name: "no-obra-backend-mvp",
     severity: "error",
-    match: "MVP must not modify ../obra/backend (ARCH-003).",
-    violation: "PR changes files under ../obra/backend/",
+    match: "MVP must not modify the sibling ERP backend (ARCH-003).",
+    violation: "PR changes files under the sibling ERP backend/",
     correction: "Obra integration is a separate story. Do not modify the obra submodule from a boq-core PR.",
   },
   {

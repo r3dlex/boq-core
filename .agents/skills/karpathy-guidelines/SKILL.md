@@ -38,7 +38,7 @@ Apply the Karpathy engineering habits in the boq-core Rust crate:
 - **Loose certification** — paid BVBS submission is a user-confirmation-gated external action (ARCH-004); never auto-claim or auto-submit.
 - **Executed reference** — a reference-only `.exe` (e.g. `GAEBXmlChecker`) must never run in CI.
 - **Lossy parsing** — parser maps into rich model first; Obra DTO is a separate adapter (ARCH-001).
-- **Obra backend coupling** — do not modify `../obra/backend` in the MVP (ARCH-003).
+- **Obra backend coupling** — do not modify the sibling ERP backend (see binding ADR WS-005) (ARCH-003).
 
 ## PR merge gate (inherited from `ai-sdlc-init`)
 

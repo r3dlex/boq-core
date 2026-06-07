@@ -45,7 +45,7 @@ rich XML structures that can exceed Obra's current WBS/BOQ/line-item fields.
 ## Constraints and non-goals
 
 - Do not modify the Obra backend in the MVP.
-- Do not perform paid BVBS submissions or represent the library as officially certified without explicit confirmation.
+- Do not perform paid submissions or represent the library as official-certified without explicit confirmation.
 - Do not make GAEB XML 3.4 beta the stable v1 target.
 - Do not execute downloaded Windows executables in CI.
 - Do not claim support for X31, X89, XRechnung, Handel, Rechnung, Zeitvertrag, GAEB XML 3.1/3.2, or GAEB 2000 unless the corresponding support status is explicitly promoted from `future_track` / `reference_only`.
