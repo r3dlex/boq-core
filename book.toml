@@ -1,0 +1,10 @@
+[book]
+title = "boq-core Documentation"
+authors = ["obra contributors"]
+description = "User, developer, certification-evidence, and release guides for the boq-core GAEB parser library."
+language = "en"
+src = "docs/book"
+
+[build]
+build-dir = "target/mdbook"
+create-missing = false

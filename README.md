@@ -10,6 +10,25 @@
 - Bauausführung and Texterstellung follow after AVA.
 - GAEB XML 3.4 beta is reference-only until explicitly promoted.
 
+## Documentation
+
+`boq-core` has two documentation layers:
+
+- Rust API reference generated from crate/module rustdoc.
+- mdBook manuals under `docs/book/` for users, developers, certification evidence, and releases.
+
+Build them locally with:
+
+```bash
+cargo doc --all-features --no-deps
+# Install once if mdBook is not available: cargo install mdbook --locked
+mdbook build
+```
+
+The docs intentionally distinguish supported, parse-only, future-track, and reference-only formats.
+BVBS and GAEBXmlChecker evidence is certification-readiness evidence, not paid or
+official certification.
+
 ## Quality gates
 
 Local/CI checks are expected to run:
