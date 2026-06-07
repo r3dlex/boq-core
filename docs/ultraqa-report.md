@@ -65,7 +65,7 @@ Representative commands used during the delivery and QA loop:
 ## Fixes applied
 
 - `.github/workflows/ci.yml`: stable Rust quality gate including retry-safe tool installation and strict checks.
-- `prek.toml`: pre-commit hook suite for fmt, clippy, tests, coverage, fixture verification, and Archgate.
+- `.pre-commit-config.yaml`: `uvx prek` pre-commit hook suite for fmt, clippy, tests, coverage, fixture verification, and Archgate.
 - `.archgate/adrs/*.rules.ts` plus `.archgate/rules.d.ts`: architecture constraints for a modular Rust GAEB parser.
 - `src/model.rs`, `src/adapter/obra.rs`: loss-aware BoQ hierarchy model and Obra adapter boundary.
 - `gaeb/manifest.toml`, `gaeb/**/.gitkeep`, `xtask`: secure fixture acquisition and verification structure.
