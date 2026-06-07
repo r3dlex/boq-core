@@ -11,7 +11,7 @@ handoffs, exploratory specs) that are not yet ready to be promoted to
   or `<topic>-draft.md` for ad-hoc work.
 - Promote to `plans/` or `specs/` only after architect + critic review.
 - Do not store paid certification data, non-public AVA test material,
-  or `obra/backend` references here (ARCH-003).
+  or `obra backend` references here (ARCH-003).
 
 ## Current contents
 
