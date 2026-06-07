@@ -1,0 +1,20 @@
+# prek configuration — boq-core subrepo level.
+# prek is a fast, pre-commit-compatible runner written in Rust.
+# https://github.com/j178/prek
+
+minimum_prek_version = "0.4.0"
+fail_fast = false
+
+# boq-core has a single Rust stack; the prek config reflects that.
+# Companion to .pre-commit-config.yaml (prek-compatible).
+
+[[repos]]
+  repo = "local"
+  hooks = [
+    { id = "validate-rules", name = "Validate boq-core .rules.ts", entry = "bash scripts/validate-rules.sh .rules.ts", language = "system", pass_filenames = false },
+    { id = "archgate-structural", name = "Archgate structural check", entry = "bash scripts/archgate.sh --mode structural --rules .rules.ts --format json", language = "system", pass_filenames = false },
+    { id = "cargo-fmt", name = "cargo fmt", entry = "cargo fmt --check", language = "system", pass_filenames = false, files = "^src/.*\\.rs$" },
+    { id = "cargo-clippy", name = "cargo clippy", entry = "cargo clippy --all-targets --all-features -- -D warnings", language = "system", pass_filenames = false, files = "^src/.*\\.rs$" },
+    { id = "cargo-test", name = "cargo test", entry = "cargo test --all-features", language = "system", pass_filenames = false, files = "^src/.*\\.rs$" },
+    { id = "fixture-verify", name = "fixture manifest verify", entry = "cargo run --bin xtask -- fixtures verify", language = "system", pass_filenames = false, files = "^gaeb/(manifest\\.toml|fixtures\\.lock)$" },
+  ]

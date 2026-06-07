@@ -31,3 +31,22 @@ See the workspace planning artifacts:
 - `../.omx/plans/prd-boq-core-gaeb-parser-20260606.md`
 - `../.omx/plans/test-spec-boq-core-gaeb-parser-20260606.md`
 - `../.omx/plans/ralplan-handoff-boq-core-gaeb-parser-20260606.json`
+
+<!-- OMX:AI-SDLC:START -->
+
+## AI SDLC Methodology
+
+This repository is part of the [obra-ws workspace](https://github.com/r3dlex/obra-workspace) monorepo. The AI SDLC layer is configured locally and at the workspace:
+
+- **Karpathy guidelines:** `.agents/skills/karpathy-guidelines/SKILL.md` (entry point) and `REFERENCE.md` (stack-specific checklists).
+- **Top-level rules:** `.rules.ts` (5-domain Archgate rules; complements the per-ADR rules in `.archgate/adrs/*`).
+- **Prek:** `prek.toml` (companion to `.pre-commit-config.yaml`).
+- **Subrepo ADRs:** `.archgate/adrs/ARCH-001..004.md`.
+- **Cross-repo ADRs:** `../docs/adr/WS-XXX.md` (workspace).
+- **BRD/PRD traceability:** `raw/brd/`, `raw/prd/`, `raw/tickets/`, `raw/drift-reports/`, `raw/agent-briefs/`. The workspace is the source of truth; this directory is a mirror synced via `../setup.sh plans`.
+
+## PR merge gate (inherited from `ai-sdlc-init`)
+
+A PR may be merged only when **all** are true: architect agrees the change matches ADRs, module boundaries, branch policy, and acceptance criteria; reviewer agrees code quality, safety, documentation, and drift checks have no blocking findings; executor agrees the requested change is implemented, cleanup is done, and required checks are green; the architect, reviewer, executor loop reaches explicit agreement.
+
+<!-- OMX:AI-SDLC:END -->
