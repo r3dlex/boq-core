@@ -43,3 +43,20 @@ APPROVE: RALPLAN-DR summaries, source matrices, concrete test plans, unique name
 
 ## Final Critic review
 APPROVE: per-issue artifacts complete; alternatives, risks, support honesty, verification, and no-duplicate policy are sufficient for execution handoff.
+
+---
+
+## Recommended implementation sequencing (post-consensus addendum, 2026-06-07)
+
+> **Source:** Final quality gate architect WATCH finding (architectural sequencing of the 8 boundary ADRs to avoid cross-PRD ADR conflicts and dependency pollution).
+
+The 8 issues are not strictly independent. The boundary ADRs gate on a sequencing order that the original ralplan consensus did not state. Recommended execution order:
+
+1. **#37** — GAEB XML 3.1/3.2 compatibility (XML version parser boundary)
+2. **#38** — GAEB XML 3.4 beta tracking (tracking-only, no new ADR)
+3. **#40** — GAEB 90 adapter-compatible promotion (anchors the companion-crate vs core decision pattern)
+4. **#39** — GAEB 2000 / Pxx parser compatibility (distinct keyword-syntax boundary, informed by #40)
+5. **#41, #42, #43** — Kosten/Kalkulation, Handel, Zeitvertrag (companion-crate cluster, ADRs aligned with #40)
+6. **#44** — Spreadsheet roundtrip (last, highest boundary risk; module TBD)
+
+#37 and #38 can run in parallel safely. #40 must precede #41-#43. #44 must run last.

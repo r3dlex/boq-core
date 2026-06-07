@@ -27,6 +27,7 @@ Write a gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 
 
 ## Non-goals and boundaries
 - [ ] No paid actions or external certification/payment/submission.
+- [ ] No Obra backend modifications (ARCH-003): "Obra-adapter-compatible" means the boq-core loss-aware model exposes the fields needed for the Obra adapter DTO (ARCH-001 layer within boq-core only); the obra ERP sibling repo (see binding ADR WS-005) must not be modified by any issue-#40 implementation lane.
 - [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
 - [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
@@ -43,6 +44,8 @@ Follow-ups should update issue #40 and its PRD/test-spec. Create a new GitHub is
 Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only if fixture, parser, model, and docs lanes need parallel ownership. `$ralph` remains an explicit fallback only.
 
 ## RALPLAN-DR consensus summary
+
+> The following decisions were reached collectively for issues #37-#44 and are reproduced here for standalone executability. Cross-issue scope: see `ralplan-consensus-gaeb-next-step-specs.md` for the canonical source and the recommended implementation sequencing appendix.
 
 ### Principles
 - Preserve support-status honesty: `reference_only` and `future_track` are not parser support.
