@@ -46,6 +46,8 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 
 ## RALPLAN-DR consensus summary
 
+> The following decisions were reached collectively for issues #37-#44 and are reproduced here for standalone executability. Cross-issue scope: see `ralplan-consensus-gaeb-next-step-specs.md` for the canonical source and the recommended implementation sequencing appendix.
+
 ### Principles
 - Preserve support-status honesty: `reference_only` and `future_track` are not parser support.
 - Prefer source-family boundaries over one overloaded parser/model abstraction.

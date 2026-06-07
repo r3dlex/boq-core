@@ -8,7 +8,7 @@
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
 ## First architecture decision
-Write a gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible.
+Write a gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible (ARCH-001 DTO layer; ARCH-003 backend-prohibited).
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |

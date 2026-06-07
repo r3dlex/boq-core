@@ -2,3 +2,16 @@
 /gaeb/.cache/
 *.profraw
 *.profdata
+
+# OMC runtime state (not plans)
+.omc/state/
+.omc/sessions/
+.omc/project-memory.json
+.omc/memory/extensions/
+
+# OMX runtime artifacts (transient review/skill outputs)
+.omx/artifacts/
+.omx/cache/
+.omx/logs/
+.omx/runtime/
+.omx/state/
