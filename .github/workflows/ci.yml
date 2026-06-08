@@ -12,9 +12,12 @@ env:
   CARGO_HTTP_MULTIPLEXING: false
 
 jobs:
-  rust-quality:
-    name: Rust quality gates
-    runs-on: ubuntu-latest
+  _rust-quality-self-hosted:
+    name: Rust quality gates (self-hosted)
+    runs-on: [self-hosted, ubuntu-latest]
+    continue-on-error: true
+    outputs:
+      passed: ${{ steps.mark.outputs.passed }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -50,4 +53,61 @@ jobs:
       - name: Archgate
         run: archgate check --ci
       - name: Prek hooks
+        run: prek run --all-files
+      - id: mark
+        if: success()
+        run: echo "passed=true" >> "$GITHUB_OUTPUT"
+
+  rust-quality:
+    name: Rust quality gates
+    needs: _rust-quality-self-hosted
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Route
+        run: echo "self-hosted passed=${{ needs._rust-quality-self-hosted.outputs.passed }}"
+      - uses: actions/checkout@v4
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+      - uses: dtolnay/rust-toolchain@stable
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        with:
+          components: rustfmt, clippy, llvm-tools-preview
+      - name: Install quality tools
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: |
+          retry() {
+            for attempt in 1 2 3; do
+              "$@" && return 0
+              sleep $((attempt * 10))
+            done
+            "$@"
+          }
+          retry cargo install cargo-llvm-cov --locked
+          retry cargo install prek --locked
+          retry npm install -g archgate
+      - name: Format
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: cargo fmt --check
+      - name: Clippy
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Test
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: cargo test --all-features
+      - name: Coverage threshold
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: |
+          cargo llvm-cov --all-features --summary-only \
+            --ignore-filename-regex 'src/bin/xtask.rs' \
+            --fail-under-lines 95 \
+            --fail-under-functions 95 \
+            --fail-under-regions 95
+      - name: Fixture manifest
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: cargo run --bin xtask -- fixtures verify
+      - name: Archgate
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        run: archgate check --ci
+      - name: Prek hooks
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: prek run --all-files
