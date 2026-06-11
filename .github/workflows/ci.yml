@@ -13,18 +13,16 @@ env:
 
 jobs:
   _rust-quality-self-hosted:
-    name: Rust quality gates (self-hosted)
+    name: Rust quality gates (self-hosted probe)
     runs-on: [self-hosted, ubuntu-latest]
-    continue-on-error: true
     outputs:
       passed: ${{ steps.mark.outputs.passed }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy, llvm-tools-preview
-      - name: Install quality tools
+      - name: Self-hosted quality gate
+        id: self_hosted_gate
+        continue-on-error: true
         run: |
+          set -euo pipefail
           retry() {
             for attempt in 1 2 3; do
               "$@" && return 0
@@ -32,31 +30,31 @@ jobs:
             done
             "$@"
           }
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
+          retry rustup toolchain install stable --component rustfmt --component clippy --component llvm-tools-preview
           retry cargo install cargo-llvm-cov --locked
           retry cargo install prek --locked
           retry npm install -g archgate
-      - name: Format
-        run: cargo fmt --check
-      - name: Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-      - name: Test
-        run: cargo test --all-features
-      - name: Coverage threshold
-        run: |
+          cargo fmt --check
+          cargo clippy --all-targets --all-features -- -D warnings
+          cargo test --all-features
           cargo llvm-cov --all-features --summary-only \
             --ignore-filename-regex 'src/bin/xtask.rs' \
             --fail-under-lines 95 \
             --fail-under-functions 95 \
             --fail-under-regions 95
-      - name: Fixture manifest
-        run: cargo run --bin xtask -- fixtures verify
-      - name: Archgate
-        run: archgate check --ci
-      - name: Prek hooks
-        run: prek run --all-files
+          cargo run --bin xtask -- fixtures verify
+          archgate check --ci
+          prek run --all-files
       - id: mark
-        if: success()
+        if: steps.self_hosted_gate.outcome == 'success'
         run: echo "passed=true" >> "$GITHUB_OUTPUT"
+      - name: Report self-hosted fallback
+        if: steps.self_hosted_gate.outcome != 'success'
+        run: echo "::warning::Self-hosted Rust quality probe failed; GitHub-hosted fallback will run as the gating job."
 
   rust-quality:
     name: Rust quality gates

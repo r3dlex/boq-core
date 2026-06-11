@@ -68,8 +68,8 @@ phase = "x83"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83"
 support_status = "future_track"
 ci_policy = "download_on_demand"
-license_note = "Follow-on Bauausführung certification fixture."
-test_mapping = ["future_bauausfuehrung_x83_cataloged"]
+license_note = "BVBS Bauausführung X83 fixture is cataloged for fixture-backed readiness; not supported until checksummed payload tests exist."
+test_mapping = ["future_xml33_bau_x83_fixture_locked", "future_xml33_bau_x83_fixture_roundtrip"]
 
 [[fixtures]]
 id = "bvbs_xml33_bau_x84"
@@ -82,8 +82,8 @@ phase = "x84"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84"
 support_status = "future_track"
 ci_policy = "download_on_demand"
-license_note = "Follow-on Bauausführung certification fixture."
-test_mapping = ["future_bauausfuehrung_x84_cataloged"]
+license_note = "BVBS Bauausführung X84 fixture is cataloged for fixture-backed readiness; offer metadata/export fidelity is not supported until checksummed payload tests exist."
+test_mapping = ["future_xml33_bau_x84_fixture_locked", "future_xml33_bau_x84_offer_merge_metadata"]
 
 [[fixtures]]
 id = "bvbs_xml33_qty_x31"
@@ -240,6 +240,20 @@ license_note = "BVBS Bauausfuehrung reference PDF; manual criteria mapping input
 test_mapping = []
 
 [[fixtures]]
+id = "bvbs_xml33_bau_criteria_pdf"
+source_url = "https://www.bvbs.de/wp-content/uploads/2024/05/Pruefkriterien-GAEB-DA-XML-3.3-Bauausfuehrung-V-04-04-2024.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2024/05/Pruefkriterien-GAEB-DA-XML-3.3-Bauausfuehrung-V-04-04-2024.pdf"
+source_family = "bvbs"
+process_domain = "construction_execution"
+gaeb_version = "gaeb_xml_3_3"
+phase = "criteria_pdf"
+target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/criteria_pdf"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "BVBS Bauausfuehrung criteria PDF; maps readiness checks without certification claims."
+test_mapping = []
+
+[[fixtures]]
 id = "bvbs_xml33_qty_x86"
 source_url = "https://www.bvbs.de/wp-content/uploads/2024/02/Pruefdatei-GAEB-DA-XML-3.3-Mengenermittlung-V-11-06-2021.x86.zip"
 normalized_url = "https://www.bvbs.de/wp-content/uploads/2024/02/Pruefdatei-GAEB-DA-XML-3.3-Mengenermittlung-V-11-06-2021.x86.zip"
@@ -336,6 +350,49 @@ support_status = "future_track"
 ci_policy = "download_on_demand"
 license_note = "Legacy GAEB XML 3.2 BVBS Bauausfuehrung fixture; future compatibility track."
 test_mapping = ["future_legacy_xml32_bau_x83_cataloged"]
+
+
+[[fixtures]]
+id = "bvbs_xml32_bau_x84"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/BVBS_Pruefdatei-GAEB-DA-XML-3.2-Bauausfuehrung-V-11-12-2013.zip"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/BVBS_Pruefdatei-GAEB-DA-XML-3.2-Bauausfuehrung-V-11-12-2013.zip"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_2"
+gaeb_version = "gaeb_xml_3_2"
+phase = "x84"
+target_dir = "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/x84"
+support_status = "future_track"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.2 BVBS Bauausfuehrung X84 fixture; future compatibility track."
+test_mapping = ["test_xml32_bau_sources_are_cataloged_before_parser_promotion"]
+
+[[fixtures]]
+id = "bvbs_xml32_bau_pdf"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Muster-Leistungsverzeichnis-GAEB-DA-XML-3.2-Bauausfuehrung.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Muster-Leistungsverzeichnis-GAEB-DA-XML-3.2-Bauausfuehrung.pdf"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_2"
+gaeb_version = "gaeb_xml_3_2"
+phase = "pdf_reference"
+target_dir = "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/pdf_reference"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.2 Bauausfuehrung visual PDF; manual/reference evidence only."
+test_mapping = []
+
+[[fixtures]]
+id = "bvbs_xml32_bau_criteria_pdf"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefkriterien-GAEB-DA-XML-3.2-Bauausfuehrung-V-04-03-2016.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefkriterien-GAEB-DA-XML-3.2-Bauausfuehrung-V-04-03-2016.pdf"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_2"
+gaeb_version = "gaeb_xml_3_2"
+phase = "criteria_pdf"
+target_dir = "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/criteria_pdf"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.2 Bauausfuehrung criteria PDF; compatibility evidence only."
+test_mapping = []
 
 [[fixtures]]
 id = "official_gaeb_xml33_leistungsverzeichnis"
@@ -531,6 +588,77 @@ target_dir = "gaeb/official_gaeb/gaeb_xml_3_1/musterdateien_2007_11"
 support_status = "reference_only"
 ci_policy = "download_on_demand"
 license_note = "Official GAEB XML 3.1 sample files; legacy reference."
+test_mapping = []
+
+
+[[fixtures]]
+id = "bvbs_xml31_bau_x83"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefdatei-GAEB-DA-XML-Schnittstelle-3.1-Bauausfuehrung-V-01-07-2010.zip"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefdatei-GAEB-DA-XML-Schnittstelle-3.1-Bauausfuehrung-V-01-07-2010.zip"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_1"
+gaeb_version = "gaeb_xml_3_1"
+phase = "x83"
+target_dir = "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/x83"
+support_status = "future_track"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.1 BVBS Bauausfuehrung X83 fixture; future compatibility track."
+test_mapping = ["test_xml31_bau_sources_are_cataloged_before_parser_promotion"]
+
+[[fixtures]]
+id = "bvbs_xml31_bau_x84"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefdatei-GAEB-DA-XML-3.1-Bauausfuehrung-V-01-07-2010.zip"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefdatei-GAEB-DA-XML-3.1-Bauausfuehrung-V-01-07-2010.zip"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_1"
+gaeb_version = "gaeb_xml_3_1"
+phase = "x84"
+target_dir = "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/x84"
+support_status = "future_track"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.1 BVBS Bauausfuehrung X84 fixture; future compatibility track."
+test_mapping = ["test_xml31_bau_sources_are_cataloged_before_parser_promotion"]
+
+[[fixtures]]
+id = "bvbs_xml31_bau_pdf"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/BVBS_GAEB_Musterdatei_fuer_GAEB_ZertifizierungBauausfuehrung_V_01072010.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/BVBS_GAEB_Musterdatei_fuer_GAEB_ZertifizierungBauausfuehrung_V_01072010.pdf"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_1"
+gaeb_version = "gaeb_xml_3_1"
+phase = "pdf_reference"
+target_dir = "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/pdf_reference"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.1 Bauausfuehrung visual PDF; manual/reference evidence only."
+test_mapping = []
+
+[[fixtures]]
+id = "bvbs_xml31_bau_criteria_pdf"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefkriterien_GAEB_DA_XML_Schnittstelle_3.1_Bauausfuehrung_V_01_07_2010.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Pruefkriterien_GAEB_DA_XML_Schnittstelle_3.1_Bauausfuehrung_V_01_07_2010.pdf"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_1"
+gaeb_version = "gaeb_xml_3_1"
+phase = "criteria_pdf"
+target_dir = "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/criteria_pdf"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.1 Bauausfuehrung criteria PDF; compatibility evidence only."
+test_mapping = []
+
+[[fixtures]]
+id = "bvbs_xml31_bau_criteria_supplement"
+source_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Ergaenzungsliste_Pruefkriterien-GAEB-DA-XML-3.1-Bauausfuehrung_Stand_13-03-2011.pdf"
+normalized_url = "https://www.bvbs.de/wp-content/uploads/2018/04/Ergaenzungsliste_Pruefkriterien-GAEB-DA-XML-3.1-Bauausfuehrung_Stand_13-03-2011.pdf"
+source_family = "bvbs"
+process_domain = "legacy_xml_3_1"
+gaeb_version = "gaeb_xml_3_1"
+phase = "criteria_supplement"
+target_dir = "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/criteria_supplement"
+support_status = "reference_only"
+ci_policy = "download_on_demand"
+license_note = "Legacy GAEB XML 3.1 Bauausfuehrung supplemental criteria list; compatibility evidence only."
 test_mapping = []
 
 [[fixtures]]
