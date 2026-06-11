@@ -14,10 +14,11 @@ env:
 jobs:
   _rust-quality-self-hosted:
     name: Rust quality gates (self-hosted probe)
-    if: github.event_name != 'pull_request'
+    # Self-hosted runners cannot be used as an automatic fallback when the
+    # runner pool is absent: a queued self-hosted job blocks the whole workflow.
+    # Keep the probe opt-in so the GitHub-hosted gate remains the deterministic CI.
+    if: github.event_name == 'push' && vars.ENABLE_SELF_HOSTED_RUST_PROBE == 'true'
     runs-on: [self-hosted, ubuntu-latest]
-    outputs:
-      passed: ${{ steps.mark.outputs.passed }}
     steps:
       - uses: actions/setup-node@v4
         id: setup_node
@@ -55,33 +56,22 @@ jobs:
           cargo run --bin xtask -- fixtures verify
           archgate check --ci
           prek run --all-files
-      - id: mark
-        if: steps.setup_node.outcome == 'success' && steps.self_hosted_gate.outcome == 'success'
-        run: echo "passed=true" >> "$GITHUB_OUTPUT"
-      - name: Report self-hosted fallback
+      - name: Report self-hosted probe failure
         if: steps.setup_node.outcome != 'success' || steps.self_hosted_gate.outcome != 'success'
-        run: echo "::warning::Self-hosted Rust quality probe setup or execution failed; GitHub-hosted fallback will run as the gating job."
+        run: echo "::warning::Self-hosted Rust quality probe setup or execution failed."
 
   rust-quality:
     name: Rust quality gates
-    needs: _rust-quality-self-hosted
-    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Route
-        run: echo "self-hosted passed=${{ needs._rust-quality-self-hosted.outputs.passed }}"
       - uses: actions/checkout@v4
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
       - uses: dtolnay/rust-toolchain@stable
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         with:
           components: rustfmt, clippy, llvm-tools-preview
       - uses: actions/setup-node@v4
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         with:
           node-version: "22"
       - name: Install quality tools
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: |
           retry() {
             for attempt in 1 2 3; do
@@ -94,16 +84,12 @@ jobs:
           retry cargo install prek --locked
           retry npm install -g archgate
       - name: Format
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: cargo fmt --check
       - name: Clippy
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Test
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: cargo test --all-features
       - name: Coverage threshold
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: |
           cargo llvm-cov --all-features --summary-only \
             --ignore-filename-regex 'src/bin/xtask.rs' \
@@ -111,11 +97,8 @@ jobs:
             --fail-under-functions 95 \
             --fail-under-regions 95
       - name: Fixture manifest
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: cargo run --bin xtask -- fixtures verify
       - name: Archgate
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: archgate check --ci
       - name: Prek hooks
-        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: prek run --all-files
