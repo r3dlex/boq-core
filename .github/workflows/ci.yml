@@ -14,10 +14,16 @@ env:
 jobs:
   _rust-quality-self-hosted:
     name: Rust quality gates (self-hosted probe)
+    if: github.event_name != 'pull_request'
     runs-on: [self-hosted, ubuntu-latest]
     outputs:
       passed: ${{ steps.mark.outputs.passed }}
     steps:
+      - uses: actions/setup-node@v4
+        id: setup_node
+        continue-on-error: true
+        with:
+          node-version: "22"
       - name: Self-hosted quality gate
         id: self_hosted_gate
         continue-on-error: true
@@ -50,11 +56,11 @@ jobs:
           archgate check --ci
           prek run --all-files
       - id: mark
-        if: steps.self_hosted_gate.outcome == 'success'
+        if: steps.setup_node.outcome == 'success' && steps.self_hosted_gate.outcome == 'success'
         run: echo "passed=true" >> "$GITHUB_OUTPUT"
       - name: Report self-hosted fallback
-        if: steps.self_hosted_gate.outcome != 'success'
-        run: echo "::warning::Self-hosted Rust quality probe failed; GitHub-hosted fallback will run as the gating job."
+        if: steps.setup_node.outcome != 'success' || steps.self_hosted_gate.outcome != 'success'
+        run: echo "::warning::Self-hosted Rust quality probe setup or execution failed; GitHub-hosted fallback will run as the gating job."
 
   rust-quality:
     name: Rust quality gates
@@ -70,6 +76,10 @@ jobs:
         if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         with:
           components: rustfmt, clippy, llvm-tools-preview
+      - uses: actions/setup-node@v4
+        if: needs._rust-quality-self-hosted.outputs.passed != 'true'
+        with:
+          node-version: "22"
       - name: Install quality tools
         if: needs._rust-quality-self-hosted.outputs.passed != 'true'
         run: |
