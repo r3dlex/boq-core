@@ -37,6 +37,7 @@ fn bvbs_certification_and_checker_areas_are_cataloged() {
         "quantity_takeoff",
         "specification_authoring",
         "legacy_xml_3_2",
+        "legacy_xml_3_1",
         "tooling_reference",
     ] {
         assert!(
@@ -195,6 +196,81 @@ fn phase_catalog_includes_requested_current_and_future_gaeb_phases() {
         assert!(
             phases.contains(expected),
             "missing phase catalog entry: {expected}"
+        );
+    }
+}
+
+#[test]
+fn bau_source_matrix_lists_xml33_xml32_xml31_x83_x84_pdf_criteria() {
+    let manifest = read_manifest();
+
+    for (version, domain, statuses) in [
+        (
+            "gaeb_xml_3_3",
+            "construction_execution",
+            [
+                ("x83", "future_track"),
+                ("x84", "future_track"),
+                ("pdf_reference", "reference_only"),
+                ("criteria_pdf", "reference_only"),
+            ],
+        ),
+        (
+            "gaeb_xml_3_2",
+            "legacy_xml_3_2",
+            [
+                ("x83", "future_track"),
+                ("x84", "future_track"),
+                ("pdf_reference", "reference_only"),
+                ("criteria_pdf", "reference_only"),
+            ],
+        ),
+        (
+            "gaeb_xml_3_1",
+            "legacy_xml_3_1",
+            [
+                ("x83", "future_track"),
+                ("x84", "future_track"),
+                ("pdf_reference", "reference_only"),
+                ("criteria_pdf", "reference_only"),
+            ],
+        ),
+    ] {
+        for (phase, support_status) in statuses {
+            assert!(
+                manifest.fixtures.iter().any(|fixture| {
+                    fixture.source_family == "bvbs"
+                        && fixture.gaeb_version == version
+                        && fixture.process_domain == domain
+                        && fixture.phase == phase
+                        && fixture.support_status == support_status
+                }),
+                "missing Bau source-matrix row: {version}/{domain}/{phase}/{support_status}"
+            );
+        }
+    }
+
+    assert!(manifest.fixtures.iter().any(|fixture| {
+        fixture.id == "bvbs_xml31_bau_criteria_supplement"
+            && fixture.support_status == "reference_only"
+    }));
+}
+
+#[test]
+fn bau_legacy_sources_remain_gated_until_version_tests_pass() {
+    let manifest = read_manifest();
+    for fixture in manifest.fixtures.iter().filter(|fixture| {
+        fixture.source_family == "bvbs"
+            && matches!(
+                fixture.process_domain.as_str(),
+                "legacy_xml_3_1" | "legacy_xml_3_2"
+            )
+            && matches!(fixture.phase.as_str(), "x83" | "x84")
+    }) {
+        assert_eq!(
+            fixture.support_status, "future_track",
+            "legacy Bau parser support is overclaimed: {}",
+            fixture.id
         );
     }
 }

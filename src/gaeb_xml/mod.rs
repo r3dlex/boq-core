@@ -2,11 +2,13 @@
 
 use std::collections::BTreeMap;
 use std::path::Path;
+use std::sync::OnceLock;
 
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::name::QName;
 use rust_decimal::Decimal;
+use serde::Deserialize;
 
 use crate::VERSION;
 use crate::checksum::sha256_hex;
@@ -17,6 +19,11 @@ use crate::model::{
     Metadata, RichText, SourceProvenance,
 };
 use crate::support::{SupportCapabilities, SupportStatus};
+
+pub mod bau;
+pub mod writer;
+
+pub use writer::{schema_validation_findings, write_string};
 
 /// Parses GAEB XML text into a loss-aware document.
 ///
@@ -303,7 +310,8 @@ impl<'a> XmlParser<'a> {
         sort_order: i32,
     ) -> Result<BoqNode, ParseError> {
         let ordinal = attr_value(start, b"ID").unwrap_or_else(|| format!("item_{sort_order}"));
-        let mut title = attr_value(start, b"RNoPart").unwrap_or_else(|| ordinal.clone());
+        let rno_part = attr_value(start, b"RNoPart").unwrap_or_else(|| ordinal.clone());
+        let mut title = rno_part.clone();
         let mut item = BoqItem {
             short_text: title.clone(),
             long_text: None,
@@ -315,6 +323,7 @@ impl<'a> XmlParser<'a> {
             metadata: BTreeMap::new(),
         };
         let mut metadata = BTreeMap::new();
+        metadata.insert("gaeb.rno_part".to_owned(), serde_json::json!(rno_part));
 
         if is_empty {
             self.findings.push(
@@ -503,11 +512,40 @@ impl<'a> XmlParser<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 struct SupportPolicy {
     status: SupportStatus,
     capabilities: SupportCapabilities,
-    reason: &'static str,
+    reason: String,
+}
+
+const FIXTURE_MANIFEST_TOML: &str = include_str!("../../gaeb/manifest.toml");
+static FIXTURE_SUPPORT_REGISTRY: OnceLock<Result<Vec<FixtureSupportEntry>, String>> =
+    OnceLock::new();
+
+#[derive(Debug, Deserialize)]
+struct FixtureManifest {
+    fixtures: Vec<FixtureManifestRow>,
+}
+
+#[derive(Debug, Deserialize)]
+struct FixtureManifestRow {
+    id: String,
+    process_domain: String,
+    gaeb_version: String,
+    phase: String,
+    target_dir: String,
+    support_status: String,
+}
+
+#[derive(Debug)]
+struct FixtureSupportEntry {
+    id: String,
+    process_domain: String,
+    gaeb_version: String,
+    phase_code: String,
+    target_dir: String,
+    support_status: String,
 }
 
 fn support_policy(
@@ -515,30 +553,146 @@ fn support_policy(
     phase: Option<&GaebPhase>,
     source_uri: Option<&str>,
 ) -> SupportPolicy {
-    let phase_code = phase.map(|phase| phase.code.as_str());
-    let source_is_ava = source_uri.is_some_and(is_ava_xml33_fixture_path);
-    if version == Some("3.3") && matches!(phase_code, Some("81" | "84" | "86")) && source_is_ava {
-        SupportPolicy {
-            status: SupportStatus::Supported,
-            capabilities: SupportCapabilities::supported_import(),
-            reason: "GAEB XML 3.3 AVA MVP phase",
+    if let Some(source_uri) = source_uri {
+        match fixture_support_entry(source_uri) {
+            Ok(Some(entry)) => {
+                if let Some(policy) = support_policy_from_fixture_entry(version, phase, entry) {
+                    return policy;
+                }
+            }
+            Ok(None) => {}
+            Err(error) => {
+                return SupportPolicy {
+                    status: SupportStatus::SupportedParseOnly,
+                    capabilities: SupportCapabilities::parse_only(),
+                    reason: format!(
+                        "embedded GAEB fixture manifest failed to parse; support registry disabled: {error}"
+                    ),
+                };
+            }
         }
-    } else {
-        SupportPolicy {
-            status: SupportStatus::SupportedParseOnly,
-            capabilities: SupportCapabilities::parse_only(),
-            reason: "GAEB XML parsed outside explicit AVA MVP support policy",
-        }
+    }
+
+    SupportPolicy {
+        status: SupportStatus::SupportedParseOnly,
+        capabilities: SupportCapabilities::parse_only(),
+        reason: "GAEB XML parsed outside manifest-backed support registry".to_owned(),
     }
 }
 
-fn is_ava_xml33_fixture_path(uri: &str) -> bool {
-    let normalized = uri.replace('\\', "/").to_ascii_lowercase();
-    let phase_segment = normalized
-        .rsplit('/')
-        .nth(1)
-        .is_some_and(|segment| matches!(segment, "x81" | "x84" | "x86"));
-    normalized.contains("/gaeb_xml_3_3/ava/") && phase_segment
+fn support_policy_from_fixture_entry(
+    version: Option<&str>,
+    phase: Option<&GaebPhase>,
+    entry: &FixtureSupportEntry,
+) -> Option<SupportPolicy> {
+    let phase_code = phase.map(|phase| phase.code.as_str());
+    if version != Some(entry.gaeb_version.as_str()) || phase_code != Some(entry.phase_code.as_str())
+    {
+        return None;
+    }
+
+    let (status, capabilities, summary) = match entry.support_status.as_str() {
+        "supported" if entry.process_domain == "ava" => (
+            SupportStatus::Supported,
+            SupportCapabilities::supported_import(),
+            "supported AVA import fixture",
+        ),
+        "supported_parse_only" => (
+            SupportStatus::SupportedParseOnly,
+            SupportCapabilities::parse_only(),
+            "supported parse-only fixture",
+        ),
+        "future_track" => (
+            SupportStatus::SupportedParseOnly,
+            SupportCapabilities::parse_only(),
+            "future-track fixture parsed without adapter/export promotion",
+        ),
+        "reference_only" => (
+            SupportStatus::SupportedParseOnly,
+            SupportCapabilities::parse_only(),
+            "reference-only fixture parsed without support promotion",
+        ),
+        _ => (
+            SupportStatus::SupportedParseOnly,
+            SupportCapabilities::parse_only(),
+            "manifest fixture parsed without support promotion",
+        ),
+    };
+
+    Some(SupportPolicy {
+        status,
+        capabilities,
+        reason: format!("manifest fixture {}: {summary}", entry.id),
+    })
+}
+
+fn fixture_support_entry(
+    source_uri: &str,
+) -> Result<Option<&'static FixtureSupportEntry>, &'static str> {
+    let normalized = normalize_source_path(source_uri);
+    Ok(fixture_support_registry()?
+        .iter()
+        .find(|entry| source_path_matches_target_dir(&normalized, &entry.target_dir)))
+}
+
+fn source_path_matches_target_dir(source_path: &str, target_dir: &str) -> bool {
+    source_path == target_dir
+        || source_path.starts_with(&format!("{target_dir}/"))
+        || source_path.ends_with(&format!("/{target_dir}"))
+        || source_path.contains(&format!("/{target_dir}/"))
+}
+
+fn fixture_support_registry() -> Result<&'static [FixtureSupportEntry], &'static str> {
+    match FIXTURE_SUPPORT_REGISTRY.get_or_init(|| {
+        toml::from_str::<FixtureManifest>(FIXTURE_MANIFEST_TOML)
+            .map(|manifest| {
+                manifest
+                    .fixtures
+                    .into_iter()
+                    .filter_map(FixtureSupportEntry::from_manifest_row)
+                    .collect()
+            })
+            .map_err(|error| error.to_string())
+    }) {
+        Ok(entries) => Ok(entries.as_slice()),
+        Err(error) => Err(error.as_str()),
+    }
+}
+
+impl FixtureSupportEntry {
+    fn from_manifest_row(row: FixtureManifestRow) -> Option<Self> {
+        let gaeb_version = gaeb_xml_version(&row.gaeb_version)?;
+        let phase_code = phase_code(&row.phase)?;
+        Some(Self {
+            id: row.id,
+            process_domain: row.process_domain,
+            gaeb_version,
+            phase_code,
+            target_dir: normalize_source_path(&row.target_dir),
+            support_status: row.support_status,
+        })
+    }
+}
+
+fn gaeb_xml_version(value: &str) -> Option<String> {
+    value
+        .strip_prefix("gaeb_xml_3_")
+        .map(|suffix| format!("3.{suffix}"))
+}
+
+fn phase_code(value: &str) -> Option<String> {
+    value
+        .strip_prefix('x')
+        .filter(|code| !code.is_empty() && code.chars().all(|ch| ch.is_ascii_digit()))
+        .map(ToOwned::to_owned)
+}
+
+fn normalize_source_path(value: &str) -> String {
+    value
+        .replace('\\', "/")
+        .trim_start_matches("./")
+        .trim_end_matches('/')
+        .to_ascii_lowercase()
 }
 
 fn local_name(name: QName<'_>) -> String {
@@ -650,11 +804,42 @@ mod tests {
         assert_eq!(item.unit_price, Some(Decimal::new(3200, 3)));
         assert_eq!(item.total_price, Some(Decimal::new(800, 2)));
         assert_eq!(item.short_text, "Pipe trench");
+        assert_eq!(
+            document.boq.nodes[0].metadata.get("gaeb.rno_part"),
+            Some(&serde_json::json!("10"))
+        );
         assert_eq!(document.support_status, SupportStatus::Supported);
         assert_eq!(
             document.findings[0].code,
             "gaeb_xml_description_plain_text_only"
         );
+    }
+
+    #[test]
+    fn fixture_support_registry_loads_manifest_rows() {
+        let registry = fixture_support_registry().expect("embedded fixture manifest should parse");
+
+        assert!(registry.iter().any(|entry| entry.id == "bvbs_xml33_ava_x81"
+            && entry.support_status == "supported"
+            && entry.process_domain == "ava"));
+        assert!(registry.iter().any(|entry| entry.id == "bvbs_xml33_bau_x83"
+            && entry.support_status == "future_track"
+            && entry.process_domain == "construction_execution"));
+    }
+
+    #[test]
+    fn support_policy_matches_absolute_fixture_paths() {
+        let source_path = std::env::current_dir()
+            .expect("current directory")
+            .join("gaeb/bvbs/gaeb_xml_3_3/ava/x81/test.X81");
+        let document = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some(source_path.display().to_string()),
+        )
+        .expect("document should parse");
+
+        assert_eq!(document.support_status, SupportStatus::Supported);
+        assert!(document.capabilities.adapt_to_obra);
     }
 
     #[test]
@@ -669,6 +854,49 @@ mod tests {
     }
 
     #[test]
+    fn support_policy_keeps_xml33_bau_x83_x84_parse_only_until_fixtures_are_locked() {
+        for (path, phase) in [
+            (
+                "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/test.X83",
+                "83",
+            ),
+            (
+                "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/test.X84",
+                "84",
+            ),
+        ] {
+            let document = parse_str(
+                r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+                Some(path.to_owned()),
+            )
+            .expect("Bau document should parse");
+
+            assert_eq!(
+                document
+                    .source
+                    .phase
+                    .as_ref()
+                    .map(|phase| phase.code.as_str()),
+                Some(phase)
+            );
+            assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+            assert_eq!(
+                document.boq.metadata.get("gaeb.support_policy"),
+                Some(&serde_json::json!({
+                    "status": SupportStatus::SupportedParseOnly,
+                    "reason": format!(
+                        "manifest fixture bvbs_xml33_bau_x{}: future-track fixture parsed without adapter/export promotion",
+                        phase
+                    ),
+                }))
+            );
+            assert!(!document.capabilities.adapt_to_obra);
+            assert!(!document.capabilities.export);
+            assert!(!document.capabilities.roundtrip);
+        }
+    }
+
+    #[test]
     fn support_policy_rejects_unsupported_ava_phase() {
         let document = parse_str(
             r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
@@ -678,6 +906,108 @@ mod tests {
 
         assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
         assert!(!document.capabilities.adapt_to_obra);
+    }
+
+    #[test]
+    fn xml33_bau_roundtrip_writer_preserves_semantic_item_fields() {
+        let mut document = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau Test</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><UP>3.200</UP><IT>8.00</IT><Description><CompleteText><DetailTxt><Text><p>Pipe trench &amp; bedding</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/test.X84".to_owned()),
+        )
+        .expect("Bau X84 should parse");
+        document.support_status = SupportStatus::Supported;
+        document.capabilities = SupportCapabilities::roundtrip_without_schema_validation();
+
+        assert!(!document.capabilities.validate);
+        let exported = write_string(&document).expect("Bau X84 export should be allowed");
+        assert!(exported.contains(r#"RNoPart="10""#));
+        assert!(!exported.contains(r#"RNoPart="Pipe trench""#));
+        let reparsed = parse_str(
+            &exported,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/exported.X84".to_owned()),
+        )
+        .expect("exported Bau X84 should parse");
+
+        let original = document.boq.nodes[0].children[0]
+            .item
+            .as_ref()
+            .expect("original item");
+        let roundtripped = reparsed.boq.nodes[0].children[0]
+            .item
+            .as_ref()
+            .expect("roundtripped item");
+        assert_eq!(roundtripped.quantity, original.quantity);
+        assert_eq!(roundtripped.unit, original.unit);
+        assert_eq!(roundtripped.unit_price, original.unit_price);
+        assert_eq!(roundtripped.total_price, original.total_price);
+        assert!(roundtripped.short_text.contains("Pipe trench"));
+        assert_eq!(reparsed.support_status, SupportStatus::SupportedParseOnly);
+    }
+
+    #[test]
+    fn parse_only_xml_export_is_rejected() {
+        let document = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x31/test.X31".to_owned()),
+        )
+        .expect("parse-only document should parse");
+
+        let error = write_string(&document).expect_err("parse-only document must not export");
+        assert_eq!(error.code, "gaeb_xml_export_not_supported");
+    }
+
+    #[test]
+    fn bau_x84_baseline_merge_overlays_prices_without_losing_x83_text() {
+        let baseline = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0010" RNoPart="10"><Qty>1</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Baseline text</p></Text></DetailTxt></CompleteText></Description></Item><Item ID="001.0020" RNoPart="20"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/base.X83".to_owned()),
+        )
+        .expect("baseline should parse");
+        let offer = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0010" RNoPart="10"><Qty>1</Qty><QU>m</QU><UP>4.20</UP><IT>4.20</IT><Description>Offer text</Description></Item><Item ID="009.9999"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/offer.X84".to_owned()),
+        )
+        .expect("offer should parse");
+
+        let merged = bau::merge_x84_offer_into_x83_baseline(&baseline, &offer);
+        let item = merged.boq.nodes[0].item.as_ref().expect("merged item");
+        assert_eq!(item.unit_price, Some(Decimal::new(420, 2)));
+        assert_eq!(item.total_price, Some(Decimal::new(420, 2)));
+        assert!(item.short_text.contains("Baseline text"));
+        assert!(
+            merged
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb_xml_bau_x84_missing_ordinal")
+        );
+        assert!(
+            merged
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb_xml_bau_x84_extra_ordinal")
+        );
+    }
+
+    #[test]
+    fn bau_x84_baseline_merge_reports_duplicate_offer_ordinals() {
+        let baseline = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0010" RNoPart="10"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/base.X83".to_owned()),
+        )
+        .expect("baseline should parse");
+        let offer = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0010" RNoPart="10"><Qty>1</Qty><UP>1.00</UP></Item><Item ID="001.0010" RNoPart="10"><Qty>1</Qty><UP>2.00</UP></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/offer.X84".to_owned()),
+        )
+        .expect("offer should parse");
+
+        let merged = bau::merge_x84_offer_into_x83_baseline(&baseline, &offer);
+        assert!(
+            merged
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb_xml_bau_x84_duplicate_ordinal")
+        );
     }
 
     #[test]

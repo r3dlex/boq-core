@@ -15,3 +15,6 @@
 .omx/logs/
 .omx/runtime/
 .omx/state/
+
+# Archgate generated local config
+.archgate/config.json

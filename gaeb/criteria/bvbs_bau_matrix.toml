@@ -1,0 +1,30 @@
+# readiness-only criteria map for GAEB XML Bauausführung.
+# This is not a BVBS certification claim or submission record.
+
+[[criteria]]
+id = "bau_x83_import_lv"
+source = "BVBS GAEB XML 3.3 Bauausfuehrung criteria V 04 04 2024"
+evidence_kind = "gap"
+automated_test = "test_xml33_bau_x83_imports_to_rich_model_snapshot"
+status = "readiness_gap"
+
+[[criteria]]
+id = "bau_x84_export_prices"
+source = "BVBS GAEB XML 3.3 Bauausfuehrung criteria V 04 04 2024"
+evidence_kind = "gap"
+automated_test = "test_xml33_bau_x84_import_export_import_preserves_prices_and_findings"
+status = "readiness_gap"
+
+[[criteria]]
+id = "bau_schema_checker_validation"
+source = "BVBS GAEB XML 3.3 Bauausfuehrung criteria V 04 04 2024"
+evidence_kind = "gap"
+automated_test = "test_xml33_bau_schema_validation_gap_is_recorded_when_tooling_unavailable"
+status = "gap"
+
+[[criteria]]
+id = "bau_visual_pdf_layout"
+source = "BVBS Bauausfuehrung visual PDF"
+evidence_kind = "manual"
+automated_test = ""
+status = "manual"
