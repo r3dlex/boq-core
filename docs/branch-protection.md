@@ -7,6 +7,7 @@ Required rules for the future `r3dlex/boq-core` repository:
 - Require pull requests before merging.
 - Require all CI checks to pass before merge.
 - Require the `Rust quality gates` workflow.
+- Do not require `Rust quality gates (self-hosted probe)`: it is opt-in telemetry for the self-hosted runner pool, not a merge gate.
 - Require branch to be up to date before merge.
 - Disallow force pushes.
 - Disallow branch deletion.
