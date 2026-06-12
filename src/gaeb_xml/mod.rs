@@ -2,13 +2,11 @@
 
 use std::collections::BTreeMap;
 use std::path::Path;
-use std::sync::OnceLock;
 
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::name::QName;
 use rust_decimal::Decimal;
-use serde::Deserialize;
 
 use crate::VERSION;
 use crate::checksum::sha256_hex;
@@ -18,7 +16,7 @@ use crate::model::{
     Boq, BoqItem, BoqNode, BoqNodeKind, GaebDocument, GaebDocumentSummary, GaebFormat, GaebPhase,
     Metadata, RichText, SourceProvenance,
 };
-use crate::support::{SupportCapabilities, SupportStatus};
+use crate::support::SupportQuery;
 
 pub mod bau;
 pub mod writer;
@@ -128,11 +126,12 @@ impl<'a> XmlParser<'a> {
             title: Some(title.clone()),
             project_name: self.project_name.clone(),
         };
-        let support = support_policy(
-            self.version.as_deref(),
-            self.phase.as_ref(),
-            source_uri.as_deref(),
-        );
+        let support = crate::support::default_policy().decide(SupportQuery {
+            format: GaebFormat::GaebXml,
+            version: self.version.as_deref(),
+            phase: self.phase.as_ref(),
+            source_uri: source_uri.as_deref(),
+        });
         let source = SourceProvenance {
             source_uri,
             source_format: GaebFormat::GaebXml,
@@ -512,189 +511,6 @@ impl<'a> XmlParser<'a> {
     }
 }
 
-#[derive(Debug, Clone)]
-struct SupportPolicy {
-    status: SupportStatus,
-    capabilities: SupportCapabilities,
-    reason: String,
-}
-
-const FIXTURE_MANIFEST_TOML: &str = include_str!("../../gaeb/manifest.toml");
-static FIXTURE_SUPPORT_REGISTRY: OnceLock<Result<Vec<FixtureSupportEntry>, String>> =
-    OnceLock::new();
-
-#[derive(Debug, Deserialize)]
-struct FixtureManifest {
-    fixtures: Vec<FixtureManifestRow>,
-}
-
-#[derive(Debug, Deserialize)]
-struct FixtureManifestRow {
-    id: String,
-    process_domain: String,
-    gaeb_version: String,
-    phase: String,
-    target_dir: String,
-    support_status: String,
-}
-
-#[derive(Debug)]
-struct FixtureSupportEntry {
-    id: String,
-    process_domain: String,
-    gaeb_version: String,
-    phase_code: String,
-    target_dir: String,
-    support_status: String,
-}
-
-fn support_policy(
-    version: Option<&str>,
-    phase: Option<&GaebPhase>,
-    source_uri: Option<&str>,
-) -> SupportPolicy {
-    if let Some(source_uri) = source_uri {
-        match fixture_support_entry(source_uri) {
-            Ok(Some(entry)) => {
-                if let Some(policy) = support_policy_from_fixture_entry(version, phase, entry) {
-                    return policy;
-                }
-            }
-            Ok(None) => {}
-            Err(error) => {
-                return SupportPolicy {
-                    status: SupportStatus::SupportedParseOnly,
-                    capabilities: SupportCapabilities::parse_only(),
-                    reason: format!(
-                        "embedded GAEB fixture manifest failed to parse; support registry disabled: {error}"
-                    ),
-                };
-            }
-        }
-    }
-
-    SupportPolicy {
-        status: SupportStatus::SupportedParseOnly,
-        capabilities: SupportCapabilities::parse_only(),
-        reason: "GAEB XML parsed outside manifest-backed support registry".to_owned(),
-    }
-}
-
-fn support_policy_from_fixture_entry(
-    version: Option<&str>,
-    phase: Option<&GaebPhase>,
-    entry: &FixtureSupportEntry,
-) -> Option<SupportPolicy> {
-    let phase_code = phase.map(|phase| phase.code.as_str());
-    if version != Some(entry.gaeb_version.as_str()) || phase_code != Some(entry.phase_code.as_str())
-    {
-        return None;
-    }
-
-    let (status, capabilities, summary) = match entry.support_status.as_str() {
-        "supported" if entry.process_domain == "ava" => (
-            SupportStatus::Supported,
-            SupportCapabilities::supported_import(),
-            "supported AVA import fixture",
-        ),
-        "supported_parse_only" => (
-            SupportStatus::SupportedParseOnly,
-            SupportCapabilities::parse_only(),
-            "supported parse-only fixture",
-        ),
-        "future_track" => (
-            SupportStatus::SupportedParseOnly,
-            SupportCapabilities::parse_only(),
-            "future-track fixture parsed without adapter/export promotion",
-        ),
-        "reference_only" => (
-            SupportStatus::SupportedParseOnly,
-            SupportCapabilities::parse_only(),
-            "reference-only fixture parsed without support promotion",
-        ),
-        _ => (
-            SupportStatus::SupportedParseOnly,
-            SupportCapabilities::parse_only(),
-            "manifest fixture parsed without support promotion",
-        ),
-    };
-
-    Some(SupportPolicy {
-        status,
-        capabilities,
-        reason: format!("manifest fixture {}: {summary}", entry.id),
-    })
-}
-
-fn fixture_support_entry(
-    source_uri: &str,
-) -> Result<Option<&'static FixtureSupportEntry>, &'static str> {
-    let normalized = normalize_source_path(source_uri);
-    Ok(fixture_support_registry()?
-        .iter()
-        .find(|entry| source_path_matches_target_dir(&normalized, &entry.target_dir)))
-}
-
-fn source_path_matches_target_dir(source_path: &str, target_dir: &str) -> bool {
-    source_path == target_dir
-        || source_path.starts_with(&format!("{target_dir}/"))
-        || source_path.ends_with(&format!("/{target_dir}"))
-        || source_path.contains(&format!("/{target_dir}/"))
-}
-
-fn fixture_support_registry() -> Result<&'static [FixtureSupportEntry], &'static str> {
-    match FIXTURE_SUPPORT_REGISTRY.get_or_init(|| {
-        toml::from_str::<FixtureManifest>(FIXTURE_MANIFEST_TOML)
-            .map(|manifest| {
-                manifest
-                    .fixtures
-                    .into_iter()
-                    .filter_map(FixtureSupportEntry::from_manifest_row)
-                    .collect()
-            })
-            .map_err(|error| error.to_string())
-    }) {
-        Ok(entries) => Ok(entries.as_slice()),
-        Err(error) => Err(error.as_str()),
-    }
-}
-
-impl FixtureSupportEntry {
-    fn from_manifest_row(row: FixtureManifestRow) -> Option<Self> {
-        let gaeb_version = gaeb_xml_version(&row.gaeb_version)?;
-        let phase_code = phase_code(&row.phase)?;
-        Some(Self {
-            id: row.id,
-            process_domain: row.process_domain,
-            gaeb_version,
-            phase_code,
-            target_dir: normalize_source_path(&row.target_dir),
-            support_status: row.support_status,
-        })
-    }
-}
-
-fn gaeb_xml_version(value: &str) -> Option<String> {
-    value
-        .strip_prefix("gaeb_xml_3_")
-        .map(|suffix| format!("3.{suffix}"))
-}
-
-fn phase_code(value: &str) -> Option<String> {
-    value
-        .strip_prefix('x')
-        .filter(|code| !code.is_empty() && code.chars().all(|ch| ch.is_ascii_digit()))
-        .map(ToOwned::to_owned)
-}
-
-fn normalize_source_path(value: &str) -> String {
-    value
-        .replace('\\', "/")
-        .trim_start_matches("./")
-        .trim_end_matches('/')
-        .to_ascii_lowercase()
-}
-
 fn local_name(name: QName<'_>) -> String {
     let raw = name.as_ref();
     let after_prefix = raw.rsplit(|byte| *byte == b':').next().unwrap_or(raw);
@@ -713,6 +529,7 @@ fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
 #[allow(clippy::expect_used)]
 mod tests {
     use super::*;
+    use crate::support::{SupportCapabilities, SupportStatus};
     #[test]
     fn parses_minimal_ava_x81_document() {
         let document = parse_str(
@@ -816,15 +633,28 @@ mod tests {
     }
 
     #[test]
-    fn fixture_support_registry_loads_manifest_rows() {
-        let registry = fixture_support_registry().expect("embedded fixture manifest should parse");
+    fn embedded_support_policy_promotes_ava_and_keeps_future_track_parse_only() {
+        let ava = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/probe.X81".to_owned()),
+        )
+        .expect("AVA probe should parse");
+        assert_eq!(ava.support_status, SupportStatus::Supported);
 
-        assert!(registry.iter().any(|entry| entry.id == "bvbs_xml33_ava_x81"
-            && entry.support_status == "supported"
-            && entry.process_domain == "ava"));
-        assert!(registry.iter().any(|entry| entry.id == "bvbs_xml33_bau_x83"
-            && entry.support_status == "future_track"
-            && entry.process_domain == "construction_execution"));
+        let bau = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/probe.X83".to_owned()),
+        )
+        .expect("Bau probe should parse");
+        assert_eq!(bau.support_status, SupportStatus::SupportedParseOnly);
+        assert_eq!(
+            bau.boq.metadata.get("gaeb.support_policy"),
+            Some(&serde_json::json!({
+                "status": SupportStatus::SupportedParseOnly,
+                "reason":
+                    "manifest fixture bvbs_xml33_bau_x83: future-track fixture parsed without adapter/export promotion",
+            }))
+        );
     }
 
     #[test]

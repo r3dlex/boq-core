@@ -15,7 +15,7 @@ use crate::model::{
     Boq, BoqItem, BoqNode, BoqNodeKind, GaebDocument, GaebDocumentSummary, GaebFormat, RichText,
     SourceProvenance,
 };
-use crate::support::{SupportCapabilities, SupportStatus};
+use crate::support::SupportQuery;
 
 /// A decoded GAEB 90 record preserving fixed-width source fields.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -88,6 +88,13 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         .filter(|value| !value.is_empty())
         .unwrap_or_else(|| "GAEB 90 BoQ".to_owned());
 
+    let support = crate::support::default_policy().decide(SupportQuery {
+        format: GaebFormat::Gaeb90,
+        version: Some("GAEB 90"),
+        phase: phase.as_ref(),
+        source_uri: source_uri.as_deref(),
+    });
+
     Ok(GaebDocument {
         source: SourceProvenance {
             source_uri,
@@ -110,8 +117,8 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
             currency: None,
             metadata: BTreeMap::new(),
         },
-        capabilities: SupportCapabilities::parse_only(),
-        support_status: SupportStatus::SupportedParseOnly,
+        capabilities: support.capabilities,
+        support_status: support.status,
         findings,
         metadata: BTreeMap::new(),
     })
@@ -238,6 +245,7 @@ fn decode_bytes(bytes: &[u8]) -> String {
 #[allow(clippy::expect_used)]
 mod tests {
     use super::*;
+    use crate::support::SupportStatus;
 
     #[test]
     fn parses_fixed_width_record_fields() {
