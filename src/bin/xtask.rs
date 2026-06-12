@@ -9,6 +9,7 @@ use std::io::{self, Read, Write as IoWrite};
 use std::path::{Component, Path, PathBuf};
 use std::process::Command;
 
+use boq_core::support::manifest::{self, FixtureEntry, FixtureManifest};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use zip::ZipArchive;
@@ -22,28 +23,6 @@ const DOWNLOAD_DIR: &str = "gaeb/.cache/downloads";
 const MAX_UNCOMPRESSED_ENTRY_BYTES: u64 = 256 * 1024 * 1024;
 const MAX_UNCOMPRESSED_ARCHIVE_BYTES: u64 = 1024 * 1024 * 1024;
 const MAX_ARCHIVE_ENTRIES: usize = 20_000;
-
-#[derive(Debug, Deserialize)]
-struct Manifest {
-    fixtures: Vec<Fixture>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Fixture {
-    id: String,
-    source_url: String,
-    normalized_url: String,
-    source_family: String,
-    process_domain: String,
-    gaeb_version: String,
-    phase: String,
-    target_dir: String,
-    support_status: String,
-    ci_policy: String,
-    license_note: String,
-    test_mapping: Vec<String>,
-    archive_sha256: Option<String>,
-}
 
 #[derive(Debug, Default, Deserialize)]
 struct Lockfile {
@@ -77,9 +56,9 @@ fn run_fixtures(action: &str) -> Result<(), Box<dyn Error>> {
     }
 }
 
-fn load_manifest() -> Result<Manifest, Box<dyn Error>> {
+fn load_manifest() -> Result<FixtureManifest, Box<dyn Error>> {
     let text = fs::read_to_string(MANIFEST_PATH)?;
-    Ok(toml::from_str(&text)?)
+    manifest::parse(&text).map_err(Into::into)
 }
 
 fn load_lockfile() -> Result<Lockfile, Box<dyn Error>> {
@@ -99,55 +78,15 @@ fn verify_manifest() -> Result<(), Box<dyn Error>> {
         .into_iter()
         .map(|entry| (entry.id, entry.archive_sha256))
         .collect::<std::collections::BTreeMap<_, _>>();
-    let mut ids = BTreeSet::new();
     let mut failures = Vec::new();
 
+    if let Err(issues) = manifest::validate(&manifest) {
+        for issue in issues {
+            failures.push(issue.to_string());
+        }
+    }
+
     for fixture in &manifest.fixtures {
-        if !ids.insert(fixture.id.as_str()) {
-            failures.push(format!("duplicate fixture id: {}", fixture.id));
-        }
-        if fixture.normalized_url.contains("google.com/search") {
-            failures.push(format!("google-search-wrapped URL: {}", fixture.id));
-        }
-        if let Err(error) = validate_fixture_identity(fixture) {
-            failures.push(error.to_string());
-        }
-        if let Err(error) = validate_url(&fixture.normalized_url) {
-            failures.push(format!("{}: {error}", fixture.id));
-        }
-        if fixture.source_url.is_empty()
-            || fixture.normalized_url.is_empty()
-            || fixture.source_family.is_empty()
-            || fixture.process_domain.is_empty()
-            || fixture.gaeb_version.is_empty()
-            || fixture.phase.is_empty()
-            || fixture.license_note.is_empty()
-        {
-            failures.push(format!("missing required metadata: {}", fixture.id));
-        }
-        if !matches!(
-            fixture.support_status.as_str(),
-            "supported" | "supported_parse_only" | "future_track" | "reference_only"
-        ) {
-            failures.push(format!("invalid support_status for {}", fixture.id));
-        }
-        if matches!(
-            fixture.support_status.as_str(),
-            "supported" | "supported_parse_only"
-        ) && fixture.test_mapping.is_empty()
-        {
-            failures.push(format!(
-                "supported fixture lacks test_mapping: {}",
-                fixture.id
-            ));
-        }
-        if Path::new(&fixture.normalized_url)
-            .extension()
-            .is_some_and(|ext| ext.eq_ignore_ascii_case("exe"))
-            && fixture.support_status != "reference_only"
-        {
-            failures.push(format!("executable must be reference_only: {}", fixture.id));
-        }
         if !Path::new(&fixture.target_dir).is_dir() {
             failures.push(format!(
                 "target_dir missing for {}: {}",
@@ -171,12 +110,6 @@ fn verify_manifest() -> Result<(), Box<dyn Error>> {
             if &actual != expected {
                 failures.push(format!("checksum mismatch for {}", fixture.id));
             }
-        }
-        if fixture.ci_policy == "reference_only" && !fixture.test_mapping.is_empty() {
-            failures.push(format!(
-                "reference_only ci_policy must not map tests: {}",
-                fixture.id
-            ));
         }
     }
 
@@ -303,11 +236,11 @@ fn selected_fixture_ids() -> Option<BTreeSet<String>> {
     })
 }
 
-fn should_process(fixture: &Fixture, selected: Option<&BTreeSet<String>>) -> bool {
+fn should_process(fixture: &FixtureEntry, selected: Option<&BTreeSet<String>>) -> bool {
     selected.is_none_or(|ids| ids.contains(&fixture.id))
 }
 
-fn archive_path(fixture: &Fixture) -> PathBuf {
+fn archive_path(fixture: &FixtureEntry) -> PathBuf {
     let suffix = Path::new(&fixture.normalized_url)
         .file_name()
         .and_then(|name| name.to_str())
@@ -315,21 +248,11 @@ fn archive_path(fixture: &Fixture) -> PathBuf {
     Path::new(DOWNLOAD_DIR).join(format!("{}__{}", fixture.id, suffix))
 }
 
-fn validate_fixture_identity(fixture: &Fixture) -> Result<(), Box<dyn Error>> {
-    if fixture.id.is_empty()
-        || !fixture
-            .id
-            .chars()
-            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_')
-    {
-        return Err(format!("invalid fixture id: {}", fixture.id).into());
-    }
+fn validate_fixture_identity(fixture: &FixtureEntry) -> Result<(), Box<dyn Error>> {
+    manifest::validate_identity(fixture).map_err(|message| -> Box<dyn Error> { message.into() })?;
+    // Belt-and-braces: reject unsafe archive extraction paths via the
+    // path-component check even when string-level validation already passed.
     reject_unsafe_path(Path::new(&fixture.target_dir))?;
-    if Path::new(&fixture.target_dir).is_absolute()
-        || !Path::new(&fixture.target_dir).starts_with("gaeb")
-    {
-        return Err(format!("target_dir must stay under gaeb/: {}", fixture.target_dir).into());
-    }
     Ok(())
 }
 
@@ -355,7 +278,7 @@ fn validate_url(url: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn verify_download_checksum(fixture: &Fixture, archive: &Path) -> Result<(), Box<dyn Error>> {
+fn verify_download_checksum(fixture: &FixtureEntry, archive: &Path) -> Result<(), Box<dyn Error>> {
     let expected = match &fixture.archive_sha256 {
         Some(checksum) => Some(checksum.clone()),
         None => locked_checksum(&fixture.id)?,
@@ -492,8 +415,8 @@ mod tests {
 
     static CWD_LOCK: Mutex<()> = Mutex::new(());
 
-    fn fixture(id: &str, target_dir: &str, archive_sha256: Option<String>) -> Fixture {
-        Fixture {
+    fn fixture(id: &str, target_dir: &str, archive_sha256: Option<String>) -> FixtureEntry {
+        FixtureEntry {
             id: id.to_owned(),
             source_url: "https://www.bvbs.de/example.zip".to_owned(),
             normalized_url: "https://www.bvbs.de/example.zip".to_owned(),

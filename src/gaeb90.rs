@@ -15,7 +15,7 @@ use crate::model::{
     Boq, BoqItem, BoqNode, BoqNodeKind, GaebDocument, GaebDocumentSummary, GaebFormat, RichText,
     SourceProvenance,
 };
-use crate::support::{SupportCapabilities, SupportStatus};
+use crate::support::SupportQuery;
 
 /// A decoded GAEB 90 record preserving fixed-width source fields.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -88,6 +88,22 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         .filter(|value| !value.is_empty())
         .unwrap_or_else(|| "GAEB 90 BoQ".to_owned());
 
+    let support = crate::support::default_policy().decide(SupportQuery {
+        format: GaebFormat::Gaeb90,
+        version: Some("GAEB 90"),
+        phase: phase.as_ref(),
+        source_uri: source_uri.as_deref(),
+    });
+
+    let mut boq_metadata = BTreeMap::new();
+    boq_metadata.insert(
+        "gaeb.support_policy".to_owned(),
+        serde_json::json!({
+            "status": support.status,
+            "reason": support.reason,
+        }),
+    );
+
     Ok(GaebDocument {
         source: SourceProvenance {
             source_uri,
@@ -108,10 +124,10 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
             title,
             nodes,
             currency: None,
-            metadata: BTreeMap::new(),
+            metadata: boq_metadata,
         },
-        capabilities: SupportCapabilities::parse_only(),
-        support_status: SupportStatus::SupportedParseOnly,
+        capabilities: support.capabilities,
+        support_status: support.status,
         findings,
         metadata: BTreeMap::new(),
     })
@@ -238,6 +254,7 @@ fn decode_bytes(bytes: &[u8]) -> String {
 #[allow(clippy::expect_used)]
 mod tests {
     use super::*;
+    use crate::support::SupportStatus;
 
     #[test]
     fn parses_fixed_width_record_fields() {
@@ -257,6 +274,19 @@ mod tests {
         )
         .expect("synthetic D81 should parse");
         assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+        assert!(
+            document.boq.metadata.contains_key("gaeb.support_policy"),
+            "gaeb90 boq metadata must carry gaeb.support_policy provenance"
+        );
+        let policy_meta = &document.boq.metadata["gaeb.support_policy"];
+        assert!(
+            policy_meta.get("status").is_some(),
+            "gaeb.support_policy must include status"
+        );
+        assert!(
+            policy_meta.get("reason").is_some(),
+            "gaeb.support_policy must include reason"
+        );
         assert_eq!(
             document
                 .source

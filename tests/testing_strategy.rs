@@ -3,23 +3,7 @@
 use std::collections::BTreeSet;
 use std::fs;
 
-use serde::Deserialize;
-
-#[derive(Deserialize)]
-struct Manifest {
-    fixtures: Vec<Fixture>,
-}
-
-#[derive(Deserialize)]
-struct Fixture {
-    id: String,
-    source_family: String,
-    process_domain: String,
-    gaeb_version: String,
-    phase: String,
-    support_status: String,
-    test_mapping: Vec<String>,
-}
+use boq_core::support::manifest::{self, FixtureManifest};
 
 #[test]
 fn bvbs_certification_and_checker_areas_are_cataloged() {
@@ -275,7 +259,7 @@ fn bau_legacy_sources_remain_gated_until_version_tests_pass() {
     }
 }
 
-fn read_manifest() -> Manifest {
+fn read_manifest() -> FixtureManifest {
     let text = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
-    toml::from_str(&text).expect("manifest parses")
+    manifest::parse(&text).expect("manifest parses")
 }
