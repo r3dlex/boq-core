@@ -249,22 +249,9 @@ fn archive_path(fixture: &FixtureEntry) -> PathBuf {
 }
 
 fn validate_fixture_identity(fixture: &FixtureEntry) -> Result<(), Box<dyn Error>> {
-    let single = FixtureManifest {
-        fixtures: vec![fixture.clone()],
-    };
-    if let Err(issues) = manifest::validate(&single) {
-        for issue in &issues {
-            let message = issue.message.as_str();
-            if message.starts_with("invalid fixture id")
-                || message.starts_with("unsafe target_dir")
-                || message.starts_with("target_dir must stay under gaeb/")
-            {
-                return Err(issue.to_string().into());
-            }
-        }
-    }
-    // Belt-and-braces: defend against archive extraction paths even when
-    // string-level validation already passed.
+    manifest::validate_identity(fixture).map_err(|message| -> Box<dyn Error> { message.into() })?;
+    // Belt-and-braces: reject unsafe archive extraction paths via the
+    // path-component check even when string-level validation already passed.
     reject_unsafe_path(Path::new(&fixture.target_dir))?;
     Ok(())
 }

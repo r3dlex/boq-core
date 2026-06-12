@@ -58,3 +58,10 @@ which is merged OR-wise. An overlay can never upgrade the base decision.
   GAEB 90).
 - Overlay support is opt-in via `BOQ_CORE_SUPPORT_OVERLAY`. Failure to load
   the overlay degrades silently to the embedded policy.
+- `default_policy()` caches the first observed `BOQ_CORE_SUPPORT_OVERLAY`
+  value process-wide via `OnceLock`. Tests must construct `ManifestPolicy`
+  or `LayeredPolicy` directly rather than setting the env var, to avoid
+  races and cross-test pollution.
+- Overlay files are trust-on-first-use and bounded risk: because overlays
+  can only downgrade, a malicious or misconfigured overlay file cannot
+  promote a fixture beyond what the embedded manifest already allows.

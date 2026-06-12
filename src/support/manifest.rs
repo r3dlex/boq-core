@@ -209,7 +209,16 @@ pub fn validate(manifest: &FixtureManifest) -> Result<(), Vec<ManifestIssue>> {
     }
 }
 
-fn validate_identity(fixture: &FixtureEntry) -> Result<(), String> {
+/// Validates the identity fields of a single fixture entry.
+///
+/// Checks that `id` uses only lowercase ASCII letters, digits, and underscores,
+/// and that `target_dir` stays within `gaeb/` with no path-traversal components.
+/// Returns an error string describing the first violation found.
+///
+/// # Errors
+///
+/// Returns a descriptive error string when the entry fails identity validation.
+pub fn validate_identity(fixture: &FixtureEntry) -> Result<(), String> {
     if fixture.id.is_empty()
         || !fixture
             .id

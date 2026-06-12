@@ -95,6 +95,15 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         source_uri: source_uri.as_deref(),
     });
 
+    let mut boq_metadata = BTreeMap::new();
+    boq_metadata.insert(
+        "gaeb.support_policy".to_owned(),
+        serde_json::json!({
+            "status": support.status,
+            "reason": support.reason,
+        }),
+    );
+
     Ok(GaebDocument {
         source: SourceProvenance {
             source_uri,
@@ -115,7 +124,7 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
             title,
             nodes,
             currency: None,
-            metadata: BTreeMap::new(),
+            metadata: boq_metadata,
         },
         capabilities: support.capabilities,
         support_status: support.status,
@@ -265,6 +274,19 @@ mod tests {
         )
         .expect("synthetic D81 should parse");
         assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+        assert!(
+            document.boq.metadata.contains_key("gaeb.support_policy"),
+            "gaeb90 boq metadata must carry gaeb.support_policy provenance"
+        );
+        let policy_meta = &document.boq.metadata["gaeb.support_policy"];
+        assert!(
+            policy_meta.get("status").is_some(),
+            "gaeb.support_policy must include status"
+        );
+        assert!(
+            policy_meta.get("reason").is_some(),
+            "gaeb.support_policy must include reason"
+        );
         assert_eq!(
             document
                 .source

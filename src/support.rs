@@ -205,10 +205,11 @@ struct IndexedEntry {
 
 impl IndexedEntry {
     fn from_entry(entry: &manifest::FixtureEntry) -> Option<Self> {
-        // Only manifest rows whose version/phase keys map to XML-style codes
-        // are eligible to participate in the policy decision. Non-XML rows
-        // (e.g. `gaeb_90`) are filtered out; the conservative default still
-        // covers them.
+        // Non-XML rows (e.g. `gaeb_90`) are filtered out here because
+        // `gaeb_xml_version` returns None for them. The GaebFormat::GaebXml
+        // guard in ManifestPolicy::decide is a belt-and-braces companion:
+        // together they ensure no manifest row can accidentally promote a
+        // non-XML format.
         let gaeb_version = manifest::gaeb_xml_version(&entry.gaeb_version)?;
         let phase_code = manifest::phase_code(&entry.phase)?;
         Some(Self {
@@ -370,12 +371,21 @@ impl<B: SupportPolicy, O: SupportPolicy> SupportPolicy for LayeredPolicy<B, O> {
         let overlay = self.overlay.decide(query);
         let base_rank = status_rank(base.status);
         let overlay_rank = status_rank(overlay.status);
-        let merged_status = if overlay_rank < base_rank {
+        let mut merged_status = if overlay_rank < base_rank {
             overlay.status
         } else {
             base.status
         };
         let merged_capabilities = merge_capabilities(base.capabilities, overlay.capabilities);
+        // Consistency invariant: if the merged capabilities carry reference_only,
+        // the status must be at most ReferenceOnly.  This is downgrade-only: a
+        // malformed overlay that claims Supported + reference_only caps cannot
+        // produce a contradictory decision.
+        if merged_capabilities.reference_only
+            && status_rank(merged_status) > status_rank(SupportStatus::ReferenceOnly)
+        {
+            merged_status = SupportStatus::ReferenceOnly;
+        }
         let changed = merged_status != base.status || merged_capabilities != base.capabilities;
         if changed {
             SupportDecision {
@@ -445,6 +455,8 @@ pub fn default_policy() -> &'static dyn SupportPolicy {
                     .ok()
                     .and_then(|text| ManifestPolicy::from_toml(&text).ok());
                 overlay.map_or(embedded as &'static dyn SupportPolicy, |overlay| {
+                    // Intentional one-shot leak: `&'static dyn SupportPolicy`
+                    // requires 'static lifetime; at most one allocation per process.
                     let layered: &'static LayeredPolicy<&'static ManifestPolicy, ManifestPolicy> =
                         Box::leak(Box::new(LayeredPolicy {
                             base: embedded,
@@ -860,5 +872,89 @@ test_mapping = ["t"]
             decision.status,
             SupportStatus::Supported | SupportStatus::SupportedParseOnly
         ));
+    }
+
+    // Finding 1: overlay-path coverage — build a LayeredPolicy from real
+    // ManifestPolicy instances (same construction path as the env-var branch of
+    // default_policy) and assert a downgrade without touching the env var.
+    #[test]
+    fn layered_manifest_policies_downgrade_supported_to_parse_only() {
+        // Overlay manifest has the same AVA X81 fixture but with
+        // supported_parse_only, which is more conservative than the embedded
+        // base's "supported" decision.
+        let overlay_toml = r#"
+[[fixtures]]
+id = "bvbs_xml33_ava_x81"
+source_url = "https://www.bvbs.de/example.zip"
+normalized_url = "https://www.bvbs.de/example.zip"
+source_family = "bvbs"
+process_domain = "ava"
+gaeb_version = "gaeb_xml_3_3"
+phase = "x81"
+target_dir = "gaeb/bvbs/gaeb_xml_3_3/ava/x81"
+support_status = "supported_parse_only"
+ci_policy = "download_on_demand"
+license_note = "overlay test"
+test_mapping = ["t"]
+"#;
+        let overlay = ManifestPolicy::from_toml(overlay_toml).expect("overlay manifest parses");
+        let layered = LayeredPolicy {
+            base: ManifestPolicy::embedded(),
+            overlay,
+        };
+        let phase = GaebPhase {
+            code: "81".to_owned(),
+            label: None,
+        };
+        let decision = layered.decide(SupportQuery {
+            format: GaebFormat::GaebXml,
+            version: Some("3.3"),
+            phase: Some(&phase),
+            source_uri: Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/file.x81"),
+        });
+        assert_eq!(decision.status, SupportStatus::SupportedParseOnly);
+        assert!(!decision.capabilities.adapt_to_obra);
+        assert!(matches!(decision.source, DecisionSource::OverlayDowngrade));
+        assert!(decision.reason.contains("overlay downgraded"));
+    }
+
+    // Finding 2: reference_only caps always force ReferenceOnly status even when
+    // the overlay reports a contradictory Supported status.
+    #[test]
+    fn layered_policy_reference_only_caps_force_reference_only_status() {
+        struct OverridePolicy(SupportDecision);
+        impl SupportPolicy for OverridePolicy {
+            fn decide(&self, _query: SupportQuery<'_>) -> SupportDecision {
+                self.0.clone()
+            }
+        }
+        let base = OverridePolicy(SupportDecision {
+            status: SupportStatus::Supported,
+            capabilities: SupportCapabilities::supported_import(),
+            reason: "base supported".to_owned(),
+            source: DecisionSource::ManifestEntry {
+                id: "base".to_owned(),
+            },
+        });
+        // Malformed overlay: claims Supported status but reference_only caps.
+        let overlay = OverridePolicy(SupportDecision {
+            status: SupportStatus::Supported,
+            capabilities: SupportCapabilities::reference_only(),
+            reason: "overlay contradictory".to_owned(),
+            source: DecisionSource::ManifestEntry {
+                id: "overlay".to_owned(),
+            },
+        });
+        let layered = LayeredPolicy { base, overlay };
+        let decision = layered.decide(SupportQuery {
+            format: GaebFormat::GaebXml,
+            version: None,
+            phase: None,
+            source_uri: None,
+        });
+        // The consistency invariant must force status down to ReferenceOnly.
+        assert_eq!(decision.status, SupportStatus::ReferenceOnly);
+        assert!(decision.capabilities.reference_only);
+        assert!(matches!(decision.source, DecisionSource::OverlayDowngrade));
     }
 }
