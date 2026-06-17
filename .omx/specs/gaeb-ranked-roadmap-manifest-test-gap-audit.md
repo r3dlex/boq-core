@@ -9,6 +9,15 @@ Planning-only cross-cutting audit generated from `.omx/specs/gaeb-ranked-source-
 - No duplicate issue creation; source rows map to existing issue lanes #28-#44.
 - Only rows with Manifest disposition `manifested` and Parser support status `fixture` may be used as executable local parser fixtures without further acquisition work.
 
+## Status vocabulary
+
+This audit uses two independent status columns:
+
+- Manifest disposition (`manifested`, `artifact-only/reference`, `gap`) describes whether a source has a local or planned manifest identity.
+- Parser support status (`future_track`, `reference_only`) describes whether a source is a planned future parser regression lane or documentation/reference-only input.
+- `future_track` rows are not executable fixtures in this PR; they require license-safe acquisition, local fixture storage, checksum/manifest entry, and targeted regression coverage before promotion.
+- `reference_only` rows may be cited for documentation and planning, but must not be used as executable parser fixtures.
+
 ## Complete ledger mapping
 
 | Source ID | Rank / track | Source | URL / locator | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
