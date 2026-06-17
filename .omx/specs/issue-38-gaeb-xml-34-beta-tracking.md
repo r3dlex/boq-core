@@ -32,3 +32,12 @@ Create a beta-impact ADR that records 3.4 as reference-only and identifies susta
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
 - [ ] Any implementation follow-up starts with the first architecture decision above.
+
+## Ranked roadmap source audit
+
+This section binds issue #38 to the canonical source/status ledger. It does not promote parser support beyond the statuses below.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| A1-01 | #38 GAEB XML 3.4 beta tracking | manifested | official_gaeb_xml34_beta_schema | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| A1-02 | #38 GAEB XML 3.4 beta tracking | manifested | official_gaeb_xml34_beta_changelog | reference_only | Reference-only manifest artifact; not executable as parser fixture. |

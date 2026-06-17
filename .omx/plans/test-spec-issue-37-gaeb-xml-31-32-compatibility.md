@@ -46,3 +46,24 @@
 - `archgate check --ci`
 - `cargo run --bin xtask -- fixtures verify`
 - `uvx prek run --all-files`
+
+## Ranked roadmap fixture/test mapping
+
+This section records how issue #37 may use the linked source rows as local fixtures, planned fixture gates, or reference-only evidence.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R3-01 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only planning artifact; not executable as parser fixture. |
+| R3-02 | #37 GAEB XML 3.1/3.2 compatibility | manifested | official_gaeb_xml32_leistungsverzeichnis | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R3-03 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R3-04 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml32_ava_x81 | future_track | ['future_legacy_xml32_ava_x81_cataloged'] |
+| R3-05 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml32_ava_x84 | future_track | ['future_legacy_xml32_ava_x84_cataloged'] |
+| R3-06 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml32_ava_x86 | future_track | ['future_legacy_xml32_ava_x86_cataloged'] |
+| R3-07 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only visual PDF; not executable as parser fixture. |
+| R3-08 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only certification criteria PDF; not executable as parser fixture. |
+| R3-09 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only planning artifact; not executable as parser fixture. |
+| R3-10 | #37 GAEB XML 3.1/3.2 compatibility | manifested | official_gaeb_xml31_muster_2009_12 | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R3-11 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R3-12 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_x83 | future_track | ['test_xml31_bau_sources_are_cataloged_before_parser_promotion'] |
+| R3-13 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only planning artifact; not executable as parser fixture. |
+| R3-14 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |

@@ -34,3 +34,13 @@ Create an ADR deciding a separate `gaeb2000` parser boundary with tag/keyword to
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
 - [ ] Any implementation follow-up starts with the first architecture decision above.
+
+## Ranked roadmap source audit
+
+This section binds issue #39 to the canonical source/status ledger. It does not promote parser support beyond the statuses below.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R4-01 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples | future_track | ['future_dangl_ava_examples_cataloged'] |
+| R4-02 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples_cpp | future_track | ['future_dangl_cpp_examples_cataloged'] |
+| R4-03 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_gaeb2000_sportheim_gist | future_track | ['future_gaeb2000_sportheim_cataloged'] |
