@@ -29,7 +29,7 @@
 ## Boundary and negative tests
 - [ ] Reference-only sources cannot be used as support evidence.
 - [ ] Future-track sources cannot be parsed as supported until promotion tests pass.
-- [ ] Paid, executable, commercial, browser, or interactive-only sources are never executed in CI.
+- [ ] Paid, executable, commercial, browser, or interactive-only sources are not executed in CI unless explicitly promoted through a future checksum/license-verified safe fixture workflow; paid/certification actions remain out of scope.
 - [ ] Unsupported fields produce structured findings rather than silent data loss.
 - [ ] No duplicate issue is created for this source family unless a new independent track is discovered.
 

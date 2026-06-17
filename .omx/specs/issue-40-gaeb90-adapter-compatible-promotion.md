@@ -7,8 +7,8 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
-Write a gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible (ARCH-001 DTO layer; ARCH-003 backend-prohibited).
+## Candidate architecture decision before implementation
+Before implementation, record or link a candidate gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible (ARCH-001 DTO layer; ARCH-003 backend-prohibited).
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -32,7 +32,7 @@ Write a gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up records or links the candidate architecture decision above before implementation work begins.
 
 ## Ranked roadmap source audit
 
