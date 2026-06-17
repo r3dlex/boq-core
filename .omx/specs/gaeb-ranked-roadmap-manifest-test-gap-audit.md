@@ -7,7 +7,7 @@ Planning-only cross-cutting audit generated from `.omx/specs/gaeb-ranked-source-
 - No paid BVBS certification actions.
 - No live/source downloads during tests.
 - No duplicate issue creation; source rows map to existing issue lanes #28-#44.
-- Only rows with Manifest disposition `manifested` and Parser support status `fixture` may be used as executable local parser fixtures without further acquisition work.
+- `manifested` is a manifest disposition only; a source becomes an executable local parser fixture only after a `future_track` row is promoted through license-safe acquisition, local fixture storage, checksum/manifest entry, and targeted regression coverage.
 
 ## Status vocabulary
 
