@@ -20,9 +20,9 @@
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.3 X83Z/X84Z package | future_track | manifest download with checksum/license note | official schema/sample package | future_zeitvertrag_33_cataloged |
-| gaeb32_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.2 package | future_track | manifest download with checksum/license note | official schema/sample package | future_zeitvertrag_32_cataloged |
-| gaeb32_zeitvertrag_examples | official_gaeb | zeitvertrag | 3.2 examples | future_track | manifest download with checksum/license note | official examples; license note required | future_zeitvertrag_32_examples_cataloged |
+| gaeb33_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.3 X83Z/X84Z package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_zeitvertrag_33_package_cataloged |
+| gaeb32_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.2 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_zeitvertrag_32_package_cataloged |
+| gaeb32_zeitvertrag_examples | official_gaeb | zeitvertrag | 3.2 examples | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference examples; not executable parser fixture | reference_zeitvertrag_32_examples_cataloged |
 | schema_x83z_33_chart | interactive_schema | zeitvertrag | 3.3 X83Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x83z_33_schema_chart |
 | schema_x84z_33_chart | interactive_schema | zeitvertrag | 3.3 X84Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x84z_33_schema_chart |
 | schema_x83z_32_chart | interactive_schema | zeitvertrag | 3.2 X83Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x83z_32_schema_chart |

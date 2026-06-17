@@ -20,8 +20,8 @@
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_handel_pkg | official_gaeb | handel | 3.3 X93-X97 package | future_track | manifest download with checksum/license note | official schema/sample package | future_handel_33_cataloged |
-| gaeb32_handel_pkg | official_gaeb | handel | 3.2 X93-X97 package | future_track | manifest download with checksum/license note | official schema/sample package | future_handel_32_cataloged |
+| gaeb33_handel_pkg | official_gaeb | handel | 3.3 X93-X97 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_handel_33_package_cataloged |
+| gaeb32_handel_pkg | official_gaeb | handel | 3.2 X93-X97 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_handel_32_package_cataloged |
 | schema_x93_33_chart | interactive_schema | handel | 3.3 X93 | reference_only | no CI dependency on external HTML | schema chart only | reference_x93_33_schema_chart |
 | schema_x94_33_chart | interactive_schema | handel | 3.3 X94 | reference_only | no CI dependency on external HTML | schema chart only | reference_x94_33_schema_chart |
 | schema_x93_32_chart | interactive_schema | handel | 3.2 X93 | reference_only | no CI dependency on external HTML | schema chart only | reference_x93_32_schema_chart |
