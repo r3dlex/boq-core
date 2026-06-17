@@ -7,7 +7,7 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
+## Candidate architecture decision before implementation
 Add a compatibility ADR documenting XML 3.1/3.2 namespace/schema differences versus the current XML 3.3 AVA parser before parser changes.
 
 ## Per-source support matrix
@@ -40,7 +40,7 @@ Add a compatibility ADR documenting XML 3.1/3.2 namespace/schema differences ver
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up starts with the candidate architecture decision above.
 
 ## Ranked roadmap source audit
 

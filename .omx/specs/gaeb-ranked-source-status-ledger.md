@@ -22,6 +22,8 @@ Scope: source-readiness ledger only; this PR does not download, vendor, execute,
 | `reference_only` | May be cited or consulted; not executable parser test input. |
 | `future_track:<name>` | Candidate future regression lane after safe local fixture promotion. |
 
+`manifested` records a roadmap/testing manifest identity only; it does not imply executable parser input unless the row is also promoted through the safe `future_track` workflow.
+
 ## Ranked source ledger
 
 | ID | Rank | Issue lane | Source | Readiness | Manifest/test ID | Test posture |
@@ -55,35 +57,35 @@ Scope: source-readiness ledger only; this PR does not download, vendor, execute,
 | R3-13 | Rank 3 | #33 | BVBS 3.1 Bauausführung X84 | artifact-only/reference | — | reference_only |
 | R3-14 | Rank 3 | #33 | Muster-LV visual PDF 3.1 Bauausführung | manifested | bvbs_xml31_bau_pdf | reference_only |
 | R3-15 | Rank 3 | #33 | BVBS 3.1 Bauausführung criteria | artifact-only/reference | — | reference_only |
-| R4-01 | Rank 4 | #34 | Dangl.AVA examples C# repo | manifested | dangl_ava_examples | future_track:`future_dangl_ava_examples_cataloged` |
-| R4-02 | Rank 4 | #34 | Dangl.AVA examples C++ repo | manifested | dangl_ava_examples_cpp | future_track:`future_dangl_cpp_examples_cataloged` |
-| R4-03 | Rank 4 | #34 | GAEB 2000 Sportheim demo gist | manifested | dangl_gaeb2000_sportheim_gist | future_track:`future_gaeb2000_sportheim_cataloged` |
-| R4-04 | Rank 4 | #34 | GAEB-Tools syntax/reference page | artifact-only/reference | — | reference_only |
-| R4-05 | Rank 4 | #34 | Sander-Doll GAEB 90/D83 overview | artifact-only/reference | — | reference_only |
+| R4-01 | Rank 4 | #39/#40 | Dangl.AVA examples C# repo | manifested | dangl_ava_examples | future_track:`future_dangl_ava_examples_cataloged` |
+| R4-02 | Rank 4 | #39/#40 | Dangl.AVA examples C++ repo | manifested | dangl_ava_examples_cpp | future_track:`future_dangl_cpp_examples_cataloged` |
+| R4-03 | Rank 4 | #39 | GAEB 2000 Sportheim demo gist | manifested | dangl_gaeb2000_sportheim_gist | future_track:`future_gaeb2000_sportheim_cataloged` |
+| R4-04 | Rank 4 | #40 | GAEB-Tools syntax/reference page | artifact-only/reference | — | reference_only |
+| R4-05 | Rank 4 | #40 | Sander-Doll GAEB 90/D83 overview | artifact-only/reference | — | reference_only |
 | R5-01 | Rank 5 | #35 | BVBS Texterstellung X81 | manifested | bvbs_xml33_text_x81 | future_track:`future_texterstellung_x81_cataloged` |
 | R5-02 | Rank 5 | #35 | BVBS Texterstellung X82 | manifested | bvbs_xml33_text_x82 | future_track:`future_texterstellung_x82_cataloged` |
 | R5-03 | Rank 5 | #35 | Muster authoring verification guideline | artifact-only/reference | — | reference_only |
 | R5-04 | Rank 5 | #35 | BVBS Texterstellung audit criteria | manifested | bvbs_xml33_texterstellung_criteria_pdf | reference_only |
-| R6-01 | Rank 6 | #36 | GAEB XML 3.3 Kosten/Kalkulation schema package | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only |
-| R6-02 | Rank 6 | #36 | GAEB XML 3.2 Kalkulation schema package | manifested | official_gaeb_xml32_kalkulation | reference_only |
-| R6-03 | Rank 6 | #36 | Interactive X50 Baukostenkatalog schema | artifact-only/reference | — | reference_only |
-| R6-04 | Rank 6 | #36 | Interactive X52 Kalkulationsdaten schema 3.3 | artifact-only/reference | — | reference_only |
-| R6-05 | Rank 6 | #36 | Interactive X52 Kalkulationsdaten schema 3.2 | artifact-only/reference | — | reference_only |
+| R6-01 | Rank 6 | #41 | GAEB XML 3.3 Kosten/Kalkulation schema package | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only |
+| R6-02 | Rank 6 | #41 | GAEB XML 3.2 Kalkulation schema package | manifested | official_gaeb_xml32_kalkulation | reference_only |
+| R6-03 | Rank 6 | #41 | Interactive X50 Baukostenkatalog schema | artifact-only/reference | — | reference_only |
+| R6-04 | Rank 6 | #41 | Interactive X52 Kalkulationsdaten schema 3.3 | artifact-only/reference | — | reference_only |
+| R6-05 | Rank 6 | #41 | Interactive X52 Kalkulationsdaten schema 3.2 | artifact-only/reference | — | reference_only |
 | R7-01 | Rank 7 | #37 | GAEB XML 3.3 Zeitvertrag schema package | manifested | official_gaeb_xml33_zeitvertrag | reference_only |
 | R7-02 | Rank 7 | #37 | GAEB XML 3.2 Zeitvertrag schema package | manifested | official_gaeb_xml32_zeitvertrag | reference_only |
 | R7-03 | Rank 7 | #37 | GAEB XML 3.2 Zeitvertrag examples | manifested | official_gaeb_xml32_zeitvertrag_examples | reference_only |
 | R7-04 | Rank 7 | #37 | Interactive X83Z schema 3.3 | artifact-only/reference | — | reference_only |
 | R7-05 | Rank 7 | #37 | Interactive X84Z schema 3.3 | artifact-only/reference | — | reference_only |
 | R7-06 | Rank 7 | #37 | Interactive X83Z schema 3.2 | artifact-only/reference | — | reference_only |
-| R8-01 | Rank 8 | #38 | GAEB XML 3.3 Handel schema package | manifested | official_gaeb_xml33_handel | reference_only |
-| R8-02 | Rank 8 | #38 | GAEB XML 3.2 Handel schema package | artifact-only/reference | — | reference_only |
-| R8-03 | Rank 8 | #38 | Interactive X93 schema 3.3 | artifact-only/reference | — | reference_only |
-| R8-04 | Rank 8 | #38 | Interactive X94 schema 3.3 | artifact-only/reference | — | reference_only |
-| R8-05 | Rank 8 | #38 | Interactive X93 schema 3.2 | artifact-only/reference | — | reference_only |
+| R8-01 | Rank 8 | #42 | GAEB XML 3.3 Handel schema package | manifested | official_gaeb_xml33_handel | reference_only |
+| R8-02 | Rank 8 | #42 | GAEB XML 3.2 Handel schema package | artifact-only/reference | — | reference_only |
+| R8-03 | Rank 8 | #42 | Interactive X93 schema 3.3 | artifact-only/reference | — | reference_only |
+| R8-04 | Rank 8 | #42 | Interactive X94 schema 3.3 | artifact-only/reference | — | reference_only |
+| R8-05 | Rank 8 | #42 | Interactive X93 schema 3.2 | artifact-only/reference | — | reference_only |
 | A1-01 | Appendix | #39 | GAEB XML 3.4 beta schema files | manifested | official_gaeb_xml34_beta_schema | reference_only |
 | A1-02 | Appendix | #39 | GAEB XML 3.4 beta changelog | manifested | official_gaeb_xml34_beta_changelog | reference_only |
-| A2-01 | Appendix | #40 | GAEB-Online Excel import blank sheet | manifested | gaeb_online_import_template | reference_only |
-| A2-02 | Appendix | #40 | GAEB-Online import sheet layout tutorial | artifact-only/reference | — | reference_only |
-| A2-03 | Appendix | #40 | Muster Excel-LV generator executable | manifested | gaeb_online_generator_exe | reference_only |
-| A2-04 | Appendix | #40 | MWM-Rialto | artifact-only/reference | — | reference_only |
-| A2-05 | Appendix | #40 | EasyGAEB browser platform | artifact-only/reference | — | reference_only |
+| A2-01 | Appendix | #44 | GAEB-Online Excel import blank sheet | manifested | gaeb_online_import_template | reference_only |
+| A2-02 | Appendix | #44 | GAEB-Online import sheet layout tutorial | artifact-only/reference | — | reference_only |
+| A2-03 | Appendix | #44 | Muster Excel-LV generator executable | manifested | gaeb_online_generator_exe | reference_only |
+| A2-04 | Appendix | #44 | MWM-Rialto | artifact-only/reference | — | reference_only |
+| A2-05 | Appendix | #44 | EasyGAEB browser platform | artifact-only/reference | — | reference_only |

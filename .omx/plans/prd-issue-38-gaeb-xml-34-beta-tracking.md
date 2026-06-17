@@ -8,9 +8,9 @@
 The current roadmap identifies this source family, but future implementers need a source-by-source support matrix and concrete test obligations before safe parser/model work can begin.
 
 ## Product outcome
-A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or first-step architecture decisions.
+A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
-## First architecture decision required
+## Candidate architecture decision required before implementation
 Create a beta-impact ADR that records 3.4 as reference-only and identifies sustainability/lifecycle/carbon descriptor model extension points.
 
 ## Per-source support matrix
@@ -35,7 +35,7 @@ Follow-ups should update issue #38 and its PRD/test-spec. Create a new GitHub is
 
 ## Acceptance criteria
 - [ ] Per-source matrix is preserved in future implementation PRs.
-- [ ] The first architecture decision is completed before parser/model code changes.
+- [ ] The candidate architecture decision is recorded or linked before parser/model code changes.
 - [ ] Test-spec concrete tests are created or consciously deferred with rationale.
 - [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
 
@@ -56,7 +56,7 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 ### Decision drivers
 1. **Traceability:** every source must map to a support status, policy, and planned test.
 2. **Safety:** no paid/executable/commercial action or unsupported certification claim may occur implicitly.
-3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and first architecture decisions.
+3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and candidate architecture decisions.
 
 ### Viable options considered
 | Option | Pros | Cons | Decision |
@@ -79,7 +79,7 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 | Accidental support promotion | Users trust unsupported formats. | support_status tests and explicit promotion gates. |
 | Parser-family coupling | Brittle architecture and category mistakes. | Boundary ADR before implementation for distinct source families. |
 | Duplicate/ambiguous tests | Executors may implement the wrong track. | Namespace test names by source family/module. |
-| ADR deferral risk | Implementation starts before boundaries are settled. | First architecture decision is an acceptance gate in every PRD. |
+| ADR deferral risk | Implementation starts before boundaries are settled. | Candidate architecture decision is a pre-implementation gate in every PRD. |
 
 ## Ranked roadmap source inventory binding
 

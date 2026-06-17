@@ -7,7 +7,7 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
+## Candidate architecture decision before implementation
 Create a boundary ADR for Z-phase framework-contract handling before changing ordinary X83/X84 behavior.
 
 ## Per-source support matrix
@@ -36,7 +36,7 @@ Create a boundary ADR for Z-phase framework-contract handling before changing or
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up starts with the candidate architecture decision above.
 
 ## Ranked roadmap source audit
 

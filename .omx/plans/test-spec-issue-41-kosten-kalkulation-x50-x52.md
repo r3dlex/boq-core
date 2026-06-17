@@ -20,8 +20,8 @@
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kosten_kalkulation_33_cataloged |
-| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kalkulation_32_cataloged |
+| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kosten_kalkulation_33 |
+| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kalkulation_32 |
 | schema_x50_33_chart | interactive_schema | kosten_kalkulation | 3.3 X50 | reference_only | no CI dependency on external HTML | schema chart only | reference_x50_33_schema_chart |
 | schema_x52_33_chart | interactive_schema | kosten_kalkulation | 3.3 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_33_schema_chart |
 | schema_x52_32_chart | interactive_schema | kosten_kalkulation | 3.2 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_32_schema_chart |

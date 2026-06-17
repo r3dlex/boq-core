@@ -7,7 +7,7 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
+## Candidate architecture decision before implementation
 Create a beta-impact ADR that records 3.4 as reference-only and identifies sustainability/lifecycle/carbon descriptor model extension points.
 
 ## Per-source support matrix
@@ -31,7 +31,7 @@ Create a beta-impact ADR that records 3.4 as reference-only and identifies susta
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up starts with the candidate architecture decision above.
 
 ## Ranked roadmap source audit
 
