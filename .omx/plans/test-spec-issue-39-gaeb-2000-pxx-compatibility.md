@@ -39,3 +39,13 @@
 - `archgate check --ci`
 - `cargo run --bin xtask -- fixtures verify`
 - `uvx prek run --all-files`
+
+## Ranked roadmap fixture/test mapping
+
+This section records how issue #39 may use the linked source rows as local fixtures, planned fixture gates, or reference-only evidence.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R4-01 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples | future_track | ['future_dangl_ava_examples_cataloged'] |
+| R4-02 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples_cpp | future_track | ['future_dangl_cpp_examples_cataloged'] |
+| R4-03 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_gaeb2000_sportheim_gist | future_track | ['future_gaeb2000_sportheim_cataloged'] |

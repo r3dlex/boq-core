@@ -8,17 +8,17 @@
 The current roadmap identifies this source family, but future implementers need a source-by-source support matrix and concrete test obligations before safe parser/model work can begin.
 
 ## Product outcome
-A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or first-step architecture decisions.
+A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
-## First architecture decision required
+## Candidate architecture decision required before implementation
 Create a boundary ADR for Z-phase framework-contract handling before changing ordinary X83/X84 behavior.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.3 X83Z/X84Z package | future_track | manifest download with checksum/license note | official schema/sample package | future_zeitvertrag_33_cataloged |
-| gaeb32_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.2 package | future_track | manifest download with checksum/license note | official schema/sample package | future_zeitvertrag_32_cataloged |
-| gaeb32_zeitvertrag_examples | official_gaeb | zeitvertrag | 3.2 examples | future_track | manifest download with checksum/license note | official examples; license note required | future_zeitvertrag_32_examples_cataloged |
+| gaeb33_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.3 X83Z/X84Z package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_zeitvertrag_33_package_cataloged |
+| gaeb32_zeitvertrag_pkg | official_gaeb | zeitvertrag | 3.2 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference schema/sample package; not executable parser fixture | reference_zeitvertrag_32_package_cataloged |
+| gaeb32_zeitvertrag_examples | official_gaeb | zeitvertrag | 3.2 examples | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | reference examples; not executable parser fixture | reference_zeitvertrag_32_examples_cataloged |
 | schema_x83z_33_chart | interactive_schema | zeitvertrag | 3.3 X83Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x83z_33_schema_chart |
 | schema_x84z_33_chart | interactive_schema | zeitvertrag | 3.3 X84Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x84z_33_schema_chart |
 | schema_x83z_32_chart | interactive_schema | zeitvertrag | 3.2 X83Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x83z_32_schema_chart |
@@ -39,7 +39,7 @@ Follow-ups should update issue #43 and its PRD/test-spec. Create a new GitHub is
 
 ## Acceptance criteria
 - [ ] Per-source matrix is preserved in future implementation PRs.
-- [ ] The first architecture decision is completed before parser/model code changes.
+- [ ] The candidate architecture decision is recorded or linked before parser/model code changes.
 - [ ] Test-spec concrete tests are created or consciously deferred with rationale.
 - [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
 
@@ -60,7 +60,7 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 ### Decision drivers
 1. **Traceability:** every source must map to a support status, policy, and planned test.
 2. **Safety:** no paid/executable/commercial action or unsupported certification claim may occur implicitly.
-3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and first architecture decisions.
+3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and candidate architecture decisions.
 
 ### Viable options considered
 | Option | Pros | Cons | Decision |
@@ -83,4 +83,19 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 | Accidental support promotion | Users trust unsupported formats. | support_status tests and explicit promotion gates. |
 | Parser-family coupling | Brittle architecture and category mistakes. | Boundary ADR before implementation for distinct source families. |
 | Duplicate/ambiguous tests | Executors may implement the wrong track. | Namespace test names by source family/module. |
-| ADR deferral risk | Implementation starts before boundaries are settled. | First architecture decision is an acceptance gate in every PRD. |
+| ADR deferral risk | Implementation starts before boundaries are settled. | Candidate architecture decision is a pre-implementation gate in every PRD. |
+
+## Ranked roadmap source inventory binding
+
+This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ranked-source-status-ledger.md`. Issue #43 owns the following source rows for planning and test-readiness purposes:
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R7-01 | #43 Zeitvertrag X83Z/X84Z | manifested | official_gaeb_xml33_zeitvertrag | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R7-02 | #43 Zeitvertrag X83Z/X84Z | manifested | official_gaeb_xml32_zeitvertrag | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R7-03 | #43 Zeitvertrag X83Z/X84Z | manifested | official_gaeb_xml32_zeitvertrag_examples | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R7-04 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R7-05 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R7-06 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.

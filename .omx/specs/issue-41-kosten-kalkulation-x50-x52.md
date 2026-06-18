@@ -7,14 +7,14 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
-Create a boundary ADR deciding whether costing belongs in boq-core modules or a companion crate before implementation.
+## Candidate architecture decision before implementation
+Before implementation, record or link a candidate boundary ADR deciding whether X50/X51/X52 costing structures remain in boq-core core DTOs or a companion costing module/crate.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kosten_kalkulation_33_cataloged |
-| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kalkulation_32_cataloged |
+| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kosten_kalkulation_33 |
+| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kalkulation_32 |
 | schema_x50_33_chart | interactive_schema | kosten_kalkulation | 3.3 X50 | reference_only | no CI dependency on external HTML | schema chart only | reference_x50_33_schema_chart |
 | schema_x52_33_chart | interactive_schema | kosten_kalkulation | 3.3 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_33_schema_chart |
 | schema_x52_32_chart | interactive_schema | kosten_kalkulation | 3.2 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_32_schema_chart |
@@ -35,4 +35,16 @@ Create a boundary ADR deciding whether costing belongs in boq-core modules or a 
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up records or links the candidate architecture decision above before code work begins.
+
+## Ranked roadmap source audit
+
+This section binds issue #41 to the canonical source/status ledger. It does not promote parser support beyond the statuses below.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R6-01 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-02 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml32_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-03 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-04 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-05 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |

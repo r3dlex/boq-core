@@ -20,8 +20,8 @@
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kosten_kalkulation_33_cataloged |
-| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kalkulation_32_cataloged |
+| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kosten_kalkulation_33 |
+| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kalkulation_32 |
 | schema_x50_33_chart | interactive_schema | kosten_kalkulation | 3.3 X50 | reference_only | no CI dependency on external HTML | schema chart only | reference_x50_33_schema_chart |
 | schema_x52_33_chart | interactive_schema | kosten_kalkulation | 3.3 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_33_schema_chart |
 | schema_x52_32_chart | interactive_schema | kosten_kalkulation | 3.2 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_32_schema_chart |
@@ -29,7 +29,7 @@
 ## Boundary and negative tests
 - [ ] Reference-only sources cannot be used as support evidence.
 - [ ] Future-track sources cannot be parsed as supported until promotion tests pass.
-- [ ] Paid, executable, commercial, browser, or interactive-only sources are never executed in CI.
+- [ ] Paid, executable, commercial, browser, or interactive-only sources are not executed in CI unless explicitly promoted through a future checksum/license-verified safe fixture workflow; paid/certification actions remain out of scope.
 - [ ] Unsupported fields produce structured findings rather than silent data loss.
 - [ ] No duplicate issue is created for this source family unless a new independent track is discovered.
 
@@ -41,3 +41,15 @@
 - `archgate check --ci`
 - `cargo run --bin xtask -- fixtures verify`
 - `uvx prek run --all-files`
+
+## Ranked roadmap fixture/test mapping
+
+This section records how issue #41 may use the linked source rows as local fixtures, planned fixture gates, or reference-only evidence.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R6-01 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-02 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml32_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-03 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-04 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-05 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |

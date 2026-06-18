@@ -40,3 +40,15 @@
 - `archgate check --ci`
 - `cargo run --bin xtask -- fixtures verify`
 - `uvx prek run --all-files`
+
+## Ranked roadmap fixture/test mapping
+
+This section records how issue #44 may use the linked source rows as local fixtures, planned fixture gates, or reference-only evidence.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| A2-01 | #44 Spreadsheet roundtrip | manifested | gaeb_online_import_template | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| A2-02 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+| A2-03 | #44 Spreadsheet roundtrip | manifested | gaeb_online_generator_exe | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| A2-04 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+| A2-05 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |

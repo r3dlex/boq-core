@@ -1,31 +1,10 @@
-# PRD: Design X31 quantity takeoff domain model
+# Test spec issue #28: X31/X86 quantity takeoff domain model
 
-## Issue
-- GitHub issue: #28
-- Milestone: v0.5 BVBS Mengenermittlung X31 support
+## Test intent
 
-## Product outcome
-A distinct X31 measurement domain represents formula records, physical progress, attachments, and baseline links without overloading BoQ items.
+Define safe fixture-readiness and regression-test expectations for issue #28 without introducing live downloads, paid certification work, or unsupported parser claims.
 
-## Source/status anchors
-- GAEB X31 schema/docs: `reference_only`.
-- BVBS X31: `future_track`.
-- REB-VB 23.003: `reference_only` calculation rules.
-
-## Requirements
-- [ ] Separate measurement model from BoQ item model.
-- [ ] Represent formula rows, quantities, ordinals, attachments, and findings.
-- [ ] Keep serialization deterministic.
-
-## Planned tests
-- [ ] `test_x31_domain_represents_formula_rows`
-- [ ] `test_x31_domain_links_measurements_to_ordinal`
-- [ ] `test_x31_domain_represents_attachments_as_findings_or_assets`
-- [ ] `test_x31_domain_is_serializable`
-
-## Ranked roadmap source inventory binding
-
-This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ranked-source-status-ledger.md`. Issue #28 owns the following source rows for planning and test-readiness purposes:
+## Ranked roadmap fixture/test mapping
 
 | Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
 | --- | --- | --- | --- | --- | --- |
@@ -39,4 +18,25 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R1-08 | #28-#31 X31/Mengenermittlung roadmap | gap | gap: manifest entry not present for reference drawing | reference_only | Reference-only visual/layout aid; not executable as parser fixture. |
 | R1-09 | #28-#31 X31/Mengenermittlung roadmap | manifested | bvbs_xml33_mengenermittlung_criteria_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 
-Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+## Executable local fixtures
+
+- None yet.
+
+## Reference-only / planned gates
+
+- `R1-01` -> artifact-only/reference / Reference-only planning artifact; not executable as parser fixture.
+- `R1-02` -> manifested / Reference-only manifest artifact; not executable as parser fixture.
+- `R1-03` -> artifact-only/reference / Schema/documentation reference for validation planning; not a parser fixture.
+- `R1-04` -> manifested / ['future_quantity_takeoff_x31_cataloged']
+- `R1-05` -> manifested / ['future_quantity_takeoff_x86_cataloged']
+- `R1-06` -> gap / Reference-only certification visual output; not executable as parser fixture.
+- `R1-07` -> manifested / Reference-only manifest artifact; not executable as parser fixture.
+- `R1-08` -> gap / Reference-only visual/layout aid; not executable as parser fixture.
+- `R1-09` -> manifested / Reference-only manifest artifact; not executable as parser fixture.
+
+## Verification expectations
+
+- Unit/integration tests may read only local files already declared in `boq-core/gaeb/manifest.toml`.
+- Planned fixture rows require license-safe acquisition, checksum recording, and manifest updates before any parser test consumes them.
+- Documentation/schema/PDF rows can support review checklists but must not be asserted as parser executable fixtures.
+- A no-overclaim grep must reject wording that implies BVBS certification completion or supported parser status where the ledger says `planned-support` or `reference_only`.

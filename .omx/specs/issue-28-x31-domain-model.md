@@ -1,31 +1,17 @@
-# PRD: Design X31 quantity takeoff domain model
+# Spec issue #28: X31/X86 quantity takeoff domain model
 
-## Issue
-- GitHub issue: #28
-- Milestone: v0.5 BVBS Mengenermittlung X31 support
+## Scope
 
-## Product outcome
-A distinct X31 measurement domain represents formula records, physical progress, attachments, and baseline links without overloading BoQ items.
+Planning-only specification for the GAEB ranked roadmap source slice backing issue #28. This artifact binds the issue to the canonical source inventory and records how each linked source may be used for safe fixture readiness.
 
-## Source/status anchors
-- GAEB X31 schema/docs: `reference_only`.
-- BVBS X31: `future_track`.
-- REB-VB 23.003: `reference_only` calculation rules.
+## Non-goals
 
-## Requirements
-- [ ] Separate measurement model from BoQ item model.
-- [ ] Represent formula rows, quantities, ordinals, attachments, and findings.
-- [ ] Keep serialization deterministic.
+- No paid BVBS certification action.
+- No live/source download during unit tests.
+- No parser support promotion beyond the parser support status recorded in the canonical ledger.
+- No duplicate issue creation; this issue remains the owning lane for the rows listed below.
 
-## Planned tests
-- [ ] `test_x31_domain_represents_formula_rows`
-- [ ] `test_x31_domain_links_measurements_to_ordinal`
-- [ ] `test_x31_domain_represents_attachments_as_findings_or_assets`
-- [ ] `test_x31_domain_is_serializable`
-
-## Ranked roadmap source inventory binding
-
-This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ranked-source-status-ledger.md`. Issue #28 owns the following source rows for planning and test-readiness purposes:
+## Ranked roadmap source audit
 
 | Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
 | --- | --- | --- | --- | --- | --- |
@@ -39,4 +25,13 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R1-08 | #28-#31 X31/Mengenermittlung roadmap | gap | gap: manifest entry not present for reference drawing | reference_only | Reference-only visual/layout aid; not executable as parser fixture. |
 | R1-09 | #28-#31 X31/Mengenermittlung roadmap | manifested | bvbs_xml33_mengenermittlung_criteria_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 
-Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+## Acceptance criteria
+
+- The PRD, spec, and test spec for issue #28 all reference the same canonical source IDs.
+- Manifest-backed rows can only be used through local fixture manifest entries.
+- Planned or artifact-only rows remain documented as research/reference gates until a license-safe local fixture is added and checksummed.
+- Certification PDFs and visual reference PDFs are treated as reference-only evidence, not executable parser fixtures.
+
+## Implementation handoff
+
+Use `.omx/specs/gaeb-ranked-source-status-ledger.md` as the source of truth for dispositions. Update `boq-core/gaeb/manifest.toml` and a follow-up test spec before promoting any planned row to fixture-backed execution.

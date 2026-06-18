@@ -7,8 +7,8 @@
 ## Intent
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
-## First architecture decision
-Create a boundary ADR deciding core vs companion crate/examples-only for spreadsheet roundtrip helpers before adding dependencies.
+## Candidate architecture decision before implementation
+Before implementation, record or link a candidate boundary ADR deciding core vs companion crate/examples-only for spreadsheet roundtrip helpers before adding dependencies.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -34,4 +34,16 @@ Create a boundary ADR deciding core vs companion crate/examples-only for spreads
 - [ ] Issue body links this spec, PRD, and test-spec.
 - [ ] PRD contains a per-source support matrix.
 - [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the first architecture decision above.
+- [ ] Any implementation follow-up records or links the candidate architecture decision above before implementation work begins.
+
+## Ranked roadmap source audit
+
+This section binds issue #44 to the canonical source/status ledger. It does not promote parser support beyond the statuses below.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| A2-01 | #44 Spreadsheet roundtrip | manifested | gaeb_online_import_template | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| A2-02 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+| A2-03 | #44 Spreadsheet roundtrip | manifested | gaeb_online_generator_exe | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| A2-04 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+| A2-05 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |

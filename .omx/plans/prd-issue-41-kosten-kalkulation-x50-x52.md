@@ -8,16 +8,16 @@
 The current roadmap identifies this source family, but future implementers need a source-by-source support matrix and concrete test obligations before safe parser/model work can begin.
 
 ## Product outcome
-A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or first-step architecture decisions.
+A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
-## First architecture decision required
-Create a boundary ADR deciding whether costing belongs in boq-core modules or a companion crate before implementation.
+## Candidate architecture decision before implementation
+Before implementation, record or link a candidate boundary ADR deciding whether costing belongs in boq-core modules or a companion crate.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
 |---|---|---|---|---|---|---|---|
-| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kosten_kalkulation_33_cataloged |
-| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | future_track | manifest download with checksum/license note | official schema/sample package | future_kalkulation_32_cataloged |
+| gaeb33_kosten_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.3 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kosten_kalkulation_33 |
+| gaeb32_kalkulation_pkg | official_gaeb | kosten_kalkulation | 3.2 X50-X52 package | reference_only | no CI download; future local vendoring/checksum/license gate required before fixture promotion | official schema/sample package reference | future_promotion:kalkulation_32 |
 | schema_x50_33_chart | interactive_schema | kosten_kalkulation | 3.3 X50 | reference_only | no CI dependency on external HTML | schema chart only | reference_x50_33_schema_chart |
 | schema_x52_33_chart | interactive_schema | kosten_kalkulation | 3.3 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_33_schema_chart |
 | schema_x52_32_chart | interactive_schema | kosten_kalkulation | 3.2 X52 | reference_only | no CI dependency on external HTML | schema chart only | reference_x52_32_schema_chart |
@@ -38,7 +38,7 @@ Follow-ups should update issue #41 and its PRD/test-spec. Create a new GitHub is
 
 ## Acceptance criteria
 - [ ] Per-source matrix is preserved in future implementation PRs.
-- [ ] The first architecture decision is completed before parser/model code changes.
+- [ ] Any implementation follow-up records or links the candidate architecture decision before parser/model code changes.
 - [ ] Test-spec concrete tests are created or consciously deferred with rationale.
 - [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
 
@@ -59,7 +59,7 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 ### Decision drivers
 1. **Traceability:** every source must map to a support status, policy, and planned test.
 2. **Safety:** no paid/executable/commercial action or unsupported certification claim may occur implicitly.
-3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and first architecture decisions.
+3. **Implementability:** future `$ultragoal`/`$team` execution needs concrete red/green tests and pre-implementation candidate architecture decisions.
 
 ### Viable options considered
 | Option | Pros | Cons | Decision |
@@ -82,4 +82,18 @@ Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only 
 | Accidental support promotion | Users trust unsupported formats. | support_status tests and explicit promotion gates. |
 | Parser-family coupling | Brittle architecture and category mistakes. | Boundary ADR before implementation for distinct source families. |
 | Duplicate/ambiguous tests | Executors may implement the wrong track. | Namespace test names by source family/module. |
-| ADR deferral risk | Implementation starts before boundaries are settled. | First architecture decision is an acceptance gate in every PRD. |
+| ADR deferral risk | Implementation starts before boundaries are settled. | Candidate architecture decision is a pre-implementation gate in every PRD. |
+
+## Ranked roadmap source inventory binding
+
+This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ranked-source-status-ledger.md`. Issue #41 owns the following source rows for planning and test-readiness purposes:
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R6-01 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-02 | #41 Kosten/Kalkulation X50-X52 | manifested | official_gaeb_xml32_kalkulation | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+| R6-03 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-04 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+| R6-05 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.

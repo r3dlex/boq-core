@@ -38,3 +38,12 @@
 - `archgate check --ci`
 - `cargo run --bin xtask -- fixtures verify`
 - `uvx prek run --all-files`
+
+## Ranked roadmap fixture/test mapping
+
+This section records how issue #40 may use the linked source rows as local fixtures, planned fixture gates, or reference-only evidence.
+
+| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
+| --- | --- | --- | --- | --- | --- |
+| R4-04 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+| R4-05 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
