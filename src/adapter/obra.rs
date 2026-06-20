@@ -1,4 +1,42 @@
 //! Obra-compatible import DTOs and mapping helpers.
+//!
+//! # Obra adapter DTO compatibility
+//!
+//! [`ObraImportDocument`] is the public compatibility boundary for handing a
+//! parsed GAEB document to Obra-facing import code. It intentionally mirrors
+//! stable DTO concepts (`boq`, `wbs_nodes`, `line_items`, `classifications`,
+//! and `loss_report`) instead of importing any Obra backend module.
+//!
+//! Adapter conversion is capability-gated: callers should use
+//! [`ObraImportDocument::try_from_gaeb`] and handle the
+//! `obra_adapter_not_supported` finding when a document is parse-only,
+//! future-track, or reference-only. Successful DTOs contain deterministic_key
+//! values so repeated imports from the same source produce stable Obra-side
+//! candidates; lossy or unsupported details are reported in `loss_report`.
+//!
+//! ```
+//! let source = include_str!("../../tests/fixtures/synthetic/minimal_ava.x81");
+//! let document = boq_core::gaeb_xml::parse_str(
+//!     source,
+//!     Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/minimal_ava.x81".to_owned()),
+//! )?;
+//! let import = boq_core::adapter::obra::ObraImportDocument::try_from_gaeb(&document)
+//!     .expect("AVA X81 fixture path has adapter support");
+//!
+//! assert!(!import.boq.deterministic_key.is_empty());
+//! assert!(import.loss_report.unsupported_fields.is_empty());
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
+//!
+//! ```
+//! let bytes = include_bytes!("../../tests/fixtures/synthetic/minimal.d81");
+//! let document = boq_core::gaeb90::parse_bytes(bytes, Some("minimal.d81".to_owned()))?;
+//! let finding = boq_core::adapter::obra::ObraImportDocument::try_from_gaeb(&document)
+//!     .expect_err("GAEB 90 D81 remains parse-only for the Obra adapter");
+//!
+//! assert_eq!(finding.code, "obra_adapter_not_supported");
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
 
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
