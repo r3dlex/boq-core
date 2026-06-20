@@ -261,6 +261,112 @@ fn test_bau_visual_pdf_checks_are_manual_or_gap_not_automated_claims() {
 }
 
 #[test]
+fn test_bvbs_bau_x83_manifest_status_is_future_until_green() {
+    let manifest = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
+    let parsed: toml::Value = toml::from_str(&manifest).expect("manifest parses");
+    let fixtures = parsed
+        .get("fixtures")
+        .and_then(toml::Value::as_array)
+        .expect("fixtures array");
+
+    let x83 = manifest_fixture(fixtures, "bvbs_xml33_bau_x83");
+    assert_eq!(field(x83, "support_status"), "supported_parse_only");
+    assert_eq!(field(x83, "phase"), "x83");
+    assert!(field(x83, "license_note").contains("parser-readiness evidence"));
+    assert!(field(x83, "license_note").contains("readiness-only"));
+    assert!(!field(x83, "license_note").contains("certification completed"));
+
+    let x84 = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
+    assert_eq!(field(x84, "support_status"), "future_track");
+}
+
+#[test]
+fn test_bau_x83_fixture_parses_to_boq_tree() {
+    let document = x83_document();
+    let item = first_item(&document);
+
+    assert_eq!(document.summary.version.as_deref(), Some("3.3"));
+    assert_eq!(
+        document
+            .source
+            .phase
+            .as_ref()
+            .map(|phase| phase.code.as_str()),
+        Some("83")
+    );
+    assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+    assert_eq!(document.capabilities, SupportCapabilities::parse_only());
+    assert_eq!(document.boq.nodes[0].ordinal, "001");
+    assert_eq!(document.boq.nodes[0].children[0].ordinal, "001.0010");
+    assert_eq!(item.quantity, Decimal::new(2500, 3));
+    assert_eq!(item.unit, "m");
+    assert!(item.short_text.contains("Baseline trench text"));
+}
+
+#[test]
+fn test_bau_x83_support_promotion_requires_evidence() {
+    let matrix = read_criteria_matrix();
+    let x83 = matrix
+        .criteria
+        .iter()
+        .find(|criterion| criterion.id == "bau_x83_import_lv")
+        .expect("x83 import criterion");
+    assert_eq!(x83.evidence_kind, "automated");
+    assert_eq!(
+        x83.automated_test,
+        "test_bau_x83_fixture_parses_to_boq_tree"
+    );
+    assert_eq!(x83.status, "readiness_covered");
+
+    let manifest = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
+    let parsed: toml::Value = toml::from_str(&manifest).expect("manifest parses");
+    let fixtures = parsed
+        .get("fixtures")
+        .and_then(toml::Value::as_array)
+        .expect("fixtures array");
+    let x83_fixture = manifest_fixture(fixtures, "bvbs_xml33_bau_x83");
+    let mappings = x83_fixture
+        .get("test_mapping")
+        .and_then(toml::Value::as_array)
+        .expect("x83 test mappings");
+    for expected in [
+        "test_bau_x83_fixture_parses_to_boq_tree",
+        "test_bau_x83_support_promotion_requires_evidence",
+        "test_bau_x83_golden_report_matches",
+    ] {
+        assert!(
+            mappings
+                .iter()
+                .any(|mapping| mapping.as_str() == Some(expected)),
+            "missing x83 evidence mapping: {expected}"
+        );
+    }
+
+    let x84 = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
+    assert_eq!(field(x84, "support_status"), "future_track");
+}
+
+#[test]
+fn test_bau_x83_golden_report_matches() {
+    let report = fs::read_to_string("docs/fixtures/bvbs-bau-x83-readiness.md")
+        .expect("x83 readiness report exists");
+    for expected in [
+        "Status: `supported_parse_only` readiness",
+        "Manifest fixture: `bvbs_xml33_bau_x83`",
+        "test_bau_x83_fixture_parses_to_boq_tree",
+        "readiness-only evidence",
+        "X84 offer/export support remains `future_track`",
+        "Adapter/export/roundtrip capabilities are not promoted",
+    ] {
+        assert!(
+            report.contains(expected),
+            "missing report evidence: {expected}"
+        );
+    }
+    assert!(!report.contains("certification completed"));
+}
+
+#[test]
 fn test_bau_docs_use_readiness_not_certification_language() {
     let combined = fs::read_to_string("gaeb/criteria/bvbs_bau_matrix.toml")
         .expect("Bau criteria matrix exists");
@@ -323,4 +429,19 @@ fn read_criteria_matrix() -> CriteriaMatrix {
     let text = fs::read_to_string("gaeb/criteria/bvbs_bau_matrix.toml")
         .expect("Bau criteria matrix exists");
     toml::from_str(&text).expect("Bau criteria matrix parses")
+}
+
+fn manifest_fixture<'a>(fixtures: &'a [toml::Value], id: &str) -> &'a toml::value::Table {
+    let fixture = fixtures
+        .iter()
+        .filter_map(toml::Value::as_table)
+        .find(|fixture| fixture.get("id").and_then(toml::Value::as_str) == Some(id));
+    assert!(fixture.is_some(), "missing manifest fixture: {id}");
+    fixture.expect("fixture presence asserted")
+}
+
+fn field<'a>(table: &'a toml::value::Table, key: &str) -> &'a str {
+    let value = table.get(key).and_then(toml::Value::as_str);
+    assert!(value.is_some(), "missing fixture field: {key}");
+    value.expect("fixture field presence asserted")
 }

@@ -672,7 +672,7 @@ mod tests {
     }
 
     #[test]
-    fn embedded_support_policy_promotes_ava_and_keeps_future_track_parse_only() {
+    fn embedded_support_policy_promotes_ava_and_keeps_bau_parse_only() {
         let ava = parse_str(
             r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
             Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/probe.X81".to_owned()),
@@ -691,7 +691,7 @@ mod tests {
             Some(&serde_json::json!({
                 "status": SupportStatus::SupportedParseOnly,
                 "reason":
-                    "manifest fixture bvbs_xml33_bau_x83: future-track fixture parsed without adapter/export promotion",
+                    "manifest fixture bvbs_xml33_bau_x83: supported parse-only fixture",
             }))
         );
     }
@@ -723,15 +723,17 @@ mod tests {
     }
 
     #[test]
-    fn support_policy_keeps_xml33_bau_x83_x84_parse_only_until_fixtures_are_locked() {
-        for (path, phase) in [
+    fn support_policy_promotes_xml33_bau_x83_parse_only_and_keeps_x84_future() {
+        for (path, phase, reason) in [
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/test.X83",
                 "83",
+                "manifest fixture bvbs_xml33_bau_x83: supported parse-only fixture".to_owned(),
             ),
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/test.X84",
                 "84",
+                "manifest fixture bvbs_xml33_bau_x84: future-track fixture parsed without adapter/export promotion".to_owned(),
             ),
         ] {
             let document = parse_str(
@@ -753,10 +755,7 @@ mod tests {
                 document.boq.metadata.get("gaeb.support_policy"),
                 Some(&serde_json::json!({
                     "status": SupportStatus::SupportedParseOnly,
-                    "reason": format!(
-                        "manifest fixture bvbs_xml33_bau_x{}: future-track fixture parsed without adapter/export promotion",
-                        phase
-                    ),
+                    "reason": reason,
                 }))
             );
             assert!(!document.capabilities.adapt_to_obra);

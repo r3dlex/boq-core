@@ -620,18 +620,35 @@ mod tests {
     }
 
     #[test]
-    fn manifest_keeps_future_track_bau_parse_only() {
+    fn manifest_keeps_supported_parse_only_bau_x83_and_future_x84() {
         let policy = ManifestPolicy::embedded();
-        let (mut query, phase) = xml_query(
+        let (mut x83_query, x83_phase) = xml_query(
             Some("3.3"),
             Some("83"),
             Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/file.x83"),
         );
-        query.phase = phase.as_ref();
-        let decision = policy.decide(query);
-        assert_eq!(decision.status, SupportStatus::SupportedParseOnly);
-        assert!(!decision.capabilities.adapt_to_obra);
-        assert!(decision.reason.contains("future-track"));
+        x83_query.phase = x83_phase.as_ref();
+        let x83 = policy.decide(x83_query);
+        assert_eq!(x83.status, SupportStatus::SupportedParseOnly);
+        assert_eq!(x83.capabilities, SupportCapabilities::parse_only());
+        assert!(x83.reason.contains("supported parse-only fixture"));
+        assert!(
+            matches!(x83.source, DecisionSource::ManifestEntry { ref id } if id == "bvbs_xml33_bau_x83")
+        );
+
+        let (mut x84_query, x84_phase) = xml_query(
+            Some("3.3"),
+            Some("84"),
+            Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/file.x84"),
+        );
+        x84_query.phase = x84_phase.as_ref();
+        let x84 = policy.decide(x84_query);
+        assert_eq!(x84.status, SupportStatus::SupportedParseOnly);
+        assert_eq!(x84.capabilities, SupportCapabilities::parse_only());
+        assert!(x84.reason.contains("future-track"));
+        assert!(
+            matches!(x84.source, DecisionSource::ManifestEntry { ref id } if id == "bvbs_xml33_bau_x84")
+        );
     }
 
     #[test]
