@@ -16,6 +16,7 @@ const X84_URI: &str = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/synthet
 
 const X83: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Baseline trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
 const X84: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X84</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><UP>3.200</UP><IT>8.00</IT><Description><CompleteText><DetailTxt><Text><p>Offer trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
+const X83_WITH_TENDER_FIELD: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Baseline trench text</p></Text></DetailTxt></CompleteText></Description><ExecutionWindow><Start>2026-07-01</Start><End>2026-08-15</End></ExecutionWindow></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
 
 #[test]
 fn test_xml33_bau_x83_imports_to_rich_model_snapshot() {
@@ -281,6 +282,98 @@ fn test_bvbs_bau_x83_manifest_status_is_future_until_green() {
 }
 
 #[test]
+fn test_bau_x83_extracts_project_and_boq_metadata() {
+    let document = x83_document();
+
+    assert_eq!(document.summary.version.as_deref(), Some("3.3"));
+    assert_eq!(document.summary.project_name.as_deref(), Some("Bau X83"));
+    assert_eq!(document.summary.title.as_deref(), Some("Bau X83"));
+    assert_eq!(
+        document
+            .source
+            .phase
+            .as_ref()
+            .map(|phase| phase.code.as_str()),
+        Some("83")
+    );
+    assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+    assert_eq!(document.capabilities, SupportCapabilities::parse_only());
+    assert!(document.source.checksum.is_some());
+    assert_eq!(
+        document
+            .boq
+            .metadata
+            .get("gaeb.support_policy")
+            .and_then(|policy| policy.get("status"))
+            .and_then(serde_json::Value::as_str),
+        Some("supported_parse_only")
+    );
+}
+
+#[test]
+fn test_bau_x83_sections_and_items_match_hierarchy() {
+    let document = x83_document();
+    let section = &document.boq.nodes[0];
+    let item_node = first_item_boq_node(&document);
+    let item = item_node.item.as_ref().expect("item payload");
+
+    assert_eq!(section.ordinal, "001");
+    assert_eq!(section.title, "001");
+    assert_eq!(section.sort_order, 0);
+    assert_eq!(item_node.ordinal, "001.0010");
+    assert_eq!(
+        item_node
+            .metadata
+            .get("gaeb.rno_part")
+            .and_then(serde_json::Value::as_str),
+        Some("10")
+    );
+    assert_eq!(item_node.sort_order, 0);
+    assert_eq!(item.quantity, Decimal::new(2500, 3));
+    assert_eq!(item.unit, "m");
+    assert_eq!(
+        item.long_text.as_ref(),
+        Some(&RichText::Plain("Baseline trench text".to_owned()))
+    );
+}
+
+#[test]
+fn test_bau_x83_tender_specific_fields_are_preserved() {
+    let document = parse_str(X83_WITH_TENDER_FIELD, Some(X83_URI.to_owned()))
+        .expect("x83 tender field document parses");
+    let item_node = first_item_boq_node(&document);
+
+    assert_eq!(
+        item_node
+            .metadata
+            .get("gaeb.unsupported.ExecutionWindow")
+            .and_then(serde_json::Value::as_str),
+        Some("2026-07-01 2026-08-15")
+    );
+}
+
+#[test]
+fn test_bau_x83_unknown_nodes_emit_findings() {
+    let document = parse_str(X83_WITH_TENDER_FIELD, Some(X83_URI.to_owned()))
+        .expect("x83 tender field document parses");
+
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_unsupported_item_field"
+            && finding.location.as_deref() == Some("001.0010/ExecutionWindow")
+    }));
+}
+
+#[test]
+fn test_bau_x83_adapter_compatibility_remains_capability_gated() {
+    let document = x83_document();
+    let finding = ObraImportDocument::from_gaeb(&document)
+        .expect_err("cataloged X83 parse-only fixture must not adapt to Obra");
+
+    assert_eq!(finding.code, "obra_adapter_not_supported");
+    assert!(!document.capabilities.adapt_to_obra);
+}
+
+#[test]
 fn test_bau_x83_fixture_parses_to_boq_tree() {
     let document = x83_document();
     let item = first_item(&document);
@@ -398,6 +491,22 @@ fn reparsed(document: &GaebDocument, uri: &str) -> GaebDocument {
 
 fn first_item(document: &GaebDocument) -> &BoqItem {
     first_item_node(&document.boq.nodes).expect("first item exists")
+}
+
+fn first_item_boq_node(document: &GaebDocument) -> &BoqNode {
+    first_boq_item_node(&document.boq.nodes).expect("first item node exists")
+}
+
+fn first_boq_item_node(nodes: &[BoqNode]) -> Option<&BoqNode> {
+    for node in nodes {
+        if node.item.is_some() {
+            return Some(node);
+        }
+        if let Some(item) = first_boq_item_node(&node.children) {
+            return Some(item);
+        }
+    }
+    None
 }
 
 fn first_item_node(nodes: &[BoqNode]) -> Option<&BoqItem> {
