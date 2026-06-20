@@ -7,6 +7,24 @@
 //! behind it; and [`default_policy`] returns the embedded manifest-backed
 //! adapter (optionally layered with a downgrade-only overlay loaded from
 //! `BOQ_CORE_SUPPORT_OVERLAY`).
+//!
+//! # Public support boundary
+//!
+//! The public contract is supported vs parse-only vs future-track vs reference-only:
+//!
+//! - [`SupportStatus::Supported`] means the declared capability set is backed
+//!   by manifest entries, implementation, and tests.
+//! - [`SupportStatus::SupportedParseOnly`] means parsing is available, but
+//!   validation, Obra adapter conversion, export, or roundtrip must still be
+//!   checked through [`SupportCapabilities`].
+//! - [`SupportStatus::FutureTrack`] is planned work and must not be described
+//!   as production support.
+//! - [`SupportStatus::ReferenceOnly`] is catalog/reference evidence only.
+//!
+//! Capability flags such as [`SupportCapabilities::adapt_to_obra`],
+//! [`SupportCapabilities::export`], and [`SupportCapabilities::roundtrip`] are
+//! independent. Callers should gate each downstream action on its specific
+//! capability rather than inferring it from a broad status label.
 
 use std::sync::OnceLock;
 

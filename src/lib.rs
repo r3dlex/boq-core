@@ -17,6 +17,25 @@
 //! - BVBS and GAEBXmlChecker evidence must not be described as paid or official
 //!   certification.
 //!
+//! # Public parse entrypoints
+//!
+//! The stable public parsing surface is intentionally small:
+//!
+//! - GAEB 90 D81 and GAEB 90 D83 fixed-width bytes are parsed through
+//!   [`gaeb90::parse_bytes`] or [`gaeb90::parse_file`]. These paths are
+//!   currently parse-only unless [`support::SupportCapabilities`] says
+//!   otherwise.
+//! - GAEB DA XML X81 and other XML phases are parsed through
+//!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
+//!   X84, and X86 AVA fixture paths are the current adapter-ready focus.
+//! - GAEB DA XML X83 is recognized and parsed as a loss-aware document, but
+//!   the current Bauausführung X83 fixture track remains future-track until
+//!   manifest entries and tests promote more capabilities.
+//!
+//! Public callers should inspect [`model::GaebDocument::support_status`] and
+//! [`model::GaebDocument::capabilities`] before assuming validation, Obra
+//! adapter, export, or roundtrip behavior.
+//!
 //! # Examples
 //!
 //! Parse GAEB DA XML from memory:
@@ -47,6 +66,40 @@
 //!     document.support_status,
 //!     boq_core::support::SupportStatus::SupportedParseOnly,
 //! );
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
+//!
+//! Parse GAEB 90 D83 bytes. The source extension drives phase detection; the
+//! checksum and decoded findings still describe the original bytes:
+//!
+//! ```
+//! let bytes = include_bytes!("../tests/fixtures/synthetic/minimal.d81");
+//! let document = boq_core::gaeb90::parse_bytes(
+//!     bytes,
+//!     Some("example.D83".to_owned()),
+//! )?;
+//!
+//! assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
+//! assert_eq!(document.summary.phase.as_ref().map(|phase| phase.code.as_str()), Some("83"));
+//! assert_eq!(
+//!     document.support_status,
+//!     boq_core::support::SupportStatus::SupportedParseOnly,
+//! );
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
+//!
+//! Parse GAEB DA XML X83 as a loss-aware future-track document without
+//! implying adapter support:
+//!
+//! ```
+//! let source = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>1.000</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
+//! let document = boq_core::gaeb_xml::parse_str(
+//!     source,
+//!     Some("gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/example.X83".to_owned()),
+//! )?;
+//!
+//! assert_eq!(document.summary.phase.as_ref().map(|phase| phase.code.as_str()), Some("83"));
+//! assert!(!document.capabilities.adapt_to_obra);
 //! # Ok::<(), boq_core::error::ParseError>(())
 //! ```
 //!

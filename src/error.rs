@@ -1,4 +1,16 @@
 //! Error and finding types shared by parsers, validators, adapters, and fixture tools.
+//!
+//! Public API callers should treat [`ParseError`] as an unrecoverable failure:
+//! the requested source could not be read, decoded, or parsed into a
+//! [`crate::model::GaebDocument`]. The parser did not produce a usable document
+//! in that case.
+//!
+//! [`ValidationFinding`] is recoverable diagnostic evidence attached to a parsed
+//! document or returned by an adapter gate. A finding has a stable finding code,
+//! human-readable message, severity, and optional source location. Findings are
+//! how `boq-core` reports malformed lines, unsupported adapter conversion,
+//! lossy mappings, and certification/readiness gaps without pretending the
+//! whole parse failed.
 
 use serde::{Deserialize, Serialize};
 
