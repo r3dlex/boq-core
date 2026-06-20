@@ -75,3 +75,88 @@ fn obra_adapter_dto_contract_has_examples() {
         );
     }
 }
+
+#[test]
+fn test_rustdoc_api_reference_no_support_overclaiming() {
+    let mut combined = String::new();
+    for path in [
+        "src/lib.rs",
+        "src/gaeb90.rs",
+        "src/gaeb_xml/mod.rs",
+        "src/adapter/obra.rs",
+        "src/support.rs",
+        "src/error.rs",
+        "src/model.rs",
+        "src/format.rs",
+        "src/checksum.rs",
+    ] {
+        combined.push_str(&fs::read_to_string(path).expect("rustdoc source exists"));
+        combined.push('\n');
+    }
+
+    for forbidden in [
+        "officially BVBS certified",
+        "BVBS certified",
+        "paid certification completed",
+        "X31 is supported",
+        "X83 is supported",
+        "X89 is supported",
+        "GAEB XML 3.4 is supported",
+        "tooling_only",
+        "certification_fixture",
+    ] {
+        assert!(
+            !combined.contains(forbidden),
+            "rustdoc overclaims unsupported or prohibited status: {forbidden}"
+        );
+    }
+}
+
+#[test]
+fn test_rustdoc_examples_parse_minimal_fixture() {
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in [
+        "include_str!(\"../tests/fixtures/synthetic/minimal_ava.x81\")",
+        "include_bytes!(\"../tests/fixtures/synthetic/minimal.d81\")",
+        "Ok::<(), boq_core::error::ParseError>(())",
+    ] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing doctest anchor: {required}"
+        );
+    }
+
+    let xml = include_str!("fixtures/synthetic/minimal_ava.x81");
+    let xml_doc = boq_core::gaeb_xml::parse_str(xml, Some("minimal_ava.x81".to_owned()))
+        .expect("rustdoc XML fixture example should parse");
+    assert_eq!(xml_doc.summary.format, boq_core::model::GaebFormat::GaebXml);
+
+    let gaeb90 = include_bytes!("fixtures/synthetic/minimal.d81");
+    let gaeb90_doc = boq_core::gaeb90::parse_bytes(gaeb90, Some("minimal.d81".to_owned()))
+        .expect("rustdoc GAEB 90 fixture example should parse");
+    assert_eq!(
+        gaeb90_doc.summary.format,
+        boq_core::model::GaebFormat::Gaeb90
+    );
+}
+
+#[test]
+fn public_modules_have_examples_or_doc_rationale() {
+    for (path, required) in [
+        ("src/lib.rs", "# Public parse entrypoints"),
+        ("src/gaeb90.rs", "parse_bytes_with_encoding"),
+        ("src/gaeb_xml/mod.rs", "parse_str"),
+        ("src/adapter/obra.rs", "Obra adapter DTO compatibility"),
+        ("src/support.rs", "# Public support boundary"),
+        ("src/error.rs", "Public API callers"),
+        ("src/model.rs", "Loss-aware GAEB domain model"),
+        ("src/format.rs", "advisory"),
+        ("src/checksum.rs", "original source bytes"),
+    ] {
+        let source = fs::read_to_string(path).expect("rustdoc source exists");
+        assert!(
+            source.contains(required),
+            "public module {path} missing rustdoc example/rationale anchor: {required}"
+        );
+    }
+}

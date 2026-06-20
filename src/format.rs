@@ -1,4 +1,13 @@
 //! Format and phase detection utilities.
+//!
+//! Format detection is path/extension based and intentionally advisory: callers
+//! still need support-status/capability checks after parsing.
+//!
+//! ```
+//! let detected = boq_core::format::detect_path("example.D83");
+//! assert_eq!(detected.format, boq_core::model::GaebFormat::Gaeb90);
+//! assert_eq!(detected.phase.as_ref().map(|phase| phase.code.as_str()), Some("83"));
+//! ```
 
 use std::path::Path;
 

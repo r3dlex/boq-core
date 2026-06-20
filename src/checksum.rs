@@ -1,4 +1,12 @@
 //! Source checksum helpers for deterministic provenance.
+//!
+//! Checksums are always computed from original source bytes, not normalized or
+//! decoded text. This keeps parser provenance stable across UTF-8 and legacy
+//! Windows-1252 inputs.
+//!
+//! ```
+//! assert_eq!(boq_core::checksum::sha256_hex(b""), "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+//! ```
 
 use sha2::{Digest, Sha256};
 

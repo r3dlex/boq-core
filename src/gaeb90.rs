@@ -1,4 +1,19 @@
 //! GAEB 90 fixed-width parser foundation.
+//!
+//! This module is the public parse-only boundary for legacy fixed-width D81/D83
+//! bytes. [`parse_bytes`] performs UTF-8-first decoding with Windows-1252
+//! fallback; [`parse_bytes_with_encoding`] lets callers specify a known legacy
+//! encoding. Both paths preserve the original byte checksum in
+//! [`crate::model::SourceProvenance`].
+//!
+//! ```
+//! let bytes = include_bytes!("../tests/fixtures/synthetic/minimal.d81");
+//! let document = boq_core::gaeb90::parse_bytes(bytes, Some("minimal.d81".to_owned()))?;
+//!
+//! assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
+//! assert!(!document.capabilities.adapt_to_obra);
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
 
 use std::collections::BTreeMap;
 use std::path::Path;
