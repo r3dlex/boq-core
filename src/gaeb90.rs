@@ -17,6 +17,34 @@ use crate::model::{
 };
 use crate::support::SupportQuery;
 
+/// Character decoding policy for GAEB 90 byte input.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Gaeb90Encoding {
+    /// Try UTF-8 first, then fall back to Windows-1252 with a finding.
+    Auto,
+    /// Decode as UTF-8 and report replacement characters as findings.
+    Utf8,
+    /// Decode as legacy ANSI/Windows-1252 and report replacement characters as findings.
+    Windows1252,
+}
+
+impl Gaeb90Encoding {
+    const fn label(self) -> &'static str {
+        match self {
+            Self::Auto => "auto",
+            Self::Utf8 => "utf-8",
+            Self::Windows1252 => "windows-1252",
+        }
+    }
+}
+
+#[derive(Debug)]
+struct DecodedText {
+    text: String,
+    effective_encoding: Gaeb90Encoding,
+    findings: Vec<ValidationFinding>,
+}
+
 /// A decoded GAEB 90 record preserving fixed-width source fields.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Gaeb90Record {
@@ -47,15 +75,38 @@ pub fn parse_file(path: impl AsRef<Path>) -> Result<GaebDocument, ParseError> {
     parse_bytes(&bytes, Some(path_ref.display().to_string()))
 }
 
-/// Parses GAEB 90 bytes into a loss-aware document.
+/// Parses GAEB 90 bytes with automatic UTF-8/Windows-1252 detection.
+///
+/// Use [`parse_bytes_with_encoding`] when a caller or upstream file catalog
+/// already knows the legacy text encoding. Automatic mode preserves the
+/// original byte checksum, reports UTF-8 fallback as a recoverable finding,
+/// and records the effective decoder in document metadata.
 ///
 /// # Errors
 ///
 /// Returns a parse error when no decodable records can be produced.
 pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocument, ParseError> {
-    let decoded = decode_bytes(bytes);
+    parse_bytes_with_encoding(bytes, source_uri, Gaeb90Encoding::Auto)
+}
+
+/// Parses GAEB 90 bytes with a caller-specified text encoding policy.
+///
+/// This entrypoint is intended for legacy GAEB 90 files whose catalog, file
+/// source, or user-selected import setting identifies ANSI/Windows-1252 before
+/// parsing. Invalid byte sequences are decoded with replacement characters and
+/// reported as structured `gaeb90_decode_replacement` findings.
+///
+/// # Errors
+///
+/// Returns a parse error when no decodable records can be produced.
+pub fn parse_bytes_with_encoding(
+    bytes: &[u8],
+    source_uri: Option<String>,
+    encoding: Gaeb90Encoding,
+) -> Result<GaebDocument, ParseError> {
+    let decoded = decode_bytes(bytes, encoding);
     let phase = source_uri.as_deref().and_then(|uri| detect_path(uri).phase);
-    let records = parse_records(&decoded);
+    let records = parse_records(&decoded.text);
     if records.is_empty() {
         return Err(ParseError {
             code: "gaeb90_no_records".to_owned(),
@@ -64,21 +115,23 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         });
     }
 
-    let mut findings = records
-        .iter()
-        .filter(|record| record.raw_line.chars().count() != 80)
-        .map(|record| {
-            ValidationFinding::warning(
-                "gaeb90_line_length",
-                format!(
-                    "line {} has {} chars, expected 80",
-                    record.physical_line,
-                    record.raw_line.chars().count()
-                ),
-            )
-            .at(record.physical_line.to_string())
-        })
-        .collect::<Vec<_>>();
+    let mut findings = decoded.findings;
+    findings.extend(
+        records
+            .iter()
+            .filter(|record| record.raw_line.chars().count() != 80)
+            .map(|record| {
+                ValidationFinding::warning(
+                    "gaeb90_line_length",
+                    format!(
+                        "line {} has {} chars, expected 80",
+                        record.physical_line,
+                        record.raw_line.chars().count()
+                    ),
+                )
+                .at(record.physical_line.to_string())
+            }),
+    );
 
     findings.extend(records.iter().filter_map(malformed_item_ordinal_finding));
 
@@ -131,7 +184,10 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         capabilities: support.capabilities,
         support_status: support.status,
         findings,
-        metadata: BTreeMap::new(),
+        metadata: BTreeMap::from([(
+            "gaeb90.encoding".to_owned(),
+            serde_json::json!(decoded.effective_encoding.label()),
+        )]),
     })
 }
 
@@ -261,13 +317,58 @@ fn records_to_nodes(records: &[Gaeb90Record]) -> Vec<BoqNode> {
     nodes
 }
 
-fn decode_bytes(bytes: &[u8]) -> String {
+fn decode_bytes(bytes: &[u8], encoding: Gaeb90Encoding) -> DecodedText {
+    match encoding {
+        Gaeb90Encoding::Auto => decode_bytes_auto(bytes),
+        Gaeb90Encoding::Utf8 => decode_with_encoding(bytes, Gaeb90Encoding::Utf8),
+        Gaeb90Encoding::Windows1252 => decode_with_encoding(bytes, Gaeb90Encoding::Windows1252),
+    }
+}
+
+fn decode_bytes_auto(bytes: &[u8]) -> DecodedText {
     let (utf8, _, had_errors) = UTF_8.decode(bytes);
     if had_errors {
-        let (decoded, _, _) = WINDOWS_1252.decode(bytes);
-        decoded.into_owned()
+        let mut decoded = decode_with_encoding(bytes, Gaeb90Encoding::Windows1252);
+        decoded.findings.insert(
+            0,
+            ValidationFinding::warning(
+                "gaeb90_encoding_fallback",
+                "input was not valid UTF-8; decoded as Windows-1252",
+            ),
+        );
+        decoded
     } else {
-        utf8.into_owned()
+        DecodedText {
+            text: utf8.into_owned(),
+            effective_encoding: Gaeb90Encoding::Utf8,
+            findings: Vec::new(),
+        }
+    }
+}
+
+fn decode_with_encoding(bytes: &[u8], encoding: Gaeb90Encoding) -> DecodedText {
+    let (text, _, had_errors) = match encoding {
+        Gaeb90Encoding::Utf8 => UTF_8.decode(bytes),
+        Gaeb90Encoding::Windows1252 => WINDOWS_1252.decode(bytes),
+        Gaeb90Encoding::Auto => {
+            unreachable!("auto decoding is handled before fixed decoder dispatch")
+        }
+    };
+    let mut findings = Vec::new();
+    if had_errors {
+        findings.push(ValidationFinding::warning(
+            "gaeb90_decode_replacement",
+            format!(
+                "{} decoding replaced invalid byte sequences",
+                encoding.label()
+            ),
+        ));
+    }
+
+    DecodedText {
+        text: text.into_owned(),
+        effective_encoding: encoding,
+        findings,
     }
 }
 
