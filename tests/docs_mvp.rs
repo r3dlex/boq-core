@@ -100,3 +100,61 @@ fn docs_do_not_overclaim_certification_or_future_formats() {
         );
     }
 }
+
+#[test]
+fn test_user_guide_links_supported_formats() {
+    let guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
+    for required in [
+        "Quickstart: parse without network or paid dependencies",
+        "GAEB DA XML 3.3 AVA",
+        "GAEB 90",
+        "supported",
+        "supported_parse_only",
+        "future_track",
+        "reference_only",
+        "parse_bytes",
+        "parse_str",
+    ] {
+        assert!(
+            guide.contains(required),
+            "user guide missing supported-format anchor: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_user_guide_warns_reference_only_sources() {
+    let guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
+    for required in [
+        "reference_only",
+        "does not grant paid or official certification",
+        "paid tools",
+        "network access",
+        "Obra backend modules",
+    ] {
+        assert!(
+            guide.contains(required),
+            "user guide missing reference-only warning: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_user_guide_explains_boq_output_fields() {
+    let guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
+    for required in [
+        "hierarchy roots",
+        "BoqNode",
+        "quantity",
+        "unit",
+        "long text",
+        "findings",
+        "gaeb90_line_length",
+        "gaeb_xml_description_plain_text_only",
+    ] {
+        assert!(
+            guide.contains(required),
+            "user guide missing output interpretation anchor: {required}"
+        );
+    }
+}
