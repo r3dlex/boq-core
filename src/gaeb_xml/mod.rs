@@ -361,7 +361,7 @@ impl<'a> XmlParser<'a> {
                 .at(ordinal.clone()),
             );
         } else {
-            self.read_item_body(&mut item, &mut title, &mut metadata)?;
+            self.read_item_body(&ordinal, &mut item, &mut title, &mut metadata)?;
         }
 
         Ok(BoqNode {
@@ -377,6 +377,7 @@ impl<'a> XmlParser<'a> {
 
     fn read_item_body(
         &mut self,
+        ordinal: &str,
         item: &mut BoqItem,
         title: &mut String,
         metadata: &mut Metadata,
@@ -405,7 +406,23 @@ impl<'a> XmlParser<'a> {
                             metadata
                                 .insert("gaeb.lump_sum_item".to_owned(), serde_json::json!(value));
                         }
-                        _ => depth = depth.saturating_add(1),
+                        _ => {
+                            let value = self.read_unsupported_item_field(&local)?;
+                            let metadata_value = value.filter(|text| !text.is_empty()).map_or_else(
+                                || serde_json::json!(true),
+                                |text| serde_json::json!(text),
+                            );
+                            metadata.insert(format!("gaeb.unsupported.{local}"), metadata_value);
+                            self.findings.push(
+                                ValidationFinding::warning(
+                                    "gaeb_xml_unsupported_item_field",
+                                    format!(
+                                        "unsupported GAEB XML item field {local} was preserved as metadata"
+                                    ),
+                                )
+                                .at(format!("{ordinal}/{local}")),
+                            );
+                        }
                     }
                 }
                 Ok(Event::Empty(start)) => {
@@ -441,6 +458,53 @@ impl<'a> XmlParser<'a> {
             self.buffer.clear();
         }
         Ok(())
+    }
+
+    fn read_unsupported_item_field(&mut self, field: &str) -> Result<Option<String>, ParseError> {
+        let mut depth = 1_usize;
+        let mut parts = Vec::new();
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(_)) => depth = depth.saturating_add(1),
+                Ok(Event::Text(text)) => {
+                    let decoded = text.decode().map_err(|error| ParseError {
+                        code: "xml_text_decode_failed".to_owned(),
+                        message: error.to_string(),
+                        location: Some(field.to_owned()),
+                    })?;
+                    let trimmed = decoded.trim();
+                    if !trimmed.is_empty() {
+                        parts.push(trimmed.to_owned());
+                    }
+                }
+                Ok(Event::End(_)) => {
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                }
+                Ok(Event::Eof) => {
+                    return Err(ParseError {
+                        code: "xml_unclosed_unsupported_item_field".to_owned(),
+                        message: format!(
+                            "unsupported item field {field} ended before its closing tag"
+                        ),
+                        location: Some(field.to_owned()),
+                    });
+                }
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: Some(field.to_owned()),
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+        let text = parts.join(" ");
+        Ok((!text.is_empty()).then_some(text))
     }
 
     fn read_description_text(&mut self) -> Result<String, ParseError> {
