@@ -80,10 +80,10 @@ process_domain = "construction_execution"
 gaeb_version = "gaeb_xml_3_3"
 phase = "x84"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84"
-support_status = "future_track"
+support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "BVBS Bauausführung X84 fixture is cataloged for fixture-backed readiness; offer metadata/export fidelity is not supported until checksummed payload tests exist."
-test_mapping = ["future_xml33_bau_x84_fixture_locked", "future_xml33_bau_x84_offer_merge_metadata"]
+license_note = "BVBS Bauausführung X84 fixture has parser-readiness evidence for supported_parse_only bid import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion."
+test_mapping = ["test_bau_x84_prices_map_by_ordinal", "test_bau_x84_missing_descriptions_resolve_against_x83_baseline", "test_bau_x84_bidder_remarks_preserved", "test_bau_x84_unmatched_ordinal_emits_finding", "test_bau_x84_support_promotion_requires_bid_evidence"]
 
 [[fixtures]]
 id = "bvbs_xml33_qty_x31"

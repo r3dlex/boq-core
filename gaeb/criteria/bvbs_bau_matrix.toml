@@ -11,9 +11,9 @@ status = "readiness_covered"
 [[criteria]]
 id = "bau_x84_export_prices"
 source = "BVBS GAEB XML 3.3 Bauausfuehrung criteria V 04 04 2024"
-evidence_kind = "gap"
-automated_test = "test_xml33_bau_x84_import_export_import_preserves_prices_and_findings"
-status = "readiness_gap"
+evidence_kind = "automated"
+automated_test = "test_bau_x84_prices_map_by_ordinal"
+status = "readiness_covered"
 
 [[criteria]]
 id = "bau_schema_checker_validation"

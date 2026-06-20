@@ -111,6 +111,7 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
         "bvbs_xml33_ava_x86",
         "dangl_ava_gaeb90_d83",
         "bvbs_xml33_bau_x83",
+        "bvbs_xml33_bau_x84",
     ] {
         assert!(
             supported_ids.contains(expected_supported),
@@ -127,6 +128,7 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
                     | "bvbs_xml33_ava_x86"
                     | "dangl_ava_gaeb90_d83"
                     | "bvbs_xml33_bau_x83"
+                    | "bvbs_xml33_bau_x84"
             )
     }) {
         assert!(
@@ -196,7 +198,7 @@ fn bau_source_matrix_lists_xml33_xml32_xml31_x83_x84_pdf_criteria() {
             "construction_execution",
             [
                 ("x83", "supported_parse_only"),
-                ("x84", "future_track"),
+                ("x84", "supported_parse_only"),
                 ("pdf_reference", "reference_only"),
                 ("criteria_pdf", "reference_only"),
             ],
