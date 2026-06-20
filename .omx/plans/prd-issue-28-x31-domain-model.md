@@ -13,15 +13,19 @@ A distinct X31 measurement domain represents formula records, physical progress,
 - REB-VB 23.003: `reference_only` calculation rules.
 
 ## Requirements
-- [ ] Separate measurement model from BoQ item model.
-- [ ] Represent formula rows, quantities, ordinals, attachments, and findings.
-- [ ] Keep serialization deterministic.
+- [x] Separate measurement model from BoQ item model.
+- [x] Represent formula rows, quantities, ordinals, attachments, and findings.
+- [x] Keep serialization deterministic.
+
+## Specification artifacts
+- Spec: `.omx/specs/issue-28-x31-domain-model.md`
+- Test spec: `.omx/plans/test-spec-issue-28-x31-domain-model.md`
 
 ## Planned tests
-- [ ] `test_x31_domain_represents_formula_rows`
-- [ ] `test_x31_domain_links_measurements_to_ordinal`
-- [ ] `test_x31_domain_represents_attachments_as_findings_or_assets`
-- [ ] `test_x31_domain_is_serializable`
+- [x] `test_x31_domain_represents_formula_rows`
+- [x] `test_x31_domain_links_measurements_to_ordinal`
+- [x] `test_x31_domain_represents_attachments_as_findings_or_assets`
+- [x] `test_x31_domain_is_serializable`
 
 ## Ranked roadmap source inventory binding
 
