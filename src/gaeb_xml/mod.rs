@@ -395,11 +395,23 @@ impl<'a> XmlParser<'a> {
                         "IT" => item.total_price = self.read_optional_decimal_for(owned.name())?,
                         "Description" => {
                             let description = self.read_description_text()?;
+                            if self.is_phase("84") && !description.is_empty() {
+                                self.findings.push(
+                                    ValidationFinding::warning(
+                                        "gaeb_xml_bau_x84_tender_description_not_authoritative",
+                                        "X84 description text is bid payload text; X83 baseline descriptions remain authoritative for tender wording",
+                                    )
+                                    .at(format!("{ordinal}/Description")),
+                                );
+                            }
                             if !description.is_empty() {
                                 title.clone_from(&description);
                                 item.short_text.clone_from(&description);
                                 item.long_text = Some(RichText::Plain(description));
                             }
+                        }
+                        "BidderRemark" | "BieterBemerkung" | "Bieterangabe" | "Remark" => {
+                            self.capture_bidder_remark(&local, item, metadata)?;
                         }
                         "LumpSumItem" => {
                             let value = self.read_text_for(owned.name())?.unwrap_or_default();
@@ -458,6 +470,31 @@ impl<'a> XmlParser<'a> {
             self.buffer.clear();
         }
         Ok(())
+    }
+
+    fn capture_bidder_remark(
+        &mut self,
+        field: &str,
+        item: &mut BoqItem,
+        metadata: &mut Metadata,
+    ) -> Result<(), ParseError> {
+        let value = self.read_unsupported_item_field(field)?.unwrap_or_default();
+        if !value.is_empty() {
+            item.notes = Some(value.clone());
+            item.metadata.insert(
+                "gaeb.bau_x84.bidder_remark".to_owned(),
+                serde_json::json!(value),
+            );
+            metadata.insert(
+                "gaeb.bau_x84.bidder_remark".to_owned(),
+                serde_json::json!(true),
+            );
+        }
+        Ok(())
+    }
+
+    fn is_phase(&self, code: &str) -> bool {
+        self.phase.as_ref().is_some_and(|phase| phase.code == code)
     }
 
     fn read_unsupported_item_field(&mut self, field: &str) -> Result<Option<String>, ParseError> {
@@ -787,7 +824,7 @@ mod tests {
     }
 
     #[test]
-    fn support_policy_promotes_xml33_bau_x83_parse_only_and_keeps_x84_future() {
+    fn support_policy_promotes_xml33_bau_x83_and_x84_parse_only() {
         for (path, phase, reason) in [
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/test.X83",
@@ -797,7 +834,7 @@ mod tests {
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/test.X84",
                 "84",
-                "manifest fixture bvbs_xml33_bau_x84: future-track fixture parsed without adapter/export promotion".to_owned(),
+                "manifest fixture bvbs_xml33_bau_x84: supported parse-only fixture".to_owned(),
             ),
         ] {
             let document = parse_str(

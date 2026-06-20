@@ -620,7 +620,7 @@ mod tests {
     }
 
     #[test]
-    fn manifest_keeps_supported_parse_only_bau_x83_and_future_x84() {
+    fn manifest_keeps_supported_parse_only_bau_x83_and_x84() {
         let policy = ManifestPolicy::embedded();
         let (mut x83_query, x83_phase) = xml_query(
             Some("3.3"),
@@ -645,7 +645,7 @@ mod tests {
         let x84 = policy.decide(x84_query);
         assert_eq!(x84.status, SupportStatus::SupportedParseOnly);
         assert_eq!(x84.capabilities, SupportCapabilities::parse_only());
-        assert!(x84.reason.contains("future-track"));
+        assert!(x84.reason.contains("supported parse-only fixture"));
         assert!(
             matches!(x84.source, DecisionSource::ManifestEntry { ref id } if id == "bvbs_xml33_bau_x84")
         );

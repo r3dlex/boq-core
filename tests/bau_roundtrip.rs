@@ -17,6 +17,7 @@ const X84_URI: &str = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/synthet
 const X83: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Baseline trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
 const X84: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X84</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><UP>3.200</UP><IT>8.00</IT><Description><CompleteText><DetailTxt><Text><p>Offer trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
 const X83_WITH_TENDER_FIELD: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Baseline trench text</p></Text></DetailTxt></CompleteText></Description><ExecutionWindow><Start>2026-07-01</Start><End>2026-08-15</End></ExecutionWindow></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
+const X84_WITH_REMARK: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X84</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>2.500</Qty><QU>m</QU><UP>3.200</UP><IT>8.00</IT><Description><CompleteText><DetailTxt><Text><p>Changed bidder text</p></Text></DetailTxt></CompleteText></Description><BidderRemark>Includes winter surcharge</BidderRemark></Item><Item ID="009.9999" RNoPart="999"><Qty>1</Qty><QU>psch</QU><UP>99.00</UP><IT>99.00</IT></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
 
 #[test]
 fn test_xml33_bau_x83_imports_to_rich_model_snapshot() {
@@ -262,7 +263,7 @@ fn test_bau_visual_pdf_checks_are_manual_or_gap_not_automated_claims() {
 }
 
 #[test]
-fn test_bvbs_bau_x83_manifest_status_is_future_until_green() {
+fn test_bvbs_bau_x83_x84_manifest_statuses_have_readiness_evidence() {
     let manifest = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
     let parsed: toml::Value = toml::from_str(&manifest).expect("manifest parses");
     let fixtures = parsed
@@ -278,7 +279,68 @@ fn test_bvbs_bau_x83_manifest_status_is_future_until_green() {
     assert!(!field(x83, "license_note").contains("certification completed"));
 
     let x84 = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
-    assert_eq!(field(x84, "support_status"), "future_track");
+    assert_eq!(field(x84, "support_status"), "supported_parse_only");
+}
+
+#[test]
+fn test_bau_x84_prices_map_by_ordinal() {
+    let merged = merge_x84_offer_into_x83_baseline(&x83_document(), &x84_document());
+    let item = first_item(&merged);
+
+    assert_eq!(item.unit_price, Some(Decimal::new(3200, 3)));
+    assert_eq!(item.total_price, Some(Decimal::new(800, 2)));
+    assert!(item.short_text.contains("Baseline trench text"));
+}
+
+#[test]
+fn test_bau_x84_missing_descriptions_resolve_against_x83_baseline() {
+    let offer = parse_str(X84_WITH_REMARK, Some(X84_URI.to_owned())).expect("x84 parses");
+    let merged = merge_x84_offer_into_x83_baseline(&x83_document(), &offer);
+    let item = first_item(&merged);
+
+    assert!(item.short_text.contains("Baseline trench text"));
+    assert!(!item.short_text.contains("Changed bidder text"));
+    assert!(merged.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_bau_x84_mutable_tender_description"
+            && finding.location.as_deref() == Some("001.0010")
+    }));
+}
+
+#[test]
+fn test_bau_x84_bidder_remarks_preserved() {
+    let offer = parse_str(X84_WITH_REMARK, Some(X84_URI.to_owned())).expect("x84 parses");
+    let merged = merge_x84_offer_into_x83_baseline(&x83_document(), &offer);
+    let item = first_item(&merged);
+
+    assert_eq!(item.notes.as_deref(), Some("Includes winter surcharge"));
+    assert_eq!(
+        item.metadata
+            .get("gaeb.bau_x84.bidder_remark")
+            .and_then(serde_json::Value::as_str),
+        Some("Includes winter surcharge")
+    );
+}
+
+#[test]
+fn test_bau_x84_unmatched_ordinal_emits_finding() {
+    let offer = parse_str(X84_WITH_REMARK, Some(X84_URI.to_owned())).expect("x84 parses");
+    let merged = merge_x84_offer_into_x83_baseline(&x83_document(), &offer);
+
+    assert!(merged.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_bau_x84_extra_ordinal"
+            && finding.location.as_deref() == Some("009.9999")
+    }));
+
+    let missing_offer = parse_str(
+        r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="009.9999"><Qty>1</Qty></Item></BoQBody></BoQ></Project></GAEB>"#,
+        Some(X84_URI.to_owned()),
+    )
+    .expect("sparse x84 parses");
+    let missing = merge_x84_offer_into_x83_baseline(&x83_document(), &missing_offer);
+    assert!(missing.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_bau_x84_missing_ordinal"
+            && finding.location.as_deref() == Some("001.0010")
+    }));
 }
 
 #[test]
@@ -436,7 +498,50 @@ fn test_bau_x83_support_promotion_requires_evidence() {
     }
 
     let x84 = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
-    assert_eq!(field(x84, "support_status"), "future_track");
+    assert_eq!(field(x84, "support_status"), "supported_parse_only");
+}
+
+#[test]
+fn test_bau_x84_support_promotion_requires_bid_evidence() {
+    let matrix = read_criteria_matrix();
+    let x84 = matrix
+        .criteria
+        .iter()
+        .find(|criterion| criterion.id == "bau_x84_export_prices")
+        .expect("x84 criterion");
+    assert_eq!(x84.evidence_kind, "automated");
+    assert_eq!(x84.automated_test, "test_bau_x84_prices_map_by_ordinal");
+    assert_eq!(x84.status, "readiness_covered");
+
+    let manifest = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
+    let parsed: toml::Value = toml::from_str(&manifest).expect("manifest parses");
+    let fixtures = parsed
+        .get("fixtures")
+        .and_then(toml::Value::as_array)
+        .expect("fixtures array");
+    let x84_fixture = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
+    assert_eq!(field(x84_fixture, "support_status"), "supported_parse_only");
+    assert!(field(x84_fixture, "license_note").contains("bid import coverage"));
+    assert!(field(x84_fixture, "license_note").contains("readiness-only"));
+    assert!(!field(x84_fixture, "license_note").contains("certification completed"));
+    let mappings = x84_fixture
+        .get("test_mapping")
+        .and_then(toml::Value::as_array)
+        .expect("x84 test mappings");
+    for expected in [
+        "test_bau_x84_prices_map_by_ordinal",
+        "test_bau_x84_missing_descriptions_resolve_against_x83_baseline",
+        "test_bau_x84_bidder_remarks_preserved",
+        "test_bau_x84_unmatched_ordinal_emits_finding",
+        "test_bau_x84_support_promotion_requires_bid_evidence",
+    ] {
+        assert!(
+            mappings
+                .iter()
+                .any(|mapping| mapping.as_str() == Some(expected)),
+            "missing x84 evidence mapping: {expected}"
+        );
+    }
 }
 
 #[test]
@@ -448,7 +553,7 @@ fn test_bau_x83_golden_report_matches() {
         "Manifest fixture: `bvbs_xml33_bau_x83`",
         "test_bau_x83_fixture_parses_to_boq_tree",
         "readiness-only evidence",
-        "X84 offer/export support remains `future_track`",
+        "X84 bid import support is tracked separately by issue #27",
         "Adapter/export/roundtrip capabilities are not promoted",
     ] {
         assert!(

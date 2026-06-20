@@ -11,6 +11,6 @@ Evidence:
 Boundaries:
 - This report is readiness-only evidence and authorizes no paid BVBS submission.
 - No paid certification submission is authorized.
-- X84 offer/export support remains `future_track` until issue #27.
+- X84 bid import support is tracked separately by issue #27 and remains parse-only; export/certification support is not promoted by this X83 report.
 - Schema checker and visual PDF evidence remain gap/manual readiness evidence.
 - Adapter/export/roundtrip capabilities are not promoted by this X83 parser-readiness report.

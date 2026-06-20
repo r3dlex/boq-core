@@ -3,7 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::error::ValidationFinding;
-use crate::model::{BoqNode, BoqNodeKind, GaebDocument};
+use crate::model::{BoqItem, BoqNode, BoqNodeKind, GaebDocument, RichText};
 
 /// Clones an X83 baseline and overlays matching X84 offer price fields by ordinal.
 ///
@@ -19,7 +19,12 @@ pub fn merge_x84_offer_into_x83_baseline(
     let offer_items = collect_item_paths(&offer.boq.nodes);
     let mut matched = BTreeSet::new();
 
-    overlay_nodes(&mut merged.boq.nodes, &offer_items, &mut matched);
+    overlay_nodes(
+        &mut merged.boq.nodes,
+        &offer_items,
+        &mut matched,
+        &mut merged.findings,
+    );
 
     for (ordinal, items) in &offer_items {
         if items.len() > 1 {
@@ -64,6 +69,7 @@ fn overlay_nodes(
     nodes: &mut [BoqNode],
     offer_items: &BTreeMap<String, Vec<BoqNode>>,
     matched: &mut BTreeSet<String>,
+    findings: &mut Vec<ValidationFinding>,
 ) {
     for node in nodes {
         if node.kind == BoqNodeKind::Item {
@@ -73,13 +79,43 @@ fn overlay_nodes(
                 if let Some(source_item) =
                     source_nodes.first().and_then(|source| source.item.as_ref())
                 {
+                    if x84_description_differs(target, source_item) {
+                        findings.push(
+                            ValidationFinding::warning(
+                                "gaeb_xml_bau_x84_mutable_tender_description",
+                                "X84 offer description differed from the X83 tender baseline and was not used as authoritative wording",
+                            )
+                            .at(node.ordinal.clone()),
+                        );
+                    }
                     target.unit_price = source_item.unit_price;
                     target.total_price = source_item.total_price;
+                    target.notes = source_item.notes.clone().or_else(|| target.notes.clone());
+                    if let Some(remark) = source_item.metadata.get("gaeb.bau_x84.bidder_remark") {
+                        target
+                            .metadata
+                            .insert("gaeb.bau_x84.bidder_remark".to_owned(), remark.clone());
+                    }
                     matched.insert(node.ordinal.clone());
                 }
             }
         }
-        overlay_nodes(&mut node.children, offer_items, matched);
+        overlay_nodes(&mut node.children, offer_items, matched, findings);
+    }
+}
+
+fn x84_description_differs(baseline: &BoqItem, offer: &BoqItem) -> bool {
+    let Some(offer_text) = rich_text_plain(offer.long_text.as_ref()) else {
+        return false;
+    };
+    rich_text_plain(baseline.long_text.as_ref())
+        .is_some_and(|baseline_text| baseline_text != offer_text)
+}
+
+fn rich_text_plain(text: Option<&RichText>) -> Option<&str> {
+    match text {
+        Some(RichText::Plain(value)) => Some(value.as_str()),
+        _ => None,
     }
 }
 
