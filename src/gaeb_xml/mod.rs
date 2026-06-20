@@ -308,7 +308,17 @@ impl<'a> XmlParser<'a> {
         is_empty: bool,
         sort_order: i32,
     ) -> Result<BoqNode, ParseError> {
-        let ordinal = attr_value(start, b"ID").unwrap_or_else(|| format!("item_{sort_order}"));
+        let raw_ordinal = attr_value(start, b"ID");
+        let ordinal = usable_item_ordinal(raw_ordinal.as_deref(), sort_order);
+        if raw_ordinal.as_deref().is_some_and(is_malformed_xml_ordinal) {
+            self.findings.push(
+                ValidationFinding::warning(
+                    "gaeb_xml_malformed_ordinal",
+                    "item ordinal attribute was blank or contained whitespace; a stable fallback ordinal was used",
+                )
+                .at(ordinal.clone()),
+            );
+        }
         let rno_part = attr_value(start, b"RNoPart").unwrap_or_else(|| ordinal.clone());
         let mut title = rno_part.clone();
         let mut item = BoqItem {
@@ -515,6 +525,17 @@ fn local_name(name: QName<'_>) -> String {
     let raw = name.as_ref();
     let after_prefix = raw.rsplit(|byte| *byte == b':').next().unwrap_or(raw);
     String::from_utf8_lossy(after_prefix).to_string()
+}
+
+fn usable_item_ordinal(raw: Option<&str>, sort_order: i32) -> String {
+    raw.map(str::trim)
+        .filter(|value| !value.is_empty() && !value.chars().any(char::is_whitespace))
+        .map_or_else(|| format!("item_{sort_order}"), ToOwned::to_owned)
+}
+
+fn is_malformed_xml_ordinal(raw: &str) -> bool {
+    let trimmed = raw.trim();
+    trimmed.is_empty() || trimmed.chars().any(char::is_whitespace)
 }
 
 fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
