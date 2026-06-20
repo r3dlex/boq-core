@@ -13,7 +13,8 @@
 //!   promote a more specific capability.
 //! - X31, X89, GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
 //!   and Zeitvertrag are future or reference tracks until `gaeb/manifest.toml`
-//!   and tests say otherwise.
+//!   and tests say otherwise. The [`x31`] module is a serializable domain model
+//!   for future quantity-takeoff parsing, not a support-status promotion.
 //! - BVBS and GAEBXmlChecker evidence must not be described as paid or official
 //!   certification.
 //!
@@ -30,9 +31,11 @@
 //! - GAEB DA XML X81 and other XML phases are parsed through
 //!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
 //!   X84, and X86 AVA fixture paths are the current adapter-ready focus.
-//! - GAEB DA XML X83 is recognized and parsed as a loss-aware document, but
-//!   the current Bauausführung X83 fixture track remains future-track until
-//!   manifest entries and tests promote more capabilities.
+//! - GAEB DA XML X83/X84 Bauausführung paths are recognized as parse-only
+//!   fixture-backed tracks when the manifest says so; adapter/export capability
+//!   remains disabled unless [`support::SupportCapabilities`] says otherwise.
+//! - X31 quantity-takeoff concepts are represented by [`x31`] without overloading
+//!   BoQ item parser semantics.
 //!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
@@ -124,6 +127,7 @@ pub mod gaeb90;
 pub mod gaeb_xml;
 pub mod model;
 pub mod support;
+pub mod x31;
 
 /// Current crate version.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
