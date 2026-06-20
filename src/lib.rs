@@ -22,9 +22,11 @@
 //! The stable public parsing surface is intentionally small:
 //!
 //! - GAEB 90 D81 and GAEB 90 D83 fixed-width bytes are parsed through
-//!   [`gaeb90::parse_bytes`] or [`gaeb90::parse_file`]. These paths are
-//!   currently parse-only unless [`support::SupportCapabilities`] says
-//!   otherwise.
+//!   [`gaeb90::parse_bytes`] or [`gaeb90::parse_file`]. Legacy ANSI inputs can
+//!   use [`gaeb90::parse_bytes_with_encoding`] with
+//!   [`gaeb90::Gaeb90Encoding::Windows1252`] when the caller already knows the
+//!   source encoding. These paths are currently parse-only unless
+//!   [`support::SupportCapabilities`] says otherwise.
 //! - GAEB DA XML X81 and other XML phases are parsed through
 //!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
 //!   X84, and X86 AVA fixture paths are the current adapter-ready focus.
