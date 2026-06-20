@@ -4,9 +4,9 @@
 [[criteria]]
 id = "bau_x83_import_lv"
 source = "BVBS GAEB XML 3.3 Bauausfuehrung criteria V 04 04 2024"
-evidence_kind = "gap"
-automated_test = "test_xml33_bau_x83_imports_to_rich_model_snapshot"
-status = "readiness_gap"
+evidence_kind = "automated"
+automated_test = "test_bau_x83_fixture_parses_to_boq_tree"
+status = "readiness_covered"
 
 [[criteria]]
 id = "bau_x84_export_prices"
