@@ -1,7 +1,7 @@
 //! Typed fixture manifest schema shared by the library, xtask, and tests.
 //!
 //! This module is the single owner of the `gaeb/manifest.toml` schema
-//! (ARCH-005). The library consumes it through [`SupportPolicy`] adapters;
+//! (ARCH-005). The library consumes it through support-policy adapters;
 //! xtask uses it for download/lockfile/checksum bookkeeping; tests assert
 //! catalog coverage on it.
 

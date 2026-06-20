@@ -10,6 +10,21 @@ Use semver for public API and support-status changes:
 - Minor releases may add parser support, adapter capabilities, or new documented extension points.
 - Major releases may change public DTOs, support semantics, or Obra adapter contracts.
 
+## Pre-1.0 compatibility promise
+
+While `boq-core` is below `1.0.0`, every release still follows an explicit compatibility promise:
+
+- Patch releases are limited to bug fixes, documentation fixes, fixture corrections, and non-breaking release automation.
+- Minor releases are required for breaking public API changes, supported-format promotions, support-status changes, new parser capabilities, or Obra adapter contract changes.
+- Support-status changes must be called out in `CHANGELOG.md` under `Support status changes` and must reference the fixture evidence, tests or gates, and certification limitations that justify the claim.
+- No release may imply paid BVBS certification, future-track compatibility, or production support unless that evidence is already present in the repository and explicitly documented.
+
+## Release channels
+
+Release candidates move through protected `main` via a full-green PR. Crates.io is the only public package channel currently documented for Rust package publishing.
+
+Automation may verify release readiness, but it must not publish by default. Actual crates.io publishing requires explicit manual maintainer authorization after local checks and GitHub CI are green.
+
 ## Protected main and PR policy
 
 All release-bound changes must go through protected main and a full-green PR. A full-green PR includes:
@@ -20,16 +35,27 @@ All release-bound changes must go through protected main and a full-green PR. A 
 - architecture/reviewer/executor agreement for non-trivial changes;
 - no paid certification or publishing side effects unless explicitly authorized.
 
-## Documentation checks
+## Dry-run release checks
 
-Before a release candidate:
+Release PRs that touch package metadata, changelog content, release documentation, or release workflow files run dry-run release checks:
+
+- `cargo package --locked` verifies the package archive can be built from the locked dependency graph.
+- `cargo publish --dry-run --locked` verifies crates.io publish readiness without uploading a release.
+
+These checks are safe verification gates only. Removing `--dry-run` from automation is a release-blocking policy violation.
+
+## Changelog expectations
+
+Every release-bound PR must update `CHANGELOG.md` when it changes release behavior, public API, parser support, adapter contracts, support status, fixture evidence, or documented certification limitations.
+
+Support-status changes must include the affected exchange format or track, the fixture evidence used, the tests or gates that prove the claim, and any certification limitation.
+
+## Documentation checks
 
 ```bash
 cargo doc --all-features --no-deps
 mdbook build
 ```
-
-The generated rustdoc API reference and mdBook manuals must agree on current support boundaries.
 
 ## crates.io readiness
 
@@ -40,5 +66,6 @@ Before publishing to crates.io:
 3. Run the full local quality gate.
 4. Confirm docs do not overclaim certification or future-track support.
 5. Confirm branch protection and CI are green on the release PR.
+6. Confirm a maintainer has explicitly authorized the manual publish action.
 
 Publishing remains gated until explicitly authorized.
