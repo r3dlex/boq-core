@@ -105,3 +105,40 @@ fn changelog_mentions_support_status_changes() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[test]
+fn test_release_guide_mentions_manual_publish_gate() -> Result<(), Box<dyn Error>> {
+    let guide = fs::read_to_string("docs/book/release-guide.md")?;
+    let lower = guide.to_lowercase();
+
+    for required in [
+        "manual publish gate",
+        "explicit manual maintainer authorization",
+        "protected `main`",
+        "full-green pr",
+        "github ci",
+        "cargo doc --all-features --no-deps",
+        "mdbook build",
+        "cargo publish --dry-run --locked",
+        "dry-run readiness only",
+    ] {
+        assert!(
+            lower.contains(&required.to_lowercase()),
+            "release guide is missing manual publish/full-green gate term: {required}"
+        );
+    }
+
+    for status in [
+        "supported",
+        "supported_parse_only",
+        "future_track",
+        "reference_only",
+    ] {
+        assert!(
+            guide.contains(status),
+            "release guide must preserve manifest support vocabulary: {status}"
+        );
+    }
+
+    Ok(())
+}
