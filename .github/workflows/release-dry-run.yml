@@ -1,0 +1,32 @@
+name: Release dry run
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - Cargo.toml
+      - Cargo.lock
+      - CHANGELOG.md
+      - docs/book/release-guide.md
+      - .github/workflows/release-dry-run.yml
+      - tests/release_automation.rs
+
+permissions:
+  contents: read
+
+env:
+  CARGO_HTTP_MULTIPLEXING: false
+
+jobs:
+  release-dry-run:
+    name: Crates.io dry-run safety
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Verify package archive
+        run: cargo package --locked
+      - name: Verify publish dry run
+        run: cargo publish --dry-run --locked
