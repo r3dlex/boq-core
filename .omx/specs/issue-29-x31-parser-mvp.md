@@ -1,33 +1,33 @@
-# Spec issue #29: X31 parser MVP
+# Spec: X31 parser MVP
+
+## Issue
+- GitHub issue: #29
+- Branch: `issue-29-x31-parser-mvp`
+- PRD: `.omx/plans/prd-issue-29-x31-parser-mvp.md`
 
 ## Scope
+Implement a conservative GAEB XML X31 parser MVP that maps quantity-takeoff measurement groups and formula records into the `x31` domain model introduced by #28.
 
-Planning-only specification for the GAEB ranked roadmap source slice backing issue #29. This artifact binds the issue to the canonical source inventory and records how each linked source may be used for safe fixture readiness.
+## In scope
+- `x31::parse_str` and `x31::parse_file` entrypoints for XML X31 payloads.
+- Measurement group id preservation in row metadata.
+- Formula source text, result quantity, unit, linked BoQ ordinal, and row id extraction.
+- Attachment detection as domain attachment assets and row attachment ids.
+- Unsupported row/container constructs reported as recoverable findings.
+- BVBS X31 manifest promotion to `supported_parse_only` for parser-readiness evidence only.
 
-## Non-goals
+## Out of scope
+- REB-VB 23.003 formula evaluation.
+- X31/X86 result linking beyond ordinal/baseline-ready fields.
+- X31 export/roundtrip/schema validation/Obra adapter support.
+- Live BVBS downloads or paid certification/checker actions.
 
-- No paid BVBS certification action.
-- No live/source download during unit tests.
-- No parser support promotion beyond the parser support status recorded in the canonical ledger.
-- No duplicate issue creation; this issue remains the owning lane for the rows listed below.
+## Functional requirements
+1. X31 XML parser entrypoints return a `QuantityTakeoffDocument` with provenance, version, rows, attachments, findings, and metadata.
+2. Formula records preserve source expression text without evaluation.
+3. Result quantities parse with decimal-comma and decimal-point tolerance.
+4. Unsupported constructs become `x31_unsupported_feature` findings rather than panics.
+5. The `bvbs_xml33_qty_x31` fixture manifest row is `supported_parse_only` with evidence test mappings.
 
-## Ranked roadmap source audit
-
-| Source ID | Source | Manifest disposition | Manifest ID / planned ID | Parser support status | Test mapping / gap |
-| --- | --- | --- | --- | --- | --- |
-| R1-02 | #28-#31 X31/Mengenermittlung roadmap | manifested | official_gaeb_xml33_mengenermittlung | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
-| R1-03 | #28-#31 X31/Mengenermittlung roadmap | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
-| R1-04 | #28-#31 X31/Mengenermittlung roadmap | manifested | bvbs_xml33_qty_x31 | future_track | ['future_quantity_takeoff_x31_cataloged'] |
-| R1-05 | #28-#31 X31/Mengenermittlung roadmap | manifested | bvbs_xml33_qty_x86 | future_track | ['future_quantity_takeoff_x86_cataloged'] |
-| R1-06 | #28-#31 X31/Mengenermittlung roadmap | gap | gap: manifest entry not present for calculations PDF | reference_only | Reference-only certification visual output; not executable as parser fixture. |
-
-## Acceptance criteria
-
-- The PRD, spec, and test spec for issue #29 all reference the same canonical source IDs.
-- Manifest-backed rows can only be used through local fixture manifest entries.
-- Planned or artifact-only rows remain documented as research/reference gates until a license-safe local fixture is added and checksummed.
-- Certification PDFs and visual reference PDFs are treated as reference-only evidence, not executable parser fixtures.
-
-## Implementation handoff
-
-Use `.omx/specs/gaeb-ranked-source-status-ledger.md` as the source of truth for dispositions. Update `boq-core/gaeb/manifest.toml` and a follow-up test spec before promoting any planned row to fixture-backed execution.
+## Source inventory constraints
+Rows R1-02 through R1-06 remain governed by `.omx/specs/gaeb-ranked-source-status-ledger.md`. X86 and reference-only rows are not promoted by this issue.

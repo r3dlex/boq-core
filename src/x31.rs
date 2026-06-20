@@ -23,11 +23,338 @@
 
 use std::collections::BTreeMap;
 
+use quick_xml::Reader;
+use quick_xml::events::{BytesStart, Event};
+use quick_xml::name::QName;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::error::ValidationFinding;
-use crate::model::{Metadata, SourceProvenance};
+use crate::checksum::sha256_hex;
+use crate::error::{ParseError, ValidationFinding};
+use crate::format::detect_path;
+use crate::model::{GaebFormat, Metadata, SourceProvenance};
+
+/// Parses a GAEB XML X31 quantity takeoff payload into the X31 domain model.
+///
+/// This MVP parser preserves formula source text and basic result metadata. It
+/// reports unsupported row-level constructs as findings instead of panicking or
+/// pretending to evaluate formulas.
+///
+/// # Errors
+///
+/// Returns a parse error when XML cannot be decoded or a numeric result cannot
+/// be parsed.
+pub fn parse_str(
+    source: &str,
+    source_uri: Option<String>,
+) -> Result<QuantityTakeoffDocument, ParseError> {
+    X31Parser::new(source).parse(source_uri, Some(sha256_hex(source.as_bytes())))
+}
+
+/// Parses an X31 XML file from disk.
+///
+/// # Errors
+///
+/// Returns a parse error when the file cannot be read or parsed.
+pub fn parse_file(
+    path: impl AsRef<std::path::Path>,
+) -> Result<QuantityTakeoffDocument, ParseError> {
+    let path_ref = path.as_ref();
+    let source = std::fs::read_to_string(path_ref).map_err(|error| ParseError {
+        code: "x31_read_failed".to_owned(),
+        message: error.to_string(),
+        location: Some(path_ref.display().to_string()),
+    })?;
+    parse_str(&source, Some(path_ref.display().to_string()))
+}
+
+struct X31Parser<'a> {
+    reader: Reader<&'a [u8]>,
+    buffer: Vec<u8>,
+    version: Option<String>,
+}
+
+impl<'a> X31Parser<'a> {
+    fn new(source: &'a str) -> Self {
+        let mut reader = Reader::from_str(source);
+        reader.config_mut().trim_text(true);
+        Self {
+            reader,
+            buffer: Vec::new(),
+            version: None,
+        }
+    }
+
+    fn parse(
+        &mut self,
+        source_uri: Option<String>,
+        checksum: Option<String>,
+    ) -> Result<QuantityTakeoffDocument, ParseError> {
+        let detected = source_uri.as_deref().map(detect_path);
+        let mut document = QuantityTakeoffDocument::new(SourceProvenance {
+            source_uri,
+            source_format: GaebFormat::GaebXml,
+            gaeb_version: None,
+            phase: detected.and_then(|format| format.phase),
+            checksum,
+            parser_version: crate::VERSION.to_owned(),
+        });
+        let mut group_id: Option<String> = None;
+
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(start)) => {
+                    let owned = start.into_owned();
+                    let local = local_name(owned.name());
+                    match local.as_str() {
+                        "Version" => self.version = self.read_text_for(owned.name())?,
+                        "MeasurementGroup" | "MeasGrp" | "QtyGroup" => {
+                            group_id =
+                                attr_value(&owned, b"ID").or_else(|| attr_value(&owned, b"Id"));
+                        }
+                        "FormulaRecord" | "FormulaRow" | "Measurement" => {
+                            let parsed = self.parse_row(&owned, group_id.as_deref())?;
+                            document.attachments.extend(parsed.attachments);
+                            document.findings.extend(parsed.findings);
+                            document.rows.push(parsed.row);
+                        }
+                        other if is_unsupported_x31_container(other) => document.findings.push(
+                            ValidationFinding::warning(
+                                "x31_unsupported_feature",
+                                format!("unsupported X31 container {other} was skipped"),
+                            )
+                            .at(other.to_owned()),
+                        ),
+                        _ => {}
+                    }
+                }
+                Ok(Event::Empty(start)) => {
+                    let local = local_name(start.name());
+                    if matches!(local.as_str(), "MeasurementGroup" | "MeasGrp" | "QtyGroup") {
+                        group_id = None;
+                    } else if is_unsupported_x31_container(&local) {
+                        document.findings.push(
+                            ValidationFinding::warning(
+                                "x31_unsupported_feature",
+                                format!("unsupported X31 container {local} was skipped"),
+                            )
+                            .at(local),
+                        );
+                    }
+                }
+                Ok(Event::End(end)) => {
+                    let local = local_name(end.name());
+                    if matches!(local.as_str(), "MeasurementGroup" | "MeasGrp" | "QtyGroup") {
+                        group_id = None;
+                    }
+                }
+                Ok(Event::Eof) => break,
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "x31_xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: None,
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+        document.source.gaeb_version.clone_from(&self.version);
+        Ok(document)
+    }
+
+    fn parse_row(
+        &mut self,
+        start: &BytesStart<'_>,
+        group_id: Option<&str>,
+    ) -> Result<ParsedRow, ParseError> {
+        let row_id = attr_value(start, b"ID")
+            .or_else(|| attr_value(start, b"Id"))
+            .unwrap_or_else(|| format!("row-{}", self.reader.buffer_position()));
+        let ordinal = attr_value(start, b"RNo")
+            .or_else(|| attr_value(start, b"Ordinal"))
+            .or_else(|| attr_value(start, b"OZ"));
+        let unit = attr_value(start, b"Unit").unwrap_or_default();
+        let mut row = MeasurementRow::formula(
+            row_id.clone(),
+            ordinal.clone().unwrap_or_else(|| row_id.clone()),
+            unit,
+            MeasurementFormula::reb_vb_23003(""),
+        );
+        row.ordinal = ordinal;
+        if let Some(group_id) = group_id {
+            row.metadata.insert(
+                "x31.measurement_group_id".to_owned(),
+                serde_json::json!(group_id),
+            );
+        }
+        let mut parsed = ParsedRow {
+            row,
+            attachments: Vec::new(),
+            findings: Vec::new(),
+        };
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(child)) => {
+                    let owned = child.into_owned();
+                    self.handle_row_start(&owned, &mut parsed)?;
+                }
+                Ok(Event::Empty(child)) => {
+                    let owned = child.into_owned();
+                    Self::handle_row_empty(&owned, &mut parsed);
+                }
+                Ok(Event::End(end))
+                    if matches!(
+                        local_name(end.name()).as_str(),
+                        "FormulaRecord" | "FormulaRow" | "Measurement"
+                    ) =>
+                {
+                    break;
+                }
+                Ok(Event::Eof) => {
+                    return Err(ParseError {
+                        code: "x31_unclosed_measurement_row".to_owned(),
+                        message: "X31 measurement row ended before its closing tag".to_owned(),
+                        location: Some(row_id),
+                    });
+                }
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "x31_xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: Some(row_id),
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+        Ok(parsed)
+    }
+
+    fn handle_row_start(
+        &mut self,
+        child: &BytesStart<'_>,
+        parsed: &mut ParsedRow,
+    ) -> Result<(), ParseError> {
+        let local = local_name(child.name());
+        match local.as_str() {
+            "Formula" | "Expression" => {
+                parsed.row.formula.expression =
+                    self.read_text_for(child.name())?.unwrap_or_default();
+            }
+            "Result" | "Quantity" | "Qty" => {
+                if let Some(value) = self.read_text_for(child.name())? {
+                    parsed.row.result_quantity = Some(parse_decimal(&value, &local)?);
+                }
+            }
+            "Unit" | "QU" => {
+                parsed.row.unit = self.read_text_for(child.name())?.unwrap_or_default();
+            }
+            "Attachment" | "Drawing" | "Asset" => Self::capture_attachment(child, parsed),
+            other => parsed
+                .findings
+                .push(unsupported_row_finding(other, &parsed.row.row_id)),
+        }
+        Ok(())
+    }
+
+    fn handle_row_empty(child: &BytesStart<'_>, parsed: &mut ParsedRow) {
+        let local = local_name(child.name());
+        match local.as_str() {
+            "Attachment" | "Drawing" | "Asset" => Self::capture_attachment(child, parsed),
+            other => parsed
+                .findings
+                .push(unsupported_row_finding(other, &parsed.row.row_id)),
+        }
+    }
+
+    fn capture_attachment(child: &BytesStart<'_>, parsed: &mut ParsedRow) {
+        let id = attr_value(child, b"ID")
+            .or_else(|| attr_value(child, b"Id"))
+            .unwrap_or_else(|| format!("attachment-{}", parsed.attachments.len()));
+        let source_uri = attr_value(child, b"HRef")
+            .or_else(|| attr_value(child, b"href"))
+            .or_else(|| attr_value(child, b"Path"));
+        parsed.row.attachment_ids.push(id.clone());
+        parsed.attachments.push(MeasurementAttachment {
+            id,
+            kind: attachment_kind(attr_value(child, b"Type").as_deref()),
+            source_uri,
+            checksum: attr_value(child, b"Checksum"),
+            metadata: BTreeMap::new(),
+        });
+    }
+
+    fn read_text_for(&mut self, end: QName<'_>) -> Result<Option<String>, ParseError> {
+        self.reader
+            .read_text(end)
+            .map_err(|error| ParseError {
+                code: "x31_xml_text_read_failed".to_owned(),
+                message: error.to_string(),
+                location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
+            })?
+            .decode()
+            .map(|decoded| Some(decoded.into_owned()))
+            .map_err(|error| ParseError {
+                code: "x31_xml_text_decode_failed".to_owned(),
+                message: error.to_string(),
+                location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
+            })
+    }
+}
+
+struct ParsedRow {
+    row: MeasurementRow,
+    attachments: Vec<MeasurementAttachment>,
+    findings: Vec<ValidationFinding>,
+}
+
+fn unsupported_row_finding(field: &str, row_id: &str) -> ValidationFinding {
+    ValidationFinding::warning(
+        "x31_unsupported_feature",
+        format!("unsupported X31 row field {field} was preserved as a finding"),
+    )
+    .at(format!("{row_id}/{field}"))
+}
+
+fn attachment_kind(raw: Option<&str>) -> MeasurementAttachmentKind {
+    match raw.map(str::to_ascii_lowercase).as_deref() {
+        Some("drawing" | "plan") => MeasurementAttachmentKind::Drawing,
+        Some("photo") => MeasurementAttachmentKind::Photo,
+        Some("calculation" | "calculation_sheet" | "sheet") => {
+            MeasurementAttachmentKind::CalculationSheet
+        }
+        _ => MeasurementAttachmentKind::Unknown,
+    }
+}
+
+fn is_unsupported_x31_container(local: &str) -> bool {
+    matches!(local, "Sketch" | "FreeMeasurement" | "UnsupportedFeature")
+}
+
+fn parse_decimal(text: &str, location: &str) -> Result<Decimal, ParseError> {
+    Decimal::from_str_exact(&text.trim().replace(',', ".")).map_err(|error| ParseError {
+        code: "x31_decimal_parse_failed".to_owned(),
+        message: error.to_string(),
+        location: Some(location.to_owned()),
+    })
+}
+
+fn local_name(name: QName<'_>) -> String {
+    let raw = name.as_ref();
+    let after_prefix = raw.rsplit(|byte| *byte == b':').next().unwrap_or(raw);
+    String::from_utf8_lossy(after_prefix).to_string()
+}
+
+fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
+    start
+        .attributes()
+        .flatten()
+        .find(|attr| attr.key.as_ref() == key)
+        .map(|attr| String::from_utf8_lossy(attr.value.as_ref()).to_string())
+}
 
 /// A complete X31 quantity takeoff document.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

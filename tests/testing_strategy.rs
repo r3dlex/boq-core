@@ -112,6 +112,7 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
         "dangl_ava_gaeb90_d83",
         "bvbs_xml33_bau_x83",
         "bvbs_xml33_bau_x84",
+        "bvbs_xml33_qty_x31",
     ] {
         assert!(
             supported_ids.contains(expected_supported),
@@ -129,6 +130,7 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
                     | "dangl_ava_gaeb90_d83"
                     | "bvbs_xml33_bau_x83"
                     | "bvbs_xml33_bau_x84"
+                    | "bvbs_xml33_qty_x31"
             )
     }) {
         assert!(
@@ -266,4 +268,12 @@ fn bau_legacy_sources_remain_gated_until_version_tests_pass() {
 fn read_manifest() -> FixtureManifest {
     let text = fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
     manifest::parse(&text).expect("manifest parses")
+}
+
+#[test]
+fn manifest_parse_errors_expose_messages_for_quality_gates() {
+    let error =
+        boq_core::support::manifest::parse("[[fixtures]").expect_err("invalid manifest toml fails");
+
+    assert!(!error.message().is_empty());
 }
