@@ -64,7 +64,7 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
         });
     }
 
-    let findings = records
+    let mut findings = records
         .iter()
         .filter(|record| record.raw_line.chars().count() != 80)
         .map(|record| {
@@ -79,6 +79,8 @@ pub fn parse_bytes(bytes: &[u8], source_uri: Option<String>) -> Result<GaebDocum
             .at(record.physical_line.to_string())
         })
         .collect::<Vec<_>>();
+
+    findings.extend(records.iter().filter_map(malformed_item_ordinal_finding));
 
     let nodes = records_to_nodes(&records);
     let title = records
@@ -158,6 +160,25 @@ fn parse_record(physical_line: usize, line: &str) -> Option<Gaeb90Record> {
         line_id,
         raw_line: line.to_owned(),
     })
+}
+
+fn malformed_item_ordinal_finding(record: &Gaeb90Record) -> Option<ValidationFinding> {
+    if record.satzart != "21" {
+        return None;
+    }
+
+    let ordinal = record.payload.chars().take(9).collect::<String>();
+    if ordinal.trim().is_empty() {
+        Some(
+            ValidationFinding::warning(
+                "gaeb90_malformed_ordinal",
+                "item ordinal field was blank; a stable fallback ordinal was used",
+            )
+            .at(record.physical_line.to_string()),
+        )
+    } else {
+        None
+    }
 }
 
 fn records_to_nodes(records: &[Gaeb90Record]) -> Vec<BoqNode> {
@@ -322,8 +343,18 @@ mod tests {
             Some("broken.d83".to_owned()),
         )
         .expect("recoverable malformed lines should parse");
-        assert_eq!(document.findings.len(), 2);
-        assert_eq!(document.findings[0].code, "gaeb90_line_length");
+        assert!(
+            document
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb90_line_length")
+        );
+        assert!(
+            document
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb90_malformed_ordinal")
+        );
         assert_eq!(document.boq.nodes[0].ordinal, "item_1");
     }
 
