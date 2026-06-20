@@ -1,4 +1,22 @@
 //! GAEB DA XML parser foundation.
+//!
+//! This module is the public XML parse/export boundary. Use [`parse_str`] or
+//! [`parse_file`] to create a loss-aware [`crate::model::GaebDocument`], then
+//! inspect [`crate::model::GaebDocument::support_status`] and
+//! [`crate::model::GaebDocument::capabilities`] before validation, adapter, or
+//! export work.
+//!
+//! ```
+//! let source = include_str!("../../tests/fixtures/synthetic/minimal_ava.x81");
+//! let document = boq_core::gaeb_xml::parse_str(
+//!     source,
+//!     Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/minimal_ava.x81".to_owned()),
+//! )?;
+//!
+//! assert_eq!(document.summary.version.as_deref(), Some("3.3"));
+//! assert!(document.capabilities.adapt_to_obra);
+//! # Ok::<(), boq_core::error::ParseError>(())
+//! ```
 
 use std::collections::BTreeMap;
 use std::path::Path;
