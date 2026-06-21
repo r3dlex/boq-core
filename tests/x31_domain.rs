@@ -3,11 +3,15 @@
 use std::collections::BTreeMap;
 
 use boq_core::error::ValidationFinding;
-use boq_core::model::{GaebFormat, SourceProvenance};
+use boq_core::model::{
+    Boq, BoqItem, BoqNode, BoqNodeKind, GaebDocument, GaebDocumentSummary, GaebFormat, GaebPhase,
+    RichText, SourceProvenance,
+};
+use boq_core::support::{SupportCapabilities, SupportStatus};
 use boq_core::x31::{
     BaselineKind, MeasurementAttachment, MeasurementAttachmentKind, MeasurementBaselineLink,
     MeasurementFormula, MeasurementReference, MeasurementReferenceKind, MeasurementRow,
-    PhysicalProgress, QuantityTakeoffDocument, RebFormulaSystem,
+    PhysicalProgress, QuantityTakeoffDocument, RebFormulaSystem, X31X86LinkStatus,
 };
 use rust_decimal::Decimal;
 
@@ -472,4 +476,205 @@ fn test_reb_formula_decimal_overflow_yields_finding() {
             .iter()
             .any(|finding| finding.code == "reb_formula_decimal_overflow")
     );
+}
+
+#[test]
+fn test_x31_links_to_x86_by_ordinal() {
+    let mut measurements = QuantityTakeoffDocument::new(source());
+    measurements.rows.push(
+        MeasurementRow::formula(
+            "M-1",
+            "001.0010",
+            "m3",
+            MeasurementFormula::reb_vb_23003("2 * 3"),
+        )
+        .with_result(Decimal::new(6, 0)),
+    );
+    let baseline = x86_baseline_document(vec![x86_item(
+        "001.0010",
+        Decimal::new(10, 0),
+        "m3",
+        Some(Decimal::new(25, 0)),
+    )]);
+
+    let report = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(report.baseline.kind, BaselineKind::X86Contract);
+    assert_eq!(report.rows[0].status, X31X86LinkStatus::Matched);
+    assert_eq!(report.rows[0].baseline_quantity, Some(Decimal::new(10, 0)));
+    assert_eq!(report.rows[0].unit_price, Some(Decimal::new(25, 0)));
+    assert_eq!(report.rows[0].progress_value, Some(Decimal::new(150, 0)));
+    assert!(report.findings.is_empty());
+    assert!(!report.invoice_generated);
+}
+
+#[test]
+fn test_x31_x86_quantity_mismatch_reports_finding() {
+    let mut measurements = QuantityTakeoffDocument::new(source());
+    measurements.rows.push(
+        MeasurementRow::formula(
+            "M-OVER",
+            "001.0010",
+            "m3",
+            MeasurementFormula::reb_vb_23003("12"),
+        )
+        .with_result(Decimal::new(12, 0)),
+    );
+    let baseline =
+        x86_baseline_document(vec![x86_item("001.0010", Decimal::new(10, 0), "m3", None)]);
+
+    let report = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(report.rows[0].status, X31X86LinkStatus::Mismatched);
+    assert!(report.findings.iter().any(|finding| {
+        finding.code == "x31_x86_quantity_exceeds_baseline"
+            && finding.location.as_deref() == Some("001.0010")
+    }));
+}
+
+#[test]
+fn test_x31_unmatched_measurement_is_nonfatal() {
+    let mut measurements = QuantityTakeoffDocument::new(source());
+    measurements.rows.push(
+        MeasurementRow::formula(
+            "M-MISSING",
+            "009.9999",
+            "m",
+            MeasurementFormula::reb_vb_23003("1"),
+        )
+        .with_result(Decimal::new(1, 0)),
+    );
+    measurements.rows.push(MeasurementRow::formula(
+        "M-NO-ORDINAL",
+        "placeholder",
+        "m",
+        MeasurementFormula::reb_vb_23003("1"),
+    ));
+    measurements.rows[1].ordinal = None;
+    let baseline = x86_baseline_document(vec![x86_item("001.0010", Decimal::new(1, 0), "m", None)]);
+
+    let report = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(report.rows.len(), 2);
+    assert_eq!(report.rows[0].status, X31X86LinkStatus::MissingBaselineItem);
+    assert_eq!(
+        report.rows[1].status,
+        X31X86LinkStatus::MissingMeasurementOrdinal
+    );
+    assert_eq!(report.findings.len(), 2);
+}
+
+#[test]
+fn test_linked_progress_report_is_deterministic() {
+    let mut measurements = QuantityTakeoffDocument::new(source());
+    measurements.rows.push(
+        MeasurementRow::formula(
+            "M-1",
+            "001.0010",
+            "m",
+            MeasurementFormula::reb_vb_23003("1"),
+        )
+        .with_result(Decimal::new(1, 0)),
+    );
+    measurements.rows.push(
+        MeasurementRow::formula(
+            "M-2",
+            "001.0020",
+            "kg",
+            MeasurementFormula::reb_vb_23003("2"),
+        )
+        .with_result(Decimal::new(2, 0)),
+    );
+    let baseline = x86_baseline_document(vec![
+        x86_item(
+            "001.0010",
+            Decimal::new(1, 0),
+            "m",
+            Some(Decimal::new(5, 0)),
+        ),
+        x86_item(
+            "001.0020",
+            Decimal::new(2, 0),
+            "t",
+            Some(Decimal::new(7, 0)),
+        ),
+    ]);
+
+    let first = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+    let second = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(first, second);
+    assert_eq!(first.rows[0].ordinal.as_deref(), Some("001.0010"));
+    assert_eq!(first.rows[1].status, X31X86LinkStatus::Mismatched);
+    assert!(
+        first
+            .findings
+            .iter()
+            .any(|finding| finding.code == "x31_x86_unit_mismatch")
+    );
+}
+
+fn x86_baseline_document(items: Vec<BoqNode>) -> GaebDocument {
+    GaebDocument {
+        source: SourceProvenance {
+            source_uri: Some("gaeb/bvbs/gaeb_xml_3_3/ava/x86/synthetic.X86".to_owned()),
+            source_format: GaebFormat::GaebXml,
+            gaeb_version: Some("3.3".to_owned()),
+            phase: Some(GaebPhase {
+                code: "86".to_owned(),
+                label: Some("Auftragserteilung".to_owned()),
+            }),
+            checksum: Some("sha256:x86-baseline".to_owned()),
+            parser_version: boq_core::VERSION.to_owned(),
+        },
+        summary: GaebDocumentSummary {
+            format: GaebFormat::GaebXml,
+            version: Some("3.3".to_owned()),
+            phase: Some(GaebPhase {
+                code: "86".to_owned(),
+                label: Some("Auftragserteilung".to_owned()),
+            }),
+            title: Some("X86 baseline".to_owned()),
+            project_name: Some("X31/X86".to_owned()),
+        },
+        boq: Boq {
+            title: "X86 baseline".to_owned(),
+            nodes: vec![BoqNode {
+                ordinal: "001".to_owned(),
+                title: "section".to_owned(),
+                kind: BoqNodeKind::Chapter,
+                children: items,
+                item: None,
+                sort_order: 0,
+                metadata: BTreeMap::new(),
+            }],
+            currency: Some("EUR".to_owned()),
+            metadata: BTreeMap::new(),
+        },
+        capabilities: SupportCapabilities::parse_only(),
+        support_status: SupportStatus::SupportedParseOnly,
+        findings: Vec::new(),
+        metadata: BTreeMap::new(),
+    }
+}
+
+fn x86_item(ordinal: &str, quantity: Decimal, unit: &str, unit_price: Option<Decimal>) -> BoqNode {
+    BoqNode {
+        ordinal: ordinal.to_owned(),
+        title: format!("Item {ordinal}"),
+        kind: BoqNodeKind::Item,
+        children: Vec::new(),
+        item: Some(BoqItem {
+            short_text: format!("Baseline {ordinal}"),
+            long_text: Some(RichText::Plain("baseline".to_owned())),
+            quantity,
+            unit: unit.to_owned(),
+            unit_price,
+            total_price: unit_price.and_then(|price| price.checked_mul(quantity)),
+            notes: None,
+            metadata: BTreeMap::new(),
+        }),
+        sort_order: 0,
+        metadata: BTreeMap::new(),
+    }
 }
