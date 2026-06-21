@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "fixture_id": "bvbs_xml33_ava_x84",
+  "source_path": "gaeb/bvbs/gaeb_xml_3_3/ava/x84/BVBS_Pruefdatei GAEB DA XML 3.3 - AVA - V 11 06 2021.X84",
+  "source_checksum_sha256": "926872994841c87226925b475215bfd092c9616072627ee16135933e7cc9faa7",
+  "parser_version": "0.1.0",
+  "support_status": "supported",
+  "capabilities": {
+    "adapt_to_obra": true,
+    "detect": true,
+    "export": false,
+    "parse": true,
+    "reference_only": false,
+    "roundtrip": false,
+    "validate": true
+  },
+  "summary": {
+    "currency": null,
+    "format": "gaeb_xml",
+    "phase": {
+      "code": "84",
+      "label": null
+    },
+    "project_name": "BVBS GAEB AVA",
+    "title": "GAEB BoQ",
+    "version": "3.3"
+  },
+  "hierarchy": {
+    "root_count": 3,
+    "total_node_count": 90,
+    "total_item_count": 68,
+    "root_ordinals": [
+      "CBAFAAAA",
+      "CBBGAAAA",
+      "CADAAAAA"
+    ]
+  },
+  "item_samples": [
+    {
+      "ordinal": "CBAFBINA",
+      "title": "10",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "5400.000",
+      "total_price": "5400.00",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFBOBA",
+      "title": "20",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "2.610",
+      "total_price": "522.00",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFCEGA",
+      "title": "30",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "3.070",
+      "total_price": "460.50",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFCKNA",
+      "title": "40",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "44.140",
+      "total_price": "132.42",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFDENI",
+      "title": "50",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "20.000",
+      "total_price": "6000.00",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFDNNA",
+      "title": "60",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "20.000",
+      "total_price": "720.00",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFEDGA",
+      "title": "70",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "83.100",
+      "total_price": "1662.00",
+      "long_text_kind": "none"
+    },
+    {
+      "ordinal": "CBAFEPNI",
+      "title": "10",
+      "quantity": "0",
+      "unit": "",
+      "unit_price": "10.000",
+      "total_price": "2000.00",
+      "long_text_kind": "none"
+    }
+  ],
+  "findings": [
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFDNNA/DiscountPcnt",
+      "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFHBMA/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFHBMA/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFHBMA/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFPKAA/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFPKAA/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFPKAA/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBAFPKAA/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAAAA/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAAAA/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAAAA/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAAAA/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAGNA/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAGNA/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAGNA/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAGNA/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAPOA/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAPOA/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAPOA/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMAPOA/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMBGAI/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMBGAI/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMBGAI/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMBGAI/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBHMEALA/DiscountPcnt",
+      "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    }
+  ],
+  "certification_claim": false
+}
