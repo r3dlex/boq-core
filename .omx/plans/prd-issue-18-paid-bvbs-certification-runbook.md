@@ -13,11 +13,17 @@ A no-paid-actions runbook defines preflight evidence, human authorization gates,
 - Paid submission: gated manual action.
 
 ## Requirements
-- [ ] Separate internal readiness from external paid submission authority.
-- [ ] Require explicit human approval before payment/submission/contact.
-- [ ] State exactly when `certified` wording becomes allowed.
+- [x] Separate internal readiness from external paid submission authority.
+- [x] Require explicit human approval before payment/submission/contact.
+- [x] State exactly when `certified` wording becomes allowed.
 
 ## Planned tests/checks
-- [ ] `test_paid_cert_runbook_requires_human_authorization`
-- [ ] `test_cert_readiness_checklist_references_green_pr_gates`
-- [ ] `test_runbook_distinguishes_readiness_from_certified_status`
+- [x] `test_paid_cert_runbook_requires_human_authorization`
+- [x] `test_cert_readiness_checklist_references_green_pr_gates`
+- [x] `test_runbook_distinguishes_readiness_from_certified_status`
+
+## Delivery evidence
+- Runbook added at `docs/book/bvbs-certification-runbook.md` and wired into `docs/book/SUMMARY.md`.
+- Regression tests added in `tests/docs_mvp.rs`.
+- Local docs gate: `cargo test --test docs_mvp`, `mdbook build`, `archgate check --ci`, `uvx prek run --all-files`.
+- No paid submission, credential entry, external contact, or certification claim performed.

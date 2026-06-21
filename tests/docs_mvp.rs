@@ -12,6 +12,7 @@ fn mdbook_documentation_mvp_scaffold_exists() {
         "docs/book/user-guide.md",
         "docs/book/developer-guide.md",
         "docs/book/certification-evidence-guide.md",
+        "docs/book/bvbs-certification-runbook.md",
         "docs/book/release-guide.md",
     ] {
         assert!(
@@ -185,6 +186,7 @@ fn docs_do_not_overclaim_certification_or_future_formats() {
         "docs/book/user-guide.md",
         "docs/book/developer-guide.md",
         "docs/book/certification-evidence-guide.md",
+        "docs/book/bvbs-certification-runbook.md",
         "docs/book/release-guide.md",
     ] {
         combined.push_str(&fs::read_to_string(path).expect("guide exists"));
@@ -208,6 +210,86 @@ fn docs_do_not_overclaim_certification_or_future_formats() {
         assert!(
             !combined.contains(forbidden),
             "documentation overclaims unsupported status: {forbidden}"
+        );
+    }
+}
+
+#[test]
+fn test_paid_cert_runbook_requires_human_authorization() {
+    let runbook = fs::read_to_string("docs/book/bvbs-certification-runbook.md")
+        .expect("BVBS certification runbook exists");
+    for required in [
+        "Issue #7",
+        "explicit human authorization",
+        "No paid submission",
+        "No credential entry",
+        "No external contact",
+        "budget owner",
+        "account owner",
+        "submission owner",
+        "ARCH-004",
+        "stop condition",
+    ] {
+        assert!(
+            runbook.contains(required),
+            "runbook missing human-authorization anchor: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_cert_readiness_checklist_references_green_pr_gates() {
+    let runbook = fs::read_to_string("docs/book/bvbs-certification-runbook.md")
+        .expect("BVBS certification runbook exists");
+    for required in [
+        "Evidence bundle",
+        "PR #91",
+        "PR #92",
+        "PR #93",
+        "PR #94",
+        "PR #96",
+        "Rust quality gates",
+        "review threads",
+        "local docs gate",
+        "GH CI",
+        "mergeStateStatus CLEAN",
+    ] {
+        assert!(
+            runbook.contains(required),
+            "runbook missing green-gate anchor: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_runbook_distinguishes_readiness_from_certified_status() {
+    let runbook = fs::read_to_string("docs/book/bvbs-certification-runbook.md")
+        .expect("BVBS certification runbook exists");
+    for required in [
+        "readiness status",
+        "official-result status",
+        "certified wording becomes allowed only after",
+        "official result artifact",
+        "do not update support_status solely because the runbook exists",
+        "reference_only",
+        "supported_parse_only",
+    ] {
+        assert!(
+            runbook.contains(required),
+            "runbook missing readiness-vs-official-status anchor: {required}"
+        );
+    }
+
+    for forbidden in [
+        "officially BVBS certified",
+        "paid certification completed",
+        "certification achieved",
+        "tooling_only",
+        "certification_fixture",
+    ] {
+        assert!(
+            !runbook.contains(forbidden),
+            "runbook contains forbidden claim or vocabulary: {forbidden}"
         );
     }
 }
