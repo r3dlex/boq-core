@@ -11,11 +11,11 @@
 5. Promote support_status only with green tests and review evidence.
 
 ## Concrete planned tests
-- [ ] `test_manifest_catalogs_gaeb_xml31_and_xml32_sources` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_xml_version_detector_distinguishes_31_32_33_namespaces` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_xml32_ava_fixtures_remain_future_track_until_parser_promotion` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_xml31_schema_sources_remain_reference_only` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_unsupported_legacy_xml_features_emit_structured_findings` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_manifest_catalogs_gaeb_xml31_and_xml32_sources` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_xml_version_detector_distinguishes_31_32_33_namespaces` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_xml32_ava_fixtures_remain_future_track_until_parser_promotion` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_xml31_schema_sources_remain_reference_only` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_unsupported_legacy_xml_features_emit_structured_findings` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
 
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -67,3 +67,10 @@ This section records how issue #37 may use the linked source rows as local fixtu
 | R3-12 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_x83 | future_track | ['test_xml31_bau_sources_are_cataloged_before_parser_promotion'] |
 | R3-13 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only planning artifact; not executable as parser fixture. |
 | R3-14 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+
+## Delivery notes
+
+- ARCH-006 records the XML 3.1/3.2 compatibility boundary before parser changes.
+- `tests/gaeb_xml_compatibility.rs` implements the issue #37 concrete tests.
+- The parser detects XML 3.1/3.2 namespaces and emits `gaeb_xml_legacy_version_compatibility` findings without promoting support status.
+- XML 3.1/3.2 manifest rows remain `reference_only` or `future_track`; no paid, certification, or external download action is performed.

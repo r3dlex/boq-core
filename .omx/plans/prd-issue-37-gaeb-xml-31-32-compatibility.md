@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision required before implementation
-Add a compatibility ADR documenting XML 3.1/3.2 namespace/schema differences versus the current XML 3.3 AVA parser before parser changes.
+ARCH-006 records XML 3.1/3.2 namespace/schema differences versus the current XML 3.3 AVA parser before parser changes.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -28,24 +28,24 @@ Add a compatibility ADR documenting XML 3.1/3.2 namespace/schema differences ver
 | gaeb_xml31_x81_x87_schema | official_gaeb | compatibility | 3.1 X81-X83/X85-X87 schemas | reference_only | manifest download gated by checksum | schema package only | schema_reference_gaeb_xml31_x81_x87 |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
-- [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
+- [x] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
+- [x] Create failing tests named in the test spec before changing parser/model behavior.
+- [x] Promote support_status only in the same PR as passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
-- [ ] No paid actions or external certification/payment/submission.
-- [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
-- [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
+- [x] No paid actions or external certification/payment/submission.
+- [x] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
+- [x] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
 ## Follow-up issue policy
 Follow-ups should update issue #37 and its PRD/test-spec. Create a new GitHub issue only when a genuinely new source family or independent implementation track is discovered.
 
 ## Acceptance criteria
-- [ ] Per-source matrix is preserved in future implementation PRs.
-- [ ] The candidate architecture decision is recorded or linked before parser/model code changes.
-- [ ] Test-spec concrete tests are created or consciously deferred with rationale.
-- [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
+- [x] Per-source matrix is preserved in future implementation PRs.
+- [x] The candidate architecture decision is recorded or linked before parser/model code changes.
+- [x] Test-spec concrete tests are created or consciously deferred with rationale.
+- [x] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
 
 ## Goal-mode handoff
 Default follow-up: `$ultragoal` for sequential implementation. Use `$team` only if fixture, parser, model, and docs lanes need parallel ownership. `$ralph` remains an explicit fallback only.
@@ -111,3 +111,10 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R3-14 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+## Delivery notes
+
+- ARCH-006 records the XML 3.1/3.2 compatibility boundary before parser changes.
+- `tests/gaeb_xml_compatibility.rs` implements the issue #37 concrete tests.
+- The parser detects XML 3.1/3.2 namespaces and emits `gaeb_xml_legacy_version_compatibility` findings without promoting support status.
+- XML 3.1/3.2 manifest rows remain `reference_only` or `future_track`; no paid, certification, or external download action is performed.

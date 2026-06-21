@@ -8,7 +8,7 @@
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
 ## Candidate architecture decision before implementation
-Add a compatibility ADR documenting XML 3.1/3.2 namespace/schema differences versus the current XML 3.3 AVA parser before parser changes.
+ARCH-006 records XML 3.1/3.2 namespace/schema differences versus the current XML 3.3 AVA parser before parser changes.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -62,3 +62,10 @@ This section binds issue #37 to the canonical source/status ledger. It does not 
 | R3-12 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_x83 | future_track | ['test_xml31_bau_sources_are_cataloged_before_parser_promotion'] |
 | R3-13 | #37 GAEB XML 3.1/3.2 compatibility | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Reference-only planning artifact; not executable as parser fixture. |
 | R3-14 | #37 GAEB XML 3.1/3.2 compatibility | manifested | bvbs_xml31_bau_pdf | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+
+## Delivery notes
+
+- ARCH-006 records the XML 3.1/3.2 compatibility boundary before parser changes.
+- `tests/gaeb_xml_compatibility.rs` implements the issue #37 concrete tests.
+- The parser detects XML 3.1/3.2 namespaces and emits `gaeb_xml_legacy_version_compatibility` findings without promoting support status.
+- XML 3.1/3.2 manifest rows remain `reference_only` or `future_track`; no paid, certification, or external download action is performed.
