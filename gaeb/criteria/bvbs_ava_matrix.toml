@@ -1,35 +1,79 @@
 [[criteria]]
 id = "ava_x81_import"
+source_reference = "BVBS AVA XML 3.3 X81 fixture and criteria PDF; import/readiness section"
 fixture = "bvbs_xml33_ava_x81"
+phase = "x81"
+expected_behavior = "Parse the request-for-quotation hierarchy, item texts, quantities, and Obra adapter snapshot without lossy support claims."
 required_action = "import_parse_adapt"
+support_status = "supported"
+evidence_status = "planned_golden"
 automated_test = "ava_x81_imports_to_rich_model_and_obra_snapshot"
-manual_evidence = "none unless checker comparison is required"
+golden_report = "planned:#17"
+manual_evidence = "none for parser readiness; optional GAEBXmlChecker readiness evidence follows docs/fixtures/gaebxmlchecker-ava-evidence.md"
+certification_claim = false
 in_v1 = true
 blocking = true
 
 [[criteria]]
 id = "ava_x84_import"
+source_reference = "BVBS AVA XML 3.3 X84 fixture and criteria PDF; bid/pricing section"
 fixture = "bvbs_xml33_ava_x84"
+phase = "x84"
+expected_behavior = "Parse priced bid data while preserving hierarchy, prices, and nonfatal findings needed for readiness review."
 required_action = "import_parse_adapt"
+support_status = "supported"
+evidence_status = "planned_golden"
 automated_test = "ava_x84_imports_priced_bid_snapshot"
-manual_evidence = "none unless checker comparison is required"
+golden_report = "planned:#17"
+manual_evidence = "none for parser readiness; optional GAEBXmlChecker readiness evidence follows docs/fixtures/gaebxmlchecker-ava-evidence.md"
+certification_claim = false
 in_v1 = true
 blocking = true
 
 [[criteria]]
 id = "ava_x86_import"
+source_reference = "BVBS AVA XML 3.3 X86 fixture and criteria PDF; contract-award section"
 fixture = "bvbs_xml33_ava_x86"
+phase = "x86"
+expected_behavior = "Parse contract-award data and adapter snapshot fields while keeping readiness distinct from paid certification."
 required_action = "import_parse_adapt"
+support_status = "supported"
+evidence_status = "planned_golden"
 automated_test = "ava_x86_imports_contract_award_snapshot"
-manual_evidence = "none unless checker comparison is required"
+golden_report = "planned:#17"
+manual_evidence = "none for parser readiness; optional GAEBXmlChecker readiness evidence follows docs/fixtures/gaebxmlchecker-ava-evidence.md"
+certification_claim = false
 in_v1 = true
 blocking = true
 
 [[criteria]]
-id = "ava_export_roundtrip_if_required"
+id = "ava_checker_comparison_if_required"
+source_reference = "GAEBXmlChecker reference-only workflow for AVA X81/X84/X86 readiness evidence"
 fixture = "bvbs_xml33_ava_x81"
+phase = "x81"
+expected_behavior = "If a human-authorized checker run is required, record reviewed JSON evidence for X81, X84, and X86; missing checker is skipped, not pass/fail."
+required_action = "local_checker_readiness_evidence"
+support_status = "supported"
+evidence_status = "manual_required"
+automated_test = "test_gaebxmlchecker_ava_optional_tool_skip"
+golden_report = "planned:#17"
+manual_evidence = "required before paid or official BVBS submission; readiness evidence only, not certification"
+certification_claim = false
+in_v1 = false
+blocking = false
+
+[[criteria]]
+id = "ava_export_roundtrip_if_required"
+source_reference = "BVBS AVA criteria PDF export/roundtrip expectations; gated until explicit export support is implemented"
+fixture = "bvbs_xml33_ava_x81"
+phase = "x81"
+expected_behavior = "Do not claim export roundtrip support until a future issue adds tests, writer behavior, checker evidence, and manifest support wording."
 required_action = "export_roundtrip_checker_policy"
-automated_test = "ava_export_roundtrip_matches_supported_fields"
-manual_evidence = "required before paid or official BVBS submission"
+support_status = "supported"
+evidence_status = "gap"
+automated_test = ""
+golden_report = "planned:#17"
+manual_evidence = "required before paid or official BVBS submission; currently a readiness gap, not certification evidence"
+certification_claim = false
 in_v1 = false
 blocking = false

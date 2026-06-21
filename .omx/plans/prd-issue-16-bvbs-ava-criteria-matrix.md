@@ -12,12 +12,18 @@ BVBS AVA criteria are mapped to fixtures, parser assertions, golden reports, man
 - BVBS AVA X81/X84/X86: `supported`.
 
 ## Requirements
-- [ ] Normalize criteria IDs and evidence statuses.
-- [ ] Link each criterion to fixture/parser/golden/manual evidence or an explicit gap.
-- [ ] Keep readiness distinct from official certification.
+- [x] Normalize criteria IDs and evidence statuses.
+- [x] Link each criterion to fixture/parser/golden/manual evidence or an explicit gap.
+- [x] Keep readiness distinct from official certification.
 
 ## Planned tests
-- [ ] `test_bvbs_ava_criteria_matrix_has_fixture_mapping`
-- [ ] `test_bvbs_ava_criteria_matrix_flags_manual_evidence`
-- [ ] `test_bvbs_ava_criteria_matrix_rejects_empty_status`
-- [ ] `test_bvbs_ava_criteria_matrix_links_golden_reports`
+- [x] `test_bvbs_ava_criteria_matrix_has_fixture_mapping`
+- [x] `test_bvbs_ava_criteria_matrix_flags_manual_evidence`
+- [x] `test_bvbs_ava_criteria_matrix_rejects_empty_status`
+- [x] `test_bvbs_ava_criteria_matrix_links_golden_reports`
+
+## Delivery evidence
+- Matrix: `gaeb/criteria/bvbs_ava_matrix.toml`.
+- Readiness note: `docs/fixtures/bvbs-ava-criteria-readiness.md`.
+- Focused tests: `tests/ava_criteria.rs`.
+- Golden report links remain explicit `planned:#17` entries until issue #17 lands.
