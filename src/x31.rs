@@ -22,6 +22,7 @@
 //! ```
 
 use std::collections::BTreeMap;
+use std::str::Chars;
 
 use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
@@ -66,6 +67,240 @@ pub fn parse_file(
         location: Some(path_ref.display().to_string()),
     })?;
     parse_str(&source, Some(path_ref.display().to_string()))
+}
+
+/// Explicit MVP subset supported by [`evaluate_reb_vb_23003`].
+///
+/// The evaluator intentionally supports only deterministic arithmetic needed by
+/// local X31 proof fixtures. It does not call a scripting engine and it does not
+/// implement the full REB-VB 23.003 grammar.
+pub const SUPPORTED_REB_VB_23003_SUBSET: &[&str] = &[
+    "decimal numbers with dot or comma separators",
+    "parentheses",
+    "unary plus and minus",
+    "addition",
+    "subtraction",
+    "multiplication",
+    "division",
+];
+
+/// Result of safely evaluating a REB-VB 23.003 formula subset.
+#[derive(Debug, Clone, PartialEq)]
+pub struct FormulaEvaluation {
+    /// Deterministic quantity when the expression is fully supported.
+    pub quantity: Option<Decimal>,
+    /// Structured findings explaining unsupported or invalid expressions.
+    pub findings: Vec<ValidationFinding>,
+}
+
+impl FormulaEvaluation {
+    const fn quantity(quantity: Decimal) -> Self {
+        Self {
+            quantity: Some(quantity),
+            findings: Vec::new(),
+        }
+    }
+
+    fn unevaluated(code: &str, message: impl Into<String>, location: impl Into<String>) -> Self {
+        Self {
+            quantity: None,
+            findings: vec![ValidationFinding::warning(code, message).at(location.into())],
+        }
+    }
+}
+
+/// Evaluates the safe arithmetic subset of REB-VB 23.003 formulas.
+///
+/// Unsupported tokens, syntax errors, overflow, and division by zero return a
+/// structured finding with no quantity. This function never uses unsafe or
+/// dynamic expression execution.
+#[must_use]
+pub fn evaluate_reb_vb_23003(expression: &str) -> FormulaEvaluation {
+    let trimmed = expression.trim();
+    if trimmed.is_empty() {
+        return FormulaEvaluation::unevaluated(
+            "reb_formula_empty",
+            "REB-VB formula expression is empty",
+            "formula",
+        );
+    }
+
+    let mut parser = FormulaParser::new(trimmed);
+    match parser.parse_expression() {
+        Ok(quantity) => {
+            parser.skip_ws();
+            if parser.peek().is_some() {
+                FormulaEvaluation::unevaluated(
+                    "reb_formula_unsupported_token",
+                    format!(
+                        "unsupported REB-VB token near '{}'; supported subset: {}",
+                        parser.remaining(),
+                        SUPPORTED_REB_VB_23003_SUBSET.join(", ")
+                    ),
+                    "formula",
+                )
+            } else {
+                FormulaEvaluation::quantity(quantity)
+            }
+        }
+        Err(finding) => FormulaEvaluation {
+            quantity: None,
+            findings: vec![finding],
+        },
+    }
+}
+
+struct FormulaParser<'a> {
+    input: &'a str,
+    chars: Chars<'a>,
+    position: usize,
+}
+
+impl<'a> FormulaParser<'a> {
+    fn new(input: &'a str) -> Self {
+        Self {
+            input,
+            chars: input.chars(),
+            position: 0,
+        }
+    }
+
+    fn parse_expression(&mut self) -> Result<Decimal, ValidationFinding> {
+        let mut value = self.parse_term()?;
+        loop {
+            self.skip_ws();
+            match self.peek() {
+                Some('+') => {
+                    self.bump();
+                    value = checked_decimal(value.checked_add(self.parse_term()?), "+")?;
+                }
+                Some('-') => {
+                    self.bump();
+                    value = checked_decimal(value.checked_sub(self.parse_term()?), "-")?;
+                }
+                _ => return Ok(value),
+            }
+        }
+    }
+
+    fn parse_term(&mut self) -> Result<Decimal, ValidationFinding> {
+        let mut value = self.parse_factor()?;
+        loop {
+            self.skip_ws();
+            match self.peek() {
+                Some('*') => {
+                    self.bump();
+                    value = checked_decimal(value.checked_mul(self.parse_factor()?), "*")?;
+                }
+                Some('/') => {
+                    self.bump();
+                    let divisor = self.parse_factor()?;
+                    if divisor.is_zero() {
+                        return Err(ValidationFinding::warning(
+                            "reb_formula_division_by_zero",
+                            "REB-VB formula division by zero was left unevaluated",
+                        )
+                        .at("formula"));
+                    }
+                    value = checked_decimal(value.checked_div(divisor), "/")?;
+                }
+                _ => return Ok(value),
+            }
+        }
+    }
+
+    fn parse_factor(&mut self) -> Result<Decimal, ValidationFinding> {
+        self.skip_ws();
+        match self.peek() {
+            Some('+') => {
+                self.bump();
+                self.parse_factor()
+            }
+            Some('-') => {
+                self.bump();
+                checked_decimal(Decimal::ZERO.checked_sub(self.parse_factor()?), "unary -")
+            }
+            Some('(') => {
+                self.bump();
+                let value = self.parse_expression()?;
+                self.skip_ws();
+                if self.peek() == Some(')') {
+                    self.bump();
+                    Ok(value)
+                } else {
+                    Err(ValidationFinding::warning(
+                        "reb_formula_syntax_error",
+                        "REB-VB formula has an unclosed parenthesis",
+                    )
+                    .at("formula"))
+                }
+            }
+            Some(ch) if ch.is_ascii_digit() || ch == ',' || ch == '.' => self.parse_number(),
+            Some(ch) if ch.is_alphabetic() => Err(ValidationFinding::warning(
+                "reb_formula_unsupported_token",
+                format!(
+                    "unsupported REB-VB identifier starting with '{ch}'; supported subset: {}",
+                    SUPPORTED_REB_VB_23003_SUBSET.join(", ")
+                ),
+            )
+            .at("formula")),
+            Some(ch) => Err(ValidationFinding::warning(
+                "reb_formula_syntax_error",
+                format!("unexpected REB-VB formula token '{ch}'"),
+            )
+            .at("formula")),
+            None => Err(ValidationFinding::warning(
+                "reb_formula_syntax_error",
+                "REB-VB formula ended unexpectedly",
+            )
+            .at("formula")),
+        }
+    }
+
+    fn parse_number(&mut self) -> Result<Decimal, ValidationFinding> {
+        let start = self.position;
+        while matches!(self.peek(), Some(ch) if ch.is_ascii_digit() || ch == ',' || ch == '.') {
+            self.bump();
+        }
+        let raw = &self.input[start..self.position];
+        Decimal::from_str_exact(&raw.replace(',', ".")).map_err(|error| {
+            ValidationFinding::warning(
+                "reb_formula_number_parse_failed",
+                format!("REB-VB numeric literal '{raw}' could not be parsed: {error}"),
+            )
+            .at("formula")
+        })
+    }
+
+    fn skip_ws(&mut self) {
+        while self.peek().is_some_and(char::is_whitespace) {
+            self.bump();
+        }
+    }
+
+    fn remaining(&self) -> &str {
+        &self.input[self.position..]
+    }
+
+    fn peek(&self) -> Option<char> {
+        self.chars.clone().next()
+    }
+
+    fn bump(&mut self) -> Option<char> {
+        let ch = self.chars.next()?;
+        self.position += ch.len_utf8();
+        Some(ch)
+    }
+}
+
+fn checked_decimal(value: Option<Decimal>, operator: &str) -> Result<Decimal, ValidationFinding> {
+    value.ok_or_else(|| {
+        ValidationFinding::warning(
+            "reb_formula_decimal_overflow",
+            format!("REB-VB decimal operation '{operator}' overflowed and was left unevaluated"),
+        )
+        .at("formula")
+    })
 }
 
 struct X31Parser<'a> {

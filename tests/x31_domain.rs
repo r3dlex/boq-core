@@ -402,3 +402,74 @@ fn test_x31_parser_reports_formula_text_read_errors() {
     assert_eq!(error.code, "x31_xml_text_read_failed");
     assert_eq!(error.location.as_deref(), Some("Formula"));
 }
+
+#[test]
+fn test_reb_formula_simple_arithmetic() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003("2 + 3 * (4 - 1)");
+
+    assert_eq!(evaluation.quantity, Some(Decimal::new(11, 0)));
+    assert!(evaluation.findings.is_empty());
+    assert!(boq_core::x31::SUPPORTED_REB_VB_23003_SUBSET.contains(&"multiplication"));
+}
+
+#[test]
+fn test_reb_formula_quantity_result_precision() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003("1,25 * 2 + 0.005");
+
+    assert_eq!(evaluation.quantity, Some(Decimal::new(2505, 3)));
+    assert!(evaluation.findings.is_empty());
+}
+
+#[test]
+fn test_reb_formula_unsupported_expression_yields_finding() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003("SIN(30) + 1");
+
+    assert_eq!(evaluation.quantity, None);
+    assert!(evaluation.findings.iter().any(|finding| {
+        finding.code == "reb_formula_unsupported_token"
+            && finding.message.contains("supported subset")
+    }));
+}
+
+#[test]
+fn test_formula_evaluator_never_panics_on_bad_input() {
+    for bad in ["", "1 / 0", "(1 + 2", "1 + * 2", "1.2.3"] {
+        let evaluation = boq_core::x31::evaluate_reb_vb_23003(bad);
+        assert_eq!(
+            evaluation.quantity, None,
+            "bad expression unexpectedly evaluated: {bad}"
+        );
+        assert!(!evaluation.findings.is_empty(), "missing finding for {bad}");
+    }
+}
+
+#[test]
+fn test_reb_formula_unary_and_division_are_deterministic() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003(" +10 / -2 ");
+
+    assert_eq!(evaluation.quantity, Some(Decimal::new(-5, 0)));
+    assert!(evaluation.findings.is_empty());
+}
+
+#[test]
+fn test_reb_formula_trailing_tokens_are_unevaluated() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003("1 2");
+
+    assert_eq!(evaluation.quantity, None);
+    assert!(evaluation.findings.iter().any(|finding| {
+        finding.code == "reb_formula_unsupported_token" && finding.message.contains("near '2'")
+    }));
+}
+
+#[test]
+fn test_reb_formula_decimal_overflow_yields_finding() {
+    let evaluation = boq_core::x31::evaluate_reb_vb_23003("79228162514264337593543950335 * 10");
+
+    assert_eq!(evaluation.quantity, None);
+    assert!(
+        evaluation
+            .findings
+            .iter()
+            .any(|finding| finding.code == "reb_formula_decimal_overflow")
+    );
+}
