@@ -53,3 +53,10 @@ This section records how issue #41 may use the linked source rows as local fixtu
 | R6-03 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R6-04 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R6-05 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+
+## Issue #41 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-010-kosten-kalkulation-boundary.md`.
+- Boundary matrix: `docs/fixtures/kosten-kalkulation-x50-x52-boundary.md`.
+- Tests: `tests/kosten_kalkulation_boundary.rs` locks official source rows, interactive chart reference-only policy, future cost-component obligations, X52 item-reference obligations, and support-policy `ReferenceOnly` behavior.
+- Support status: no X50/X51/X52 parser or adapter support is promoted; official rows remain `reference_only`.
