@@ -425,7 +425,7 @@ mod tests {
             gaeb_version: "gaeb_xml_3_3".to_owned(),
             phase: "x81".to_owned(),
             target_dir: target_dir.to_owned(),
-            support_status: "supported".to_owned(),
+            support_status: boq_core::support::manifest::ManifestSupportStatus::Supported,
             ci_policy: "download_on_demand".to_owned(),
             license_note: "test".to_owned(),
             test_mapping: vec!["test".to_owned()],

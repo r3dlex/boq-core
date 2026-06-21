@@ -218,7 +218,7 @@ struct IndexedEntry {
     gaeb_version: String,
     phase_code: Option<String>,
     target_dir: String,
-    support_status: String,
+    support_status: manifest::ManifestSupportStatus,
 }
 
 impl IndexedEntry {
@@ -235,7 +235,7 @@ impl IndexedEntry {
             gaeb_version,
             phase_code,
             target_dir: manifest::normalize_source_path(&entry.target_dir),
-            support_status: entry.support_status.clone(),
+            support_status: entry.support_status,
         })
     }
 }
@@ -321,33 +321,37 @@ impl SupportPolicy for ManifestPolicy {
             return conservative_default();
         }
 
-        let (status, capabilities, summary) = match entry.support_status.as_str() {
-            "supported" if entry.process_domain == "ava" => (
+        let (status, capabilities, summary) = match entry.support_status {
+            manifest::ManifestSupportStatus::Supported if entry.process_domain == "ava" => (
                 SupportStatus::Supported,
                 SupportCapabilities::supported_import(),
                 "supported AVA import fixture",
             ),
-            "supported" if entry.process_domain == "gaeb90_examples" => (
-                SupportStatus::Supported,
-                SupportCapabilities::supported_import(),
-                "supported GAEB 90 adapter-compatible import fixture",
-            ),
-            "supported_parse_only" => (
+            manifest::ManifestSupportStatus::Supported
+                if entry.process_domain == "gaeb90_examples" =>
+            {
+                (
+                    SupportStatus::Supported,
+                    SupportCapabilities::supported_import(),
+                    "supported GAEB 90 adapter-compatible import fixture",
+                )
+            }
+            manifest::ManifestSupportStatus::SupportedParseOnly => (
                 SupportStatus::SupportedParseOnly,
                 SupportCapabilities::parse_only(),
                 "supported parse-only fixture",
             ),
-            "future_track" => (
+            manifest::ManifestSupportStatus::FutureTrack => (
                 SupportStatus::FutureTrack,
                 SupportCapabilities::reference_only(),
                 "future-track fixture cataloged; parser compatibility remains gated",
             ),
-            "reference_only" => (
+            manifest::ManifestSupportStatus::ReferenceOnly => (
                 SupportStatus::ReferenceOnly,
                 SupportCapabilities::reference_only(),
                 "reference-only fixture cataloged; parser support is not claimed",
             ),
-            _ => (
+            manifest::ManifestSupportStatus::Supported => (
                 SupportStatus::SupportedParseOnly,
                 SupportCapabilities::parse_only(),
                 "manifest fixture parsed without support promotion",
