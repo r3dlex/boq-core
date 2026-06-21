@@ -29,9 +29,9 @@ Before implementation, record or link a candidate gap-analysis ADR listing exact
 - test_mwm_rialto_is_reference_only_non_executed
 
 ## Acceptance criteria
-- [ ] Issue body links this spec, PRD, and test-spec.
-- [ ] PRD contains a per-source support matrix.
-- [ ] Test-spec contains concrete red/green test names and promotion gates.
+- [x] Issue body links this spec, PRD, and test-spec.
+- [x] PRD contains a per-source support matrix.
+- [x] Test-spec contains concrete red/green test names and promotion gates.
 - [ ] Any implementation follow-up records or links the candidate architecture decision above before implementation work begins.
 
 ## Ranked roadmap source audit
@@ -42,3 +42,9 @@ This section binds issue #40 to the canonical source/status ledger. It does not 
 | --- | --- | --- | --- | --- | --- |
 | R4-04 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 | R4-05 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+
+
+## Delivery notes
+- ARCH-009 records the GAEB 90 adapter gap analysis and promotion boundary.
+- `docs/fixtures/gaeb90-adapter-gap-matrix.md` lists required adapter fields, current parser evidence, and known gaps.
+- `tests/gaeb90_adapter_promotion.rs` verifies D83 adapter conversion, D81/malformed recovery boundaries, Windows-1252 handling, and the MWM/Rialto reference-only gate.

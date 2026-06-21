@@ -223,12 +223,11 @@ struct IndexedEntry {
 
 impl IndexedEntry {
     fn from_entry(entry: &manifest::FixtureEntry) -> Option<Self> {
-        // Non-XML rows (e.g. `gaeb_90`) are filtered out here because
-        // `gaeb_xml_version` returns None for them. The GaebFormat::GaebXml
-        // guard in ManifestPolicy::decide is a belt-and-braces companion:
-        // together they ensure no manifest row can accidentally promote a
-        // non-XML format.
-        let gaeb_version = manifest::gaeb_xml_version(&entry.gaeb_version)?;
+        // Only XML and explicitly supported GAEB 90 rows participate in runtime
+        // support decisions. Other source families remain catalog/test-strategy
+        // evidence until their own policy branch is added.
+        let gaeb_version = manifest::gaeb_xml_version(&entry.gaeb_version)
+            .or_else(|| (entry.gaeb_version == "gaeb_90").then(|| "GAEB 90".to_owned()))?;
         let phase_code = manifest::phase_code(&entry.phase);
         Some(Self {
             id: entry.id.clone(),
@@ -306,12 +305,7 @@ impl SupportPolicy for ManifestPolicy {
             };
         }
 
-        // Behaviour preservation: pre-refactor `gaeb_xml::support_policy`
-        // was the only consumer of the registry, so GAEB 90 documents
-        // never reached manifest-driven promotion. Keep that invariant
-        // explicit here so future manifest rows cannot accidentally
-        // promote a non-XML format.
-        if !matches!(query.format, GaebFormat::GaebXml) {
+        if !matches!(query.format, GaebFormat::GaebXml | GaebFormat::Gaeb90) {
             return conservative_default();
         }
 
@@ -332,6 +326,11 @@ impl SupportPolicy for ManifestPolicy {
                 SupportStatus::Supported,
                 SupportCapabilities::supported_import(),
                 "supported AVA import fixture",
+            ),
+            "supported" if entry.process_domain == "gaeb90_examples" => (
+                SupportStatus::Supported,
+                SupportCapabilities::supported_import(),
+                "supported GAEB 90 adapter-compatible import fixture",
             ),
             "supported_parse_only" => (
                 SupportStatus::SupportedParseOnly,

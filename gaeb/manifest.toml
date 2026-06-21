@@ -726,10 +726,10 @@ process_domain = "gaeb90_examples"
 gaeb_version = "gaeb_90"
 phase = "d83"
 target_dir = "gaeb/developer_examples/dangl_ava_examples/gaeb90/d83"
-support_status = "supported_parse_only"
+support_status = "supported"
 ci_policy = "download_on_demand"
-license_note = "Dangl GAEB 90 D83 example used for parse-only regression; verify repository license before vendoring."
-test_mapping = ["dangl_gaeb90_d83_parses_as_fixture_backed_parse_only"]
+license_note = "Dangl GAEB 90 D83 example used for fixture-backed adapter-compatible import promotion; verify repository license before vendoring."
+test_mapping = ["dangl_gaeb90_d83_parses_as_fixture_backed_adapter_compatible", "test_gaeb90_d81_d83_hierarchy_extraction_red_tests"]
 
 [[fixtures]]
 id = "gaeb2000_priced_gist"
@@ -771,4 +771,19 @@ target_dir = "gaeb/interactive_schema/gaeb2000_xml_mapping_chart"
 support_status = "reference_only"
 ci_policy = "reference_only"
 license_note = "GAEB 2.1 to XML mapping reference only; not runtime parser support evidence."
+test_mapping = []
+
+
+[[fixtures]]
+id = "mwm_rialto_gaeb90_demo"
+source_url = "https://www.mwm.de/"
+normalized_url = "https://www.mwm.de/"
+source_family = "commercial_demo"
+process_domain = "spreadsheet_middleware"
+gaeb_version = "gaeb_90"
+phase = "roundtrip_reference"
+target_dir = "gaeb/commercial_demo/mwm_rialto_gaeb90_demo"
+support_status = "reference_only"
+ci_policy = "reference_only"
+license_note = "Commercial MWM/Rialto GAEB 90/2000/XML conversion demo; reference only and never executed or downloaded in CI."
 test_mapping = []

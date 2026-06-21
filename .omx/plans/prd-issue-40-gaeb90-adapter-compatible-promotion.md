@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision before implementation
-Before implementation, record or link a candidate gap-analysis ADR listing exact data required to promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible.
+ARCH-009 records the gap-analysis ADR listing exact data required to promote selected GAEB 90 D81/D83 fixtures from parse-only to Obra-adapter-compatible.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -20,14 +20,14 @@ Before implementation, record or link a candidate gap-analysis ADR listing exact
 | mwm_rialto_gaeb90_demo | commercial_demo | spreadsheet_middleware | GAEB 90/2000/XML conversion demo | reference_only | do not execute/download in CI | commercial demo; compatibility reference only | reference_mwm_rialto_gaeb90_roundtrip |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
-- [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
+- [x] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
+- [x] Create failing tests named in the test spec before changing parser/model behavior.
+- [x] Promote support_status only in the same PR as passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
 - [ ] No paid actions or external certification/payment/submission.
-- [ ] No Obra backend modifications (ARCH-003): "Obra-adapter-compatible" means the boq-core loss-aware model exposes the fields needed for the Obra adapter DTO (ARCH-001 layer within boq-core only); the obra ERP sibling repo (see binding ADR WS-005) must not be modified by any issue-#40 implementation lane.
+- [x] No Obra backend modifications (ARCH-003): "Obra-adapter-compatible" means the boq-core loss-aware model exposes the fields needed for the Obra adapter DTO (ARCH-001 layer within boq-core only); the obra ERP sibling repo (see binding ADR WS-005) must not be modified by any issue-#40 implementation lane.
 - [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
 - [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
@@ -92,3 +92,9 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R4-05 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+
+## Delivery notes
+- ARCH-009 records the GAEB 90 adapter gap analysis and promotion boundary.
+- `docs/fixtures/gaeb90-adapter-gap-matrix.md` lists required adapter fields, current parser evidence, and known gaps.
+- `tests/gaeb90_adapter_promotion.rs` verifies D83 adapter conversion, D81/malformed recovery boundaries, Windows-1252 handling, and the MWM/Rialto reference-only gate.

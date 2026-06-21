@@ -47,3 +47,9 @@ This section records how issue #40 may use the linked source rows as local fixtu
 | --- | --- | --- | --- | --- | --- |
 | R4-04 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 | R4-05 | #40 GAEB90 adapter-compatible promotion | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+
+
+## Delivery notes
+- ARCH-009 records the GAEB 90 adapter gap analysis and promotion boundary.
+- `docs/fixtures/gaeb90-adapter-gap-matrix.md` lists required adapter fields, current parser evidence, and known gaps.
+- `tests/gaeb90_adapter_promotion.rs` verifies D83 adapter conversion, D81/malformed recovery boundaries, Windows-1252 handling, and the MWM/Rialto reference-only gate.
