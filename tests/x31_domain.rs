@@ -118,3 +118,287 @@ fn source() -> SourceProvenance {
         parser_version: boq_core::VERSION.to_owned(),
     }
 }
+
+const X31_XML: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>X31</Name><QtyTakeoff><MeasurementGroup ID="G-1"><FormulaRecord ID="FR-1" RNo="001.0010" Unit="m3"><Formula>L * B * H</Formula><Result>12.50</Result><Attachment ID="D-1" Type="drawing" HRef="drawings/detail-a.pdf" Checksum="sha256:abc"/><UnsupportedFeature>needs future parser</UnsupportedFeature></FormulaRecord></MeasurementGroup></QtyTakeoff></Project></GAEB>"#;
+const X31_URI: &str = "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x31/synthetic.X31";
+
+#[test]
+fn test_bvbs_x31_parses_measurement_groups() {
+    let document =
+        boq_core::x31::parse_str(X31_XML, Some(X31_URI.to_owned())).expect("x31 fixture parses");
+    let row = &document.rows[0];
+
+    assert_eq!(document.source.gaeb_version.as_deref(), Some("3.3"));
+    assert_eq!(row.row_id, "FR-1");
+    assert_eq!(row.ordinal.as_deref(), Some("001.0010"));
+    assert_eq!(
+        row.metadata
+            .get("x31.measurement_group_id")
+            .and_then(serde_json::Value::as_str),
+        Some("G-1")
+    );
+}
+
+#[test]
+fn test_bvbs_x31_formula_records_preserve_source() {
+    let document =
+        boq_core::x31::parse_str(X31_XML, Some(X31_URI.to_owned())).expect("x31 fixture parses");
+    let row = &document.rows[0];
+
+    assert_eq!(row.formula.system, RebFormulaSystem::RebVb23003);
+    assert_eq!(row.formula.expression, "L * B * H");
+    assert_eq!(row.result_quantity, Some(Decimal::new(1250, 2)));
+    assert_eq!(row.unit, "m3");
+}
+
+#[test]
+fn test_bvbs_x31_attachments_are_detected() {
+    let document =
+        boq_core::x31::parse_str(X31_XML, Some(X31_URI.to_owned())).expect("x31 fixture parses");
+
+    assert_eq!(document.rows[0].attachment_ids, ["D-1"]);
+    assert_eq!(
+        document.attachments[0].kind,
+        MeasurementAttachmentKind::Drawing
+    );
+    assert_eq!(
+        document.attachments[0].source_uri.as_deref(),
+        Some("drawings/detail-a.pdf")
+    );
+}
+
+#[test]
+fn test_x31_parser_reports_unsupported_features() {
+    let document =
+        boq_core::x31::parse_str(X31_XML, Some(X31_URI.to_owned())).expect("x31 fixture parses");
+
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "x31_unsupported_feature"
+            && finding.location.as_deref() == Some("FR-1/UnsupportedFeature")
+    }));
+}
+
+#[test]
+fn test_bvbs_x31_support_promotion_requires_parser_evidence() {
+    let manifest = std::fs::read_to_string("gaeb/manifest.toml").expect("manifest exists");
+    let parsed: toml::Value = toml::from_str(&manifest).expect("manifest parses");
+    let fixtures = parsed
+        .get("fixtures")
+        .and_then(toml::Value::as_array)
+        .expect("fixtures array");
+    let x31 = fixtures
+        .iter()
+        .filter_map(toml::Value::as_table)
+        .find(|fixture| {
+            fixture.get("id").and_then(toml::Value::as_str) == Some("bvbs_xml33_qty_x31")
+        })
+        .expect("x31 fixture exists");
+
+    assert_eq!(
+        x31.get("support_status").and_then(toml::Value::as_str),
+        Some("supported_parse_only")
+    );
+    assert!(
+        x31.get("license_note")
+            .and_then(toml::Value::as_str)
+            .expect("license note")
+            .contains("measurement-domain import coverage")
+    );
+    let mappings = x31
+        .get("test_mapping")
+        .and_then(toml::Value::as_array)
+        .expect("x31 test mappings");
+    for expected in [
+        "test_bvbs_x31_parses_measurement_groups",
+        "test_bvbs_x31_formula_records_preserve_source",
+        "test_bvbs_x31_attachments_are_detected",
+        "test_x31_parser_reports_unsupported_features",
+        "test_bvbs_x31_support_promotion_requires_parser_evidence",
+    ] {
+        assert!(
+            mappings
+                .iter()
+                .any(|mapping| mapping.as_str() == Some(expected)),
+            "missing x31 parser evidence: {expected}"
+        );
+    }
+}
+
+#[test]
+fn test_x31_parser_accepts_aliases_child_units_and_decimal_comma() {
+    let xml = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><QtyTakeoff><MeasGrp Id="G-A"><FormulaRow Id="ROW-A" Ordinal="002.0010"><Expression>1,25 + 2</Expression><Quantity>3,25</Quantity><QU>m2</QU><Drawing Id="PLAN-1" Type="plan" href="plan.pdf"/><Asset Id="PHOTO-1" Type="photo" Path="photo.jpg"/><Asset Id="CALC-1" Type="calculation_sheet" Path="calc.xlsx"/><Asset Id="UNK-1" Type="other"/></FormulaRow></MeasGrp><QtyGroup ID="G-B"><Measurement ID="ROW-B" OZ="003.0010" Unit="kg"><Formula>5</Formula><Qty>5</Qty></Measurement></QtyGroup></QtyTakeoff></GAEB>"#;
+
+    let document = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect("aliases parse");
+
+    assert_eq!(document.rows.len(), 2);
+    assert_eq!(document.rows[0].row_id, "ROW-A");
+    assert_eq!(document.rows[0].ordinal.as_deref(), Some("002.0010"));
+    assert_eq!(document.rows[0].formula.expression, "1,25 + 2");
+    assert_eq!(document.rows[0].result_quantity, Some(Decimal::new(325, 2)));
+    assert_eq!(document.rows[0].unit, "m2");
+    assert_eq!(
+        document.rows[0]
+            .metadata
+            .get("x31.measurement_group_id")
+            .and_then(serde_json::Value::as_str),
+        Some("G-A")
+    );
+    assert_eq!(document.rows[1].row_id, "ROW-B");
+    assert_eq!(document.rows[1].ordinal.as_deref(), Some("003.0010"));
+    assert_eq!(document.rows[1].unit, "kg");
+    assert_eq!(document.attachments.len(), 4);
+    assert_eq!(
+        document.attachments[0].kind,
+        MeasurementAttachmentKind::Drawing
+    );
+    assert_eq!(
+        document.attachments[1].kind,
+        MeasurementAttachmentKind::Photo
+    );
+    assert_eq!(
+        document.attachments[2].kind,
+        MeasurementAttachmentKind::CalculationSheet
+    );
+    assert_eq!(
+        document.attachments[3].kind,
+        MeasurementAttachmentKind::Unknown
+    );
+    assert_eq!(
+        document.attachments[0].source_uri.as_deref(),
+        Some("plan.pdf")
+    );
+    assert_eq!(
+        document.attachments[1].source_uri.as_deref(),
+        Some("photo.jpg")
+    );
+}
+
+#[test]
+fn test_x31_parse_file_reads_document_from_disk() {
+    let temp_dir = std::path::Path::new("target").join("x31-parser-tests");
+    std::fs::create_dir_all(&temp_dir).expect("temp dir");
+    let path = temp_dir.join("parse-file.X31");
+    std::fs::write(&path, X31_XML).expect("write x31 temp file");
+
+    let document = boq_core::x31::parse_file(&path).expect("parse file succeeds");
+
+    assert_eq!(document.rows.len(), 1);
+    assert_eq!(
+        document.source.source_uri.as_deref(),
+        Some(path.to_str().expect("utf8 path"))
+    );
+    assert!(
+        document
+            .source
+            .checksum
+            .as_deref()
+            .is_some_and(|checksum| checksum.len() == 64)
+    );
+}
+
+#[test]
+fn test_x31_parse_file_reports_missing_file() {
+    let error = boq_core::x31::parse_file("target/x31-parser-tests/missing.X31")
+        .expect_err("missing file fails");
+
+    assert_eq!(error.code, "x31_read_failed");
+    assert_eq!(
+        error.location.as_deref(),
+        Some("target/x31-parser-tests/missing.X31")
+    );
+}
+
+#[test]
+fn test_x31_parser_reports_document_level_unsupported_containers() {
+    let xml = r"<GAEB><Sketch/><FreeMeasurement/><UnsupportedFeature/></GAEB>";
+
+    let document = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect("x31 parses");
+
+    for expected in ["Sketch", "FreeMeasurement", "UnsupportedFeature"] {
+        assert!(
+            document.findings.iter().any(|finding| {
+                finding.code == "x31_unsupported_feature"
+                    && finding.location.as_deref() == Some(expected)
+            }),
+            "missing finding for {expected}"
+        );
+    }
+}
+
+#[test]
+fn test_x31_parser_reports_decimal_parse_errors() {
+    let xml = r#"<GAEB><FormulaRecord ID="BAD" RNo="001"><Result>not-a-number</Result></FormulaRecord></GAEB>"#;
+
+    let error =
+        boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect_err("invalid decimal fails");
+
+    assert_eq!(error.code, "x31_decimal_parse_failed");
+    assert_eq!(error.location.as_deref(), Some("Result"));
+}
+
+#[test]
+fn test_x31_parser_reports_unclosed_rows() {
+    let xml = r#"<GAEB><FormulaRecord ID="OPEN" RNo="001"><Formula>1</Formula>"#;
+
+    let error =
+        boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect_err("unclosed row fails");
+
+    assert_eq!(error.code, "x31_unclosed_measurement_row");
+    assert_eq!(error.location.as_deref(), Some("OPEN"));
+}
+
+#[test]
+fn test_x31_parser_reports_malformed_xml() {
+    let xml = r"<GAEB><Broken></GAEB>";
+
+    let error =
+        boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect_err("malformed xml fails");
+
+    assert_eq!(error.code, "x31_xml_parse_failed");
+}
+
+#[test]
+fn test_x31_parser_reports_started_unsupported_containers_and_empty_groups() {
+    let xml = r"<GAEB><MeasurementGroup/><Sketch>reference-only</Sketch></GAEB>";
+
+    let document = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect("x31 parses");
+
+    assert!(document.rows.is_empty());
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "x31_unsupported_feature" && finding.location.as_deref() == Some("Sketch")
+    }));
+}
+
+#[test]
+fn test_x31_parser_reports_empty_row_unknown_fields() {
+    let xml = r#"<GAEB><FormulaRecord ID="ROW-UNSUPPORTED" RNo="001"><UnsupportedEmpty/></FormulaRecord></GAEB>"#;
+
+    let document = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned())).expect("x31 parses");
+
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "x31_unsupported_feature"
+            && finding.location.as_deref() == Some("ROW-UNSUPPORTED/UnsupportedEmpty")
+    }));
+}
+
+#[test]
+fn test_x31_parser_preserves_nested_formula_markup_as_source_text() {
+    let xml = r#"<GAEB><FormulaRecord ID="NESTED" RNo="001"><Formula><Nested/></Formula></FormulaRecord></GAEB>"#;
+
+    let document = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned()))
+        .expect("nested formula markup is preserved as source text");
+
+    assert_eq!(document.rows[0].formula.expression, "<Nested/>");
+}
+
+#[test]
+fn test_x31_parser_reports_formula_text_read_errors() {
+    let xml =
+        r#"<GAEB><FormulaRecord ID="TEXTERR" RNo="001"><Formula>1</Other></FormulaRecord></GAEB>"#;
+
+    let error = boq_core::x31::parse_str(xml, Some(X31_URI.to_owned()))
+        .expect_err("mismatched formula text fails");
+
+    assert_eq!(error.code, "x31_xml_text_read_failed");
+    assert_eq!(error.location.as_deref(), Some("Formula"));
+}

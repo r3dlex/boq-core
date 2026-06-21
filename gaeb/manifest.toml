@@ -94,10 +94,10 @@ process_domain = "quantity_takeoff"
 gaeb_version = "gaeb_xml_3_3"
 phase = "x31"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x31"
-support_status = "future_track"
+support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "Future quantity takeoff fixture."
-test_mapping = ["future_quantity_takeoff_x31_cataloged"]
+license_note = "BVBS Mengenermittlung X31 fixture has parser-readiness evidence for supported_parse_only measurement-domain import coverage; readiness-only; no paid submission, adapter, export, formula evaluation, or roundtrip promotion."
+test_mapping = ["test_bvbs_x31_parses_measurement_groups", "test_bvbs_x31_formula_records_preserve_source", "test_bvbs_x31_attachments_are_detected", "test_x31_parser_reports_unsupported_features", "test_bvbs_x31_support_promotion_requires_parser_evidence"]
 
 [[fixtures]]
 id = "bvbs_xml33_text_x81"

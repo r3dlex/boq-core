@@ -8,22 +8,27 @@
 BVBS X31 fixtures parse into the X31 measurement domain with formula source preservation and loss-aware findings.
 
 ## Source/status anchors
-- BVBS X31: `future_track`.
+- BVBS X31: `supported_parse_only` after this issue; formula evaluation, adapter, export, schema validation, and roundtrip remain disabled.
 - GAEB XML 3.3 X31 schema: `reference_only` schema.
 
 ## Blocking dependencies
-- Depends on #28 X31 domain model.
+- #28 X31 domain model is complete and used as the parser output boundary.
 
 ## Requirements
-- [ ] Complete #28 model before parser behavior.
-- [ ] Parse measurement groups and formula records.
-- [ ] Detect attachments and unsupported features.
+- [x] Complete #28 model before parser behavior.
+- [x] Parse measurement groups and formula records.
+- [x] Detect attachments and unsupported features.
+
+## Specification artifacts
+- Spec: `.omx/specs/issue-29-x31-parser-mvp.md`
+- Test spec: `.omx/plans/test-spec-issue-29-x31-parser-mvp.md`
 
 ## Planned tests
-- [ ] `test_bvbs_x31_parses_measurement_groups`
-- [ ] `test_bvbs_x31_formula_records_preserve_source`
-- [ ] `test_bvbs_x31_attachments_are_detected`
-- [ ] `test_x31_parser_reports_unsupported_features`
+- [x] `test_bvbs_x31_parses_measurement_groups`
+- [x] `test_bvbs_x31_formula_records_preserve_source`
+- [x] `test_bvbs_x31_attachments_are_detected`
+- [x] `test_x31_parser_reports_unsupported_features`
+- [x] `test_bvbs_x31_support_promotion_requires_parser_evidence`
 
 ## Ranked roadmap source inventory binding
 
