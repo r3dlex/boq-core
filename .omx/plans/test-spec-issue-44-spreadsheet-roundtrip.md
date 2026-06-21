@@ -52,3 +52,10 @@ This section records how issue #44 may use the linked source rows as local fixtu
 | A2-03 | #44 Spreadsheet roundtrip | manifested | gaeb_online_generator_exe | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 | A2-04 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 | A2-05 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+
+
+## Issue #44 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-013-spreadsheet-roundtrip-boundary.md`.
+- Boundary matrix: `docs/fixtures/spreadsheet-roundtrip-boundary.md`.
+- Tests: `tests/spreadsheet_roundtrip_boundary.rs` locks reference-only/non-executed spreadsheet sources, no spreadsheet dependency, OZ matching with reordered/inserted columns, missing-OZ rejection, and artifact sync.
+- Support status: no spreadsheet parser, export, executable, browser, or roundtrip helper support is promoted; relevant rows remain `reference_only`.
