@@ -108,6 +108,74 @@ fn test_developer_guide_states_95_coverage_policy() {
 }
 
 #[test]
+fn test_certification_guide_mentions_paid_gate() {
+    let guide = fs::read_to_string("docs/book/certification-evidence-guide.md")
+        .expect("certification guide exists");
+    for required in [
+        "readiness evidence only",
+        "explicit human authorization",
+        "No paid submission",
+        "No credential entry",
+        "ARCH-004",
+        "Issue #18",
+        "gaeb/manifest.toml",
+        "reference_only",
+        "supported_parse_only",
+    ] {
+        assert!(
+            guide.contains(required),
+            "certification guide missing paid-gate anchor: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_certification_guide_uses_no_certified_claim() {
+    let guide = fs::read_to_string("docs/book/certification-evidence-guide.md")
+        .expect("certification guide exists");
+
+    let forbidden = [
+        "officially certified".to_owned(),
+        "BVBS certified".to_owned(),
+        "certified by BVBS".to_owned(),
+        "paid certification completed".to_owned(),
+        "certification achieved".to_owned(),
+        "tooling_only".to_owned(),
+        "certification_fixture".to_owned(),
+        ["obra", "backend"].join("/"),
+    ];
+    for forbidden in forbidden {
+        assert!(
+            !guide.contains(&forbidden),
+            "certification guide contains forbidden claim or vocabulary: {forbidden}"
+        );
+    }
+
+    for required in [
+        "AVA",
+        "Bauausführung",
+        "Mengenermittlung",
+        "Texterstellung",
+        "docs/fixtures/gaebxmlchecker-ava-evidence.md",
+        "docs/fixtures/bvbs-ava-criteria-readiness.md",
+        "docs/fixtures/bvbs-ava-golden-reports.md",
+        "docs/fixtures/bvbs-bau-x83-readiness.md",
+        "docs/fixtures/bvbs-texterstellung-criteria-readiness.md",
+        "docs/fixtures/xrechnung-bridge-plan.md",
+        "docs/fixtures/gaeb-xml34-beta-impact.md",
+        "docs/fixtures/kosten-kalkulation-x50-x52-boundary.md",
+        "docs/fixtures/handel-x93-x97-boundary.md",
+        "docs/fixtures/zeitvertrag-x83z-x84z-boundary.md",
+        "docs/fixtures/spreadsheet-roundtrip-boundary.md",
+    ] {
+        assert!(
+            guide.contains(required),
+            "certification guide missing evidence-track anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn docs_do_not_overclaim_certification_or_future_formats() {
     let mut combined = String::new();
     for path in [
