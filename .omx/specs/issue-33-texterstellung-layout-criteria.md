@@ -23,8 +23,8 @@ Planning-only specification for the GAEB ranked roadmap source slice backing iss
 - The PRD, spec, and test spec for issue #33 all reference the same canonical source IDs.
 - Manifest-backed rows can only be used through local fixture manifest entries.
 - Planned or artifact-only rows remain documented as research/reference gates until a license-safe local fixture is added and checksummed.
-- Certification PDFs and visual reference PDFs are treated as reference-only evidence, not executable parser fixtures.
+- Certification PDFs and visual reference PDFs are treated as reference-only evidence, not executable parser fixtures. The delivered matrix lives at `gaeb/criteria/bvbs_texterstellung_matrix.toml`; the readiness report lives at `docs/fixtures/bvbs-texterstellung-criteria-readiness.md`.
 
 ## Implementation handoff
 
-Use `.omx/specs/gaeb-ranked-source-status-ledger.md` as the source of truth for dispositions. Update `boq-core/gaeb/manifest.toml` and a follow-up test spec before promoting any planned row to fixture-backed execution.
+Use `.omx/specs/gaeb-ranked-source-status-ledger.md` as the source of truth for dispositions. Issue #33 adds a readiness-only criteria matrix and tests; future promotion requires manifest/test-plan updates and must not convert rendering-only criteria into parser support claims without a renderer plan.

@@ -9,18 +9,18 @@ Texterstellung BVBS layout criteria map to parser evidence, golden reports, manu
 
 ## Source/status anchors
 - BVBS Texterstellung criteria: `reference_only`.
-- Texterstellung X81/X82 fixtures: `future_track`.
+- Texterstellung X81/X82 fixtures: `supported_parse_only` parser-readiness after issue #32; no adapter/export/roundtrip/rendering/certification claim.
 
 ## Requirements
-- [ ] Define parser evidence vs layout/manual evidence.
-- [ ] Cover all known criteria sections.
-- [ ] Require matrix status before support/certification claims.
+- [x] Define parser evidence vs layout/manual evidence in `gaeb/criteria/bvbs_texterstellung_matrix.toml`.
+- [x] Cover all known criteria sections: rich text, tables, text complements, X82 metadata, visual layout, font rendering, PDF/checker evidence, and paid certification submission.
+- [x] Require matrix status before support/certification claims; parser rows are `supported_parse_only`, rendering/certification rows remain `reference_only`.
 
 ## Planned tests
-- [ ] `test_text_criteria_matrix_covers_all_known_sections`
-- [ ] `test_text_layout_manual_evidence_is_marked_manual`
-- [ ] `test_text_fixture_golden_reports_link_criteria`
-- [ ] `test_text_support_claims_require_matrix_status`
+- [x] `test_text_criteria_matrix_covers_all_known_sections`
+- [x] `test_text_layout_manual_evidence_is_marked_manual`
+- [x] `test_text_fixture_golden_reports_link_criteria`
+- [x] `test_text_support_claims_require_matrix_status`
 
 ## Ranked roadmap source inventory binding
 
