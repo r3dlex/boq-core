@@ -11,10 +11,10 @@
 5. Promote support_status only with green tests and review evidence.
 
 ## Concrete planned tests
-- [ ] `test_gaeb_xml34_sources_are_reference_only` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_gaeb_xml34_does_not_promote_supported_versions` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_beta_sustainability_fields_are_recorded_as_model_impact_notes` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
-- [ ] `test_no_bvbs_certification_claim_for_xml34_beta` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_gaeb_xml34_sources_are_reference_only` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_gaeb_xml34_does_not_promote_supported_versions` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_beta_sustainability_fields_are_recorded_as_model_impact_notes` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
+- [x] `test_no_bvbs_certification_claim_for_xml34_beta` — add as a failing/red test before implementation; turn green only with source-backed behavior and support-status review.
 
 ## Per-source fixture/status checks
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -46,3 +46,9 @@ This section records how issue #38 may use the linked source rows as local fixtu
 | --- | --- | --- | --- | --- | --- |
 | A1-01 | #38 GAEB XML 3.4 beta tracking | manifested | official_gaeb_xml34_beta_schema | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 | A1-02 | #38 GAEB XML 3.4 beta tracking | manifested | official_gaeb_xml34_beta_changelog | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
+
+
+## Delivery notes
+- ARCH-007 records the beta support boundary.
+- `docs/fixtures/gaeb-xml34-beta-impact.md` lists sustainability, lifecycle, and carbon / CO2 impact extension points.
+- `tests/gaeb_xml34_beta.rs` keeps manifest rows, parser policy, documentation, and no-certification claims in sync.
