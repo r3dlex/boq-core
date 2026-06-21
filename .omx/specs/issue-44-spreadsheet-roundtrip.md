@@ -8,7 +8,7 @@
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
 ## Candidate architecture decision before implementation
-Before implementation, record or link a candidate boundary ADR deciding core vs companion crate/examples-only for spreadsheet roundtrip helpers before adding dependencies.
+ARCH-013 records the boundary decision: spreadsheet roundtrip helpers remain reference-only examples/companion-crate planning in this issue; no spreadsheet dependency, executable run, parser support, export support, or roundtrip capability is added.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -31,10 +31,10 @@ Before implementation, record or link a candidate boundary ADR deciding core vs 
 - test_missing_oz_rejects_roundtrip_red_tests
 
 ## Acceptance criteria
-- [ ] Issue body links this spec, PRD, and test-spec.
-- [ ] PRD contains a per-source support matrix.
-- [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up records or links the candidate architecture decision above before implementation work begins.
+- [x] Issue body links this spec, PRD, and test-spec.
+- [x] PRD contains a per-source support matrix.
+- [x] Test-spec contains concrete red/green test names and promotion gates.
+- [x] ARCH-013 records the candidate architecture decision before parser/helper promotion.
 
 ## Ranked roadmap source audit
 
@@ -47,3 +47,10 @@ This section binds issue #44 to the canonical source/status ledger. It does not 
 | A2-03 | #44 Spreadsheet roundtrip | manifested | gaeb_online_generator_exe | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 | A2-04 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 | A2-05 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
+
+
+## Issue #44 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-013-spreadsheet-roundtrip-boundary.md`.
+- Boundary matrix: `docs/fixtures/spreadsheet-roundtrip-boundary.md`.
+- Tests: `tests/spreadsheet_roundtrip_boundary.rs` locks reference-only/non-executed spreadsheet sources, no spreadsheet dependency, OZ matching with reordered/inserted columns, missing-OZ rejection, and artifact sync.
+- Support status: no spreadsheet parser, export, executable, browser, or roundtrip helper support is promoted; relevant rows remain `reference_only`.

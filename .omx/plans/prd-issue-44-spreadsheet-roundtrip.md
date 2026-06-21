@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision before implementation
-Before implementation, record or link a candidate boundary ADR deciding core vs companion crate/examples-only for spreadsheet roundtrip helpers before adding dependencies.
+ARCH-013 records the boundary decision: spreadsheet roundtrip helpers remain reference-only examples/companion-crate planning in this issue; no spreadsheet dependency, executable run, parser support, export support, or roundtrip capability is added.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -22,15 +22,15 @@ Before implementation, record or link a candidate boundary ADR deciding core vs 
 | easy_gaeb_browser | browser_utility | spreadsheet_roundtrip | Browser utility | reference_only | no CI dependency; no scraping/execution | external web utility; reference only | reference_easy_gaeb_browser |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
-- [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
+- [x] Maintain fixture manifest/reference entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, executable, commercial, browser, or interactive-only sources.
+- [x] Create boundary/negative tests named in the test spec before changing parser/model behavior; no parser/model behavior is promoted in this issue.
+- [x] Preserve reference_only support_status; promotion remains reserved for a future PR with passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
-- [ ] No paid actions or external certification/payment/submission.
-- [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
-- [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
+- [x] No paid actions or external certification/payment/submission.
+- [x] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
+- [x] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
 ## Follow-up issue policy
 Follow-ups should update issue #44 and its PRD/test-spec. Create a new GitHub issue only when a genuinely new source family or independent implementation track is discovered.
@@ -96,3 +96,10 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | A2-05 | #44 Spreadsheet roundtrip | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+
+## Issue #44 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-013-spreadsheet-roundtrip-boundary.md`.
+- Boundary matrix: `docs/fixtures/spreadsheet-roundtrip-boundary.md`.
+- Tests: `tests/spreadsheet_roundtrip_boundary.rs` locks reference-only/non-executed spreadsheet sources, no spreadsheet dependency, OZ matching with reordered/inserted columns, missing-OZ rejection, and artifact sync.
+- Support status: no spreadsheet parser, export, executable, browser, or roundtrip helper support is promoted; relevant rows remain `reference_only`.
