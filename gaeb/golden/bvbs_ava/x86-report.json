@@ -1,0 +1,1213 @@
+{
+  "schema_version": 1,
+  "fixture_id": "bvbs_xml33_ava_x86",
+  "source_path": "gaeb/bvbs/gaeb_xml_3_3/ava/x86/BVBS_Pruefdatei GAEB DA XML 3.3 - AVA - V 11 06 2021.X86",
+  "source_checksum_sha256": "7a60d33dded58b78281a3556b3e6b6e7ed54cb49589273fd84bdb27c19216657",
+  "parser_version": "0.1.0",
+  "support_status": "supported",
+  "capabilities": {
+    "adapt_to_obra": true,
+    "detect": true,
+    "export": false,
+    "parse": true,
+    "reference_only": false,
+    "roundtrip": false,
+    "validate": true
+  },
+  "summary": {
+    "currency": null,
+    "format": "gaeb_xml",
+    "phase": {
+      "code": "86",
+      "label": null
+    },
+    "project_name": "BVBS GAEB AVA",
+    "title": "GAEB BoQ",
+    "version": "3.3"
+  },
+  "hierarchy": {
+    "root_count": 3,
+    "total_node_count": 90,
+    "total_item_count": 68,
+    "root_ordinals": [
+      "CBNDAAAA",
+      "CBNFAAAA",
+      "CBNGAAAA"
+    ]
+  },
+  "item_samples": [
+    {
+      "ordinal": "CBNDBHEA",
+      "title": "9300201123000202\nBaugelände abräumen gemäß beiliegendem Lageplan,\nin Teilflächen,\nvon Aufwuchs mit Stämmen bis 10 cm Durchmesser,\ndas abgeräumte Material getrennt nach Stoffen laden.\nAbfuhr und Entsorgung werden gesondert vergütet.\nGelände abräumen",
+      "quantity": "1.000",
+      "unit": "psch",
+      "unit_price": "5400.000",
+      "total_price": "5400.00",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDBMIA",
+      "title": "STLB-Bau\n2001-10\n080\n350\n183\n0\n110\n58\n0\n8\n3371\n0\n10\n51\n0\n215\n12\n0\n15\n8335\n0\n2\n1352\n0\n1\n2381\n0\n5\n2621\n0\n53\n2620\n0\n9\n2622\n0\n4\n2754\n0\n3\n3175\n0\n10\n2922\n0\n61\n2136\n0\n15\n10216\n0\n9\nPlattenbelag ZTV P-StB aus Gehwegplatten aus Beton\nDIN 485, Endplatte, 30 cm x 30 cm x 4 cm, Oberfläche\ndurchgefärbt, Farbton grau, Platten einschichtig,\nBettung aus Sand 0/2, Dicke 4 cm, in parallelen Reihen,\nin Fußgängerzonen, Fugen einschlämmen mit Sand.\nPlattenbelag Beton 30x30x4cm durchgefärbt",
+      "quantity": "200.000",
+      "unit": "St",
+      "unit_price": "2.610",
+      "total_price": "522.00",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDCFCI",
+      "title": "STLB-Bau\n2001-10\n002\n526\n3628\n0\n171\n3629\n0\n20\n3632\n0\n10\n3631\n0\n20\n3265\n0\n418\n5650\n0\n1\n783\n0\n1\n2136\n0\n1\n12302\n0\n1\nOberboden DIN 18300 abtragen, laden, fördern und\ngeordnet lagern, Abtragdicke im Mittel 20 cm,\nMengenermittlung nach Aufmaß an der Entnahmestelle.\nOberboden abtragen, lagern d 20cm",
+      "quantity": "150.000",
+      "unit": "m2",
+      "unit_price": "3.070",
+      "total_price": "460.50",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDCMGI",
+      "title": "STLB-Bau\n2001-10\n002\n536\n3632\n0\n270\n3696\n0\n20\n3827\n0\n20\n2342\n0\n7\n783\n0\n1\n3697\n0\n10\n3702\n0\n20\n3631\n0\n10\n3701\n0\n1\n2136\n0\n3\n11703\n0\n2\nBoden für Suchgraben zur Freilegung von Kabeln ab\nGeländeoberfläche profilgerecht lösen, außerhalb der\nBaugrube lagern, Verbau wird gesondert vergütet,\nAushubtiefe bis 0,8 m, Bodenklassen 3 und 4 DIN 18300.\nBoden Suchgraben lösen, lagern BK 3/4",
+      "quantity": "3.000",
+      "unit": "m3",
+      "unit_price": "44.140",
+      "total_price": "132.42",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDDGLA",
+      "title": "9300221151521052\nYes\nYes\nHinterfüllen\nvon Arbeitsräumen,\nprofilgerecht,\nmit vom AN zu liefernden Stoffen,\nStoff\nKies-Sand-Gemisch 0/32\noder gleichwertiger Art,\nStoff\n....................................................\n,\nverdichten.\nSchichtdicke über 20 bis 30 cm.\nHinterfüllen profilgerecht\nD 20-30 cm",
+      "quantity": "300.000",
+      "unit": "m2",
+      "unit_price": "20.000",
+      "total_price": "6000.00",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDDPKA",
+      "title": "9300214102028301\nYes\nBoden für Streifenfundamente\nprofilgerecht lösen und seitlich lagern,\nAushub nach Abtrag des Oberbodens,\nBreite der Fundamentsohle über 0,50 bis 1,00 m,\nAushubtiefe ab/bis\n1,00\n,\nBodenklasse 4.\nBoden Fundamente lösen,lagern",
+      "quantity": "40.000",
+      "unit": "m3",
+      "unit_price": "20.000",
+      "total_price": "720.00",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDEEOI",
+      "title": "STLB-Bau\n2001-10\n012\n69\n702\n0\n2\n701\n0\n3\n2691\n0\n5\n2\n0\n40\n3\n0\n5\n4\n0\n7\n6\n0\n3\n543\n0\n6\n2793\n0\n330\n691\n0\n5\n2287\n0\n7\n2839\n0\n30\n2794\n0\n10\n2136\n0\n1\n-7\n10008\n2011\n7691\n0\n26\nYes\nVerblendmauerwerk DIN 1053-1 an vorhandenen\nDrahtankern, mit Luftschicht, Schalenabstand 8 cm, vor\nInnenwänden, Hüttenstein DIN 398 - VHSV 20 - 1,6\nFormat NF (240 x 115 x 71), Mauermörtel MG II a, Höhe\nbis 6 m, Ausführung im Binderverband,\nFugenglattstrich/Ausfugen werden gesondert vergütet, in\nEinzelflächen über 2 bis 3 m2,\nErzeugnis\n.......................................................\nvom Bieter einzutragen.\nVerblendung Innenwand VHSV 20 - 1,6 - NF MGIIa H bis 6m",
+      "quantity": "20.000",
+      "unit": "m2",
+      "unit_price": "83.100",
+      "total_price": "1662.00",
+      "long_text_kind": "plain"
+    },
+    {
+      "ordinal": "CBNDFCGA",
+      "title": "8911010341121202\nBefestigung der Sohle und Boeschungen von Mulden und\nGraeben freilegen und einschliesslich Bettung ausbauen.\nMaterial = Rasengittersteine.\nSteine in Beton verlegt.\nFugen mit Moertel verfugt.\nGesamtdicke mit Bettung ueber 20 bis 30 cm.\nWiederverwendbare Stoffe saeubern und innerhalb der\nBaustelle lagern.\nMittlere Laenge des Foerderweges ueber 0,25 bis 0,5 km.\nNicht wiederverwendbare Stoffe und uebriges Aufbruchgut\ninnerhalb der Baustelle foerdern und nach Angabe des AG\neinbauen und verdichten.\nMulden- u. Grabenbefestig. ausbauen Rasengittersteine In Beton Moertelfuge Dicke 20 - 30 cm Stoffe s.+lagern Weg 0,25 - 0,5 km Aufbr.tw.verdicht",
+      "quantity": "200.000",
+      "unit": "m2",
+      "unit_price": "10.000",
+      "total_price": "2000.00",
+      "long_text_kind": "plain"
+    }
+  ],
+  "findings": [
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDBMIA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDCFCI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDCMGI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDDPKA/DiscountPcnt",
+      "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDEEOI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDHECI/SumDescr",
+      "message": "unsupported GAEB XML item field SumDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDHECI/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDHECI/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDHECI/SubDescr",
+      "message": "unsupported GAEB XML item field SubDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLFJI/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLFJI/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLFJI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLLEA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLLEA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLLEA/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLPPI/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLPPI/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDLPPI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDMEEI/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDMEEI/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDMMLA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDMMLA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDMMLA/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNECA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNECA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNECA/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNJBI/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNJBI/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDNJBI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOADA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOADA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOGEA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOGEA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOLBA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOLBA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOPPA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDOPPA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDPENA/ALNGroupNo",
+      "message": "unsupported GAEB XML item field ALNGroupNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNDPENA/ALNSerNo",
+      "message": "unsupported GAEB XML item field ALNSerNo was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/Provis",
+      "message": "unsupported GAEB XML item field Provis was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/UPBkdn",
+      "message": "unsupported GAEB XML item field UPBkdn was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAAAA/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/Provis",
+      "message": "unsupported GAEB XML item field Provis was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/UPBkdn",
+      "message": "unsupported GAEB XML item field UPBkdn was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEAGCI/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/UPBkdn",
+      "message": "unsupported GAEB XML item field UPBkdn was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEANDI/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/UPBkdn",
+      "message": "unsupported GAEB XML item field UPBkdn was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/QtyTBD",
+      "message": "unsupported GAEB XML item field QtyTBD was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBEAI/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/UPBkdn",
+      "message": "unsupported GAEB XML item field UPBkdn was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/UPComp1",
+      "message": "unsupported GAEB XML item field UPComp1 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/UPComp2",
+      "message": "unsupported GAEB XML item field UPComp2 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/UPComp3",
+      "message": "unsupported GAEB XML item field UPComp3 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEBKMI/UPComp4",
+      "message": "unsupported GAEB XML item field UPComp4 was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/Provis",
+      "message": "unsupported GAEB XML item field Provis was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/QtyTBD",
+      "message": "unsupported GAEB XML item field QtyTBD was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECGHA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECLOI/Provis",
+      "message": "unsupported GAEB XML item field Provis was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECLOI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECLOI/QtySplit",
+      "message": "unsupported GAEB XML item field QtySplit was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNECLOI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEDCGI/NotAppl",
+      "message": "unsupported GAEB XML item field NotAppl was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEDCGI/HourIt",
+      "message": "unsupported GAEB XML item field HourIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEDCGI/QtyTBD",
+      "message": "unsupported GAEB XML item field QtyTBD was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEDCGI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEEAGI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEEAGI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEEIHI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEENKI/RefDescr",
+      "message": "unsupported GAEB XML item field RefDescr was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEFCHI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEFPDI/MarkupIt",
+      "message": "unsupported GAEB XML item field MarkupIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEGIGI/MarkupIt",
+      "message": "unsupported GAEB XML item field MarkupIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNEGIGI/DiscountPcnt",
+      "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFALKI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFBELI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFGEMI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFHJOI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFIFLA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFJDJA/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFKCHI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFNMEI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFNMEI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNGAHFI/HourIt",
+      "message": "unsupported GAEB XML item field HourIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNGALJA/HourIt",
+      "message": "unsupported GAEB XML item field HourIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNGAPNI/HourIt",
+      "message": "unsupported GAEB XML item field HourIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNGBECI/Provis",
+      "message": "unsupported GAEB XML item field Provis was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNGBECI/HourIt",
+      "message": "unsupported GAEB XML item field HourIt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_description_plain_text_only",
+      "location": null,
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "severity": "warning"
+    }
+  ],
+  "certification_claim": false
+}
