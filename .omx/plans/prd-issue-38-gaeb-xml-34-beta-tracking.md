@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision required before implementation
-Create a beta-impact ADR that records 3.4 as reference-only and identifies sustainability/lifecycle/carbon descriptor model extension points.
+ARCH-007 records 3.4 as reference-only and identifies sustainability/lifecycle/carbon descriptor model extension points.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -20,21 +20,21 @@ Create a beta-impact ADR that records 3.4 as reference-only and identifies susta
 | gaeb_xml34_beta_changelog | official_gaeb | beta_compatibility | 3.4 beta changelog | reference_only | manual/manifest gated; no CI dependency until stable | beta changelog; documentation only | reference_gaeb_xml34_beta_changelog |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
-- [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
+- [x] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
+- [x] Create failing tests named in the test spec before changing parser/model behavior.
+- [x] Promote support_status only in the same PR as passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
-- [ ] No paid actions or external certification/payment/submission.
-- [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
-- [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
+- [x] No paid actions or external certification/payment/submission.
+- [x] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
+- [x] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
 ## Follow-up issue policy
 Follow-ups should update issue #38 and its PRD/test-spec. Create a new GitHub issue only when a genuinely new source family or independent implementation track is discovered.
 
 ## Acceptance criteria
-- [ ] Per-source matrix is preserved in future implementation PRs.
+- [x] Per-source matrix is preserved in future implementation PRs.
 - [ ] The candidate architecture decision is recorded or linked before parser/model code changes.
 - [ ] Test-spec concrete tests are created or consciously deferred with rationale.
 - [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
@@ -91,3 +91,9 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | A1-02 | #38 GAEB XML 3.4 beta tracking | manifested | official_gaeb_xml34_beta_changelog | reference_only | Reference-only manifest artifact; not executable as parser fixture. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+
+## Delivery notes
+- ARCH-007 records the beta support boundary.
+- `docs/fixtures/gaeb-xml34-beta-impact.md` lists sustainability, lifecycle, and carbon / CO2 impact extension points.
+- `tests/gaeb_xml34_beta.rs` keeps manifest rows, parser policy, documentation, and no-certification claims in sync.

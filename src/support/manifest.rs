@@ -275,6 +275,9 @@ fn validate_url(url: &str) -> Result<(), String> {
 /// Returns `None` for non-XML versions such as `gaeb_90`.
 #[must_use]
 pub fn gaeb_xml_version(value: &str) -> Option<String> {
+    if value == "gaeb_xml_3_4_beta" {
+        return Some("3.4".to_owned());
+    }
     value
         .strip_prefix("gaeb_xml_3_")
         .map(|suffix| format!("3.{suffix}"))

@@ -159,7 +159,7 @@ impl<'a> XmlParser<'a> {
             project_name: self.project_name.clone(),
         };
         if let Some(version) = self.version.clone() {
-            self.record_legacy_compatibility_finding(&version);
+            self.record_version_compatibility_finding(&version);
         }
         let support = crate::support::default_policy().decide(SupportQuery {
             format: GaebFormat::GaebXml,
@@ -258,13 +258,18 @@ impl<'a> XmlParser<'a> {
         }
     }
 
-    fn record_legacy_compatibility_finding(&mut self, version: &str) {
+    fn record_version_compatibility_finding(&mut self, version: &str) {
         if matches!(version, "3.1" | "3.2") {
             self.findings.push(ValidationFinding::warning(
                 "gaeb_xml_legacy_version_compatibility",
                 format!(
                     "GAEB XML {version} compatibility is detected but remains gated by fixture support status; data is not silently coerced to GAEB XML 3.3"
                 ),
+            ));
+        } else if version == "3.4" {
+            self.findings.push(ValidationFinding::warning(
+                "gaeb_xml_beta_version_reference_only",
+                "GAEB XML 3.4 beta is detected as reference-only impact tracking, not production parser support",
             ));
         }
     }
@@ -881,6 +886,8 @@ fn legacy_xml_version_from_namespace(namespace: &str) -> Option<&'static str> {
         Some("3.2")
     } else if normalized.contains("3.3") {
         Some("3.3")
+    } else if normalized.contains("3.4") {
+        Some("3.4")
     } else {
         None
     }
