@@ -52,6 +52,16 @@ The adapter must reject parse-only or reference-only inputs rather than silently
 
 ## Extension workflow
 
+### X89/Rechnung model boundary
+
+`boq_core::x89` is a GAEB invoice-domain model for X89/Rechnung planning. It
+keeps invoice headers, parties, line amounts, tax/payment data, X86 contract
+baseline links, X31 quantity evidence links, totals, and audit findings separate
+from both the BoQ parser and any XRechnung envelope generator. A populated
+`InvoiceDocument` is not parser support, not an Obra adapter DTO, and not an
+XRechnung payload; use `InvoiceDocument::xrechnung_boundary()` to expose that
+boundary explicitly.
+
 For a new GAEB phase such as X83, X31, or X89:
 
 1. Register or confirm fixture manifest entries.

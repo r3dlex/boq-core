@@ -13,8 +13,9 @@
 //!   promote a more specific capability.
 //! - X31, X89, GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
 //!   and Zeitvertrag are future or reference tracks until `gaeb/manifest.toml`
-//!   and tests say otherwise. The [`x31`] module is a serializable domain model
-//!   for future quantity-takeoff parsing, not a support-status promotion.
+//!   and tests say otherwise. The [`x31`] and [`x89`] modules are serializable
+//!   domain models for future quantity-takeoff and Rechnung work, not
+//!   support-status promotions.
 //! - BVBS and GAEBXmlChecker evidence must not be described as paid or official
 //!   certification.
 //!
@@ -36,6 +37,8 @@
 //!   remains disabled unless [`support::SupportCapabilities`] says otherwise.
 //! - X31 quantity-takeoff concepts are represented by [`x31`] without overloading
 //!   BoQ item parser semantics.
+//! - X89 invoice concepts are represented by [`x89`] without generating
+//!   XRechnung envelopes or promoting parser support.
 //!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
@@ -128,6 +131,7 @@ pub mod gaeb_xml;
 pub mod model;
 pub mod support;
 pub mod x31;
+pub mod x89;
 
 /// Current crate version.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
