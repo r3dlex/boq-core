@@ -65,6 +65,49 @@ fn documentation_guides_cover_required_mvp_topics() {
 }
 
 #[test]
+fn test_developer_guide_links_fixture_manifest() {
+    let guide = fs::read_to_string("docs/book/developer-guide.md").expect("developer guide exists");
+    for required in [
+        "gaeb/manifest.toml",
+        "fixture manifest",
+        "checksums",
+        "support_status",
+        "supported",
+        "supported_parse_only",
+        "future_track",
+        "reference_only",
+        "ci_policy",
+        "test_mapping",
+        "ARCH-002",
+        "ARCH-004",
+    ] {
+        assert!(
+            guide.contains(required),
+            "developer guide missing fixture governance anchor: {required}"
+        );
+    }
+}
+
+#[test]
+fn test_developer_guide_states_95_coverage_policy() {
+    let guide = fs::read_to_string("docs/book/developer-guide.md").expect("developer guide exists");
+    for required in [
+        "red-green-refactor",
+        "95% line/function/region coverage",
+        "cargo llvm-cov --all-features --summary-only",
+        "--fail-under-lines 95",
+        "--fail-under-functions 95",
+        "--fail-under-regions 95",
+        "local and GitHub CI",
+    ] {
+        assert!(
+            guide.contains(required),
+            "developer guide missing TDD/coverage anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn docs_do_not_overclaim_certification_or_future_formats() {
     let mut combined = String::new();
     for path in [
