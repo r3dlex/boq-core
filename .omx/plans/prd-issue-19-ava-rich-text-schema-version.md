@@ -12,12 +12,18 @@ AVA XML parsing preserves rich text/tables, extracts schema-version metadata, an
 - BVBS AVA fixtures: `supported`.
 
 ## Requirements
-- [ ] Define rich-text normalization contract before element expansion.
-- [ ] Preserve plain text plus structured markup/table findings.
-- [ ] Detect XML version/namespace without support overclaiming.
+- [x] Define rich-text normalization contract before element expansion.
+- [x] Preserve plain text plus structured markup/table findings.
+- [x] Detect XML version/namespace without support overclaiming.
 
 ## Planned tests
-- [ ] `test_ava_rich_text_preserves_plain_text_and_markup_findings`
-- [ ] `test_ava_xhtml_table_is_structured_or_reported`
-- [ ] `test_xml_version_metadata_is_extracted`
-- [ ] `test_unknown_ava_nodes_emit_structured_findings`
+- [x] `test_ava_rich_text_preserves_plain_text_and_markup_findings`
+- [x] `test_ava_xhtml_table_is_structured_or_reported`
+- [x] `test_xml_version_metadata_is_extracted`
+- [x] `test_unknown_ava_nodes_emit_structured_findings`
+
+## Delivery evidence
+- Parser change: AVA source URIs use the rich-description preservation path in `src/gaeb_xml/mod.rs`.
+- Contract note: `docs/fixtures/ava-rich-text-schema-version.md`.
+- Focused tests: `tests/bvbs_ava_integration.rs`.
+- Golden reports refreshed because AVA long-text output shape changed from plain-only to preserved rich text.

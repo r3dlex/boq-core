@@ -121,7 +121,9 @@ impl<'a> XmlParser<'a> {
         checksum: Option<String>,
     ) -> Result<GaebDocument, ParseError> {
         self.preserve_rich_descriptions = source_uri.as_deref().is_some_and(|uri| {
-            uri.contains("specification_authoring")
+            uri.contains("/ava/")
+                || uri.contains("\\ava\\")
+                || uri.contains("specification_authoring")
                 || uri.contains("texterstellung")
                 || uri.contains("text_x81")
                 || uri.contains("text_x82")
@@ -1056,9 +1058,16 @@ mod tests {
             Some(&serde_json::json!("10"))
         );
         assert_eq!(document.support_status, SupportStatus::Supported);
-        assert_eq!(
-            document.findings[0].code,
-            "gaeb_xml_description_plain_text_only"
+        assert!(matches!(
+            item.long_text.as_ref(),
+            Some(RichText::XhtmlFragment(fragment))
+                if fragment.contains("<p>Pipe trench</p>")
+        ));
+        assert!(
+            !document
+                .findings
+                .iter()
+                .any(|finding| finding.code == "gaeb_xml_description_plain_text_only")
         );
     }
 
