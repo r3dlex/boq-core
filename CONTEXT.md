@@ -32,6 +32,8 @@ _Avoid_: "registry file", "fixture list"
 **Support Status**:
 The honest claim level for a Fixture or phase: `supported`,
 `supported_parse_only`, `future_track`, or `reference_only`.
+The Fixture Manifest parses this vocabulary as typed data at its module
+interface; invalid vocabulary is rejected before Support Policy decisions run.
 _Avoid_: "works", "compatible", "implemented"
 
 **Support Capabilities**:

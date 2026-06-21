@@ -45,7 +45,7 @@ pub struct FixtureEntry {
     /// Target directory under `gaeb/` where the unpacked payload lives.
     pub target_dir: String,
     /// Support status (`supported` | `supported_parse_only` | `future_track` | `reference_only`).
-    pub support_status: String,
+    pub support_status: ManifestSupportStatus,
     /// CI policy keyword.
     pub ci_policy: String,
     /// License/redistribution note.
@@ -54,6 +54,62 @@ pub struct FixtureEntry {
     pub test_mapping: Vec<String>,
     /// Optional pinned archive checksum (otherwise resolved via `gaeb/fixtures.lock`).
     pub archive_sha256: Option<String>,
+}
+
+/// Typed Fixture Manifest support-status vocabulary.
+///
+/// This is the manifest-side representation of the exact string vocabulary
+/// governed by ARCH-002. Runtime policy decisions convert it to
+/// [`crate::support::SupportStatus`] only after process-domain and format
+/// rules are applied.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ManifestSupportStatus {
+    /// Manifest row claims full support for the named fixture scope.
+    Supported,
+    /// Manifest row claims parser-readiness only.
+    SupportedParseOnly,
+    /// Manifest row catalogs planned follow-on work.
+    FutureTrack,
+    /// Manifest row catalogs reference evidence only.
+    ReferenceOnly,
+}
+
+impl ManifestSupportStatus {
+    /// Returns the canonical manifest string.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Supported => "supported",
+            Self::SupportedParseOnly => "supported_parse_only",
+            Self::FutureTrack => "future_track",
+            Self::ReferenceOnly => "reference_only",
+        }
+    }
+
+    /// Returns true when the status requires at least one mapped test.
+    #[must_use]
+    pub const fn requires_test_mapping(self) -> bool {
+        matches!(self, Self::Supported | Self::SupportedParseOnly)
+    }
+}
+
+impl fmt::Display for ManifestSupportStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl PartialEq<&str> for ManifestSupportStatus {
+    fn eq(&self, other: &&str) -> bool {
+        self.as_str() == *other
+    }
+}
+
+impl PartialEq<String> for ManifestSupportStatus {
+    fn eq(&self, other: &String) -> bool {
+        self.as_str() == other
+    }
 }
 
 /// Manifest parse error.
@@ -165,20 +221,7 @@ pub fn validate(manifest: &FixtureManifest) -> Result<(), Vec<ManifestIssue>> {
                 message: "missing required metadata".to_owned(),
             });
         }
-        if !matches!(
-            fixture.support_status.as_str(),
-            "supported" | "supported_parse_only" | "future_track" | "reference_only"
-        ) {
-            issues.push(ManifestIssue {
-                fixture_id: Some(fixture.id.clone()),
-                message: format!("invalid support_status: {}", fixture.support_status),
-            });
-        }
-        if matches!(
-            fixture.support_status.as_str(),
-            "supported" | "supported_parse_only"
-        ) && fixture.test_mapping.is_empty()
-        {
+        if fixture.support_status.requires_test_mapping() && fixture.test_mapping.is_empty() {
             issues.push(ManifestIssue {
                 fixture_id: Some(fixture.id.clone()),
                 message: "supported fixture lacks test_mapping".to_owned(),
@@ -399,12 +442,12 @@ ci_policy = "download_on_demand"
 license_note = "x"
 test_mapping = []
 "#;
-        let manifest = parse(toml_text).expect("parses");
-        let issues = validate(&manifest).expect_err("bad status should fail");
+        let error = parse(toml_text).expect_err("bad status should fail at parse seam");
         assert!(
-            issues
-                .iter()
-                .any(|issue| issue.message.contains("invalid support_status"))
+            error
+                .message()
+                .contains("unknown variant `totally_supported`"),
+            "unexpected parse error: {error}"
         );
     }
 
