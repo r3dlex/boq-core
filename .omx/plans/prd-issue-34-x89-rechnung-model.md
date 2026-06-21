@@ -10,17 +10,31 @@ A GAEB X89 invoice domain model exists without conflating GAEB invoice data with
 ## Source/status anchors
 - GAEB Rechnung schema: `reference_only`.
 - official GAEB XML 3.3 Rechnung package: `reference_only`; any BVBS/vendor X89 fixture must be added to the manifest before parser-promotion claims.
+- Delivered model module: `src/x89.rs`.
+- Boundary documentation: `docs/fixtures/x89-rechnung-model-design.md` and `docs/book/developer-guide.md`.
 
 ## Requirements
-- [ ] Separate GAEB invoice model from XRechnung envelope.
-- [ ] Represent invoice header, line amounts, taxes/payment findings, and contract links after manifest/source registration is settled.
-- [ ] Document that XRechnung generation is not supported by this model alone.
+- [x] Separate GAEB invoice model from XRechnung envelope.
+- [x] Represent invoice header, parties, line amounts, tax/payment data, totals, and contract links without parser-promotion claims.
+- [x] Represent the relationship to X31 quantity evidence and X86 contract baselines.
+- [x] Document that XRechnung generation is not supported by this model alone.
+- [x] Identify validation/audit findings needed for public-sector billing readiness.
 
 ## Planned tests
-- [ ] `test_x89_domain_represents_invoice_header`
-- [ ] `test_x89_domain_represents_line_amounts`
-- [ ] `test_x89_domain_links_contract_baseline`
-- [ ] `test_x89_domain_does_not_claim_xrechnung_support`
+- [x] `test_x89_domain_represents_invoice_header`
+- [x] `test_x89_domain_represents_line_amounts`
+- [x] `test_x89_domain_links_contract_baseline`
+- [x] `test_x89_domain_does_not_claim_xrechnung_support`
+- [x] `test_x89_audit_findings_identify_public_sector_billing_gaps`
+- [x] `test_x89_payment_application_keeps_public_sector_references`
+
+## Delivered behavior
+- `boq_core::x89::InvoiceDocument` is a serializable Rechnung/X89 source-domain model.
+- `InvoiceHeader`, `InvoiceParty`, `InvoiceLine`, `TaxBreakdown`, `PaymentApplication`, `InvoiceTotals`, `ContractReference`, and `QuantityEvidenceReference` model the issue #34 invoice concepts.
+- `InvoiceDocument::recalculate_totals()` deterministically derives net/tax/gross totals from supplied line data.
+- `InvoiceDocument::record_public_sector_audit_findings()` records missing X86 baseline, missing X31 evidence, missing tax breakdown, and missing payment terms findings.
+- `InvoiceDocument::xrechnung_boundary()` and `xrechnung_generated = false` keep XRechnung output generation out of scope.
+- No manifest support status was promoted; Rechnung fixtures remain reference-only.
 
 ## Ranked roadmap source inventory binding
 

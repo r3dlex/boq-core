@@ -2,7 +2,7 @@
 
 ## Scope
 
-Planning-only specification for the GAEB ranked roadmap source slice backing issue #34. This artifact binds the issue to the canonical source inventory and records how each linked source may be used for safe fixture readiness.
+Design and implement a GAEB X89/Rechnung source-domain invoice model without coupling it to XRechnung generation, Obra adapter DTOs, live downloads, or parser support promotion.
 
 ## Non-goals
 
@@ -10,6 +10,26 @@ Planning-only specification for the GAEB ranked roadmap source slice backing iss
 - No live/source download during unit tests.
 - No parser support promotion beyond the parser support status recorded in the canonical ledger.
 - No duplicate issue creation; this issue remains the owning lane for the rows listed below.
+- No XRechnung envelope generation or export support.
+
+## Model requirements
+
+- `InvoiceDocument` owns source provenance, header, parties, lines, document-level X86 contract links, X31 quantity evidence links, totals, payment metadata, findings, and explicit XRechnung boundary state.
+- `InvoiceHeader` represents invoice id, invoice date, invoice type, currency, and project/contract id.
+- `InvoiceLine` represents line id, BoQ ordinal, description, quantity, unit, unit price, net amount, tax breakdown, contract link, and quantity evidence.
+- `ContractReference` models X86 contract baseline links.
+- `QuantityEvidenceReference` models X31 measurement/progress evidence links.
+- `PaymentApplication` preserves payment terms, due date, payment reference, and buyer reference.
+- Public-sector billing readiness gaps are emitted as `ValidationFinding` values, not as fatal parser errors.
+- `InvoiceDocument::xrechnung_boundary()` must state that a separate bridge is required for XRechnung output.
+
+## Delivered files
+
+- `src/x89.rs`
+- `tests/x89_domain.rs`
+- `docs/fixtures/x89-rechnung-model-design.md`
+- `docs/book/developer-guide.md`
+- `src/lib.rs`
 
 ## Ranked roadmap source audit
 
@@ -27,6 +47,7 @@ Planning-only specification for the GAEB ranked roadmap source slice backing iss
 - Manifest-backed rows can only be used through local fixture manifest entries.
 - Planned or artifact-only rows remain documented as research/reference gates until a license-safe local fixture is added and checksummed.
 - Certification PDFs and visual reference PDFs are treated as reference-only evidence, not executable parser fixtures.
+- Architecture boundary is explicit: X89 domain data is separate from XRechnung envelope generation.
 
 ## Implementation handoff
 
