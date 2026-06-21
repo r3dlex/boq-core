@@ -1,0 +1,30 @@
+<GAEB>
+  <GAEBInfo>
+    <Version>3.3</Version>
+  </GAEBInfo>
+  <Project>
+    <Name>Rechnung MVP</Name>
+    <Invoice ID="RE-2026-0042" Date="2026-06-21" Type="progress" Currency="EUR" ProjectID="P-X89">
+      <Party Role="Seller" Name="Bau GmbH" EndpointID="0204:seller" TaxID="DE123456789" />
+      <Party Role="Buyer" Name="Stadt Muster" EndpointID="0204:buyer" />
+      <ContractRef DocumentID="sha256:x86-contract" Kind="x86" RNo="001.0010" />
+      <QuantityEvidence DocumentID="sha256:x31-measurement" Kind="x31" RNo="001.0010" />
+      <Line ID="L-1" RNo="001.0010" Unit="m3" Qty="12,50" UnitPrice="80.00" NetAmount="1000.00" Description="Concrete progress">
+        <Tax Rate="19.00" TaxableAmount="1000.00" Amount="190.00" />
+        <ContractRef DocumentID="sha256:x86-contract" Kind="x86" RNo="001.0010" />
+        <QuantityEvidence DocumentID="sha256:x31-measurement" Kind="x31" RNo="001.0010" />
+      </Line>
+      <Line ID="L-2" RNo="001.0020">
+        <Description>Site setup</Description>
+        <Qty>2</Qty>
+        <QU>psch</QU>
+        <UnitPrice>150.00</UnitPrice>
+        <NetAmount>300.00</NetAmount>
+        <UnsupportedTax Code="reverse-charge-note" />
+        <DirectDebitMandate Id="not-supported-yet" />
+      </Line>
+      <Payment Terms="30 days" DueDate="2026-07-21" PaymentReference="RF18539007547034" BuyerReference="04011000-12345-34" />
+      <UnsupportedPayment Code="card" />
+    </Invoice>
+  </Project>
+</GAEB>

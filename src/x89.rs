@@ -29,11 +29,449 @@
 
 use std::collections::BTreeMap;
 
+use quick_xml::Reader;
+use quick_xml::events::{BytesStart, Event};
+use quick_xml::name::QName;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::error::ValidationFinding;
-use crate::model::{Metadata, SourceProvenance};
+use crate::checksum::sha256_hex;
+use crate::error::{ParseError, ValidationFinding};
+use crate::format::detect_path;
+use crate::model::{GaebFormat, GaebPhase, Metadata, SourceProvenance};
+
+/// Parses a GAEB XML X89/Rechnung payload into the invoice-domain model.
+///
+/// This parser is an MVP for fixture-backed invoice-domain extraction. It does
+/// not promote manifest support status and does not create XRechnung output.
+///
+/// # Errors
+///
+/// Returns a parse error when XML cannot be decoded or a numeric invoice field
+/// cannot be parsed.
+pub fn parse_str(source: &str, source_uri: Option<String>) -> Result<InvoiceDocument, ParseError> {
+    X89Parser::new(source).parse(source_uri, Some(sha256_hex(source.as_bytes())))
+}
+
+/// Parses an X89 XML file from disk.
+///
+/// # Errors
+///
+/// Returns a parse error when the file cannot be read or parsed.
+pub fn parse_file(path: impl AsRef<std::path::Path>) -> Result<InvoiceDocument, ParseError> {
+    let path_ref = path.as_ref();
+    let source = std::fs::read_to_string(path_ref).map_err(|error| ParseError {
+        code: "x89_read_failed".to_owned(),
+        message: error.to_string(),
+        location: Some(path_ref.display().to_string()),
+    })?;
+    parse_str(&source, Some(path_ref.display().to_string()))
+}
+
+struct X89Parser<'a> {
+    reader: Reader<&'a [u8]>,
+    buffer: Vec<u8>,
+    version: Option<String>,
+}
+
+impl<'a> X89Parser<'a> {
+    fn new(source: &'a str) -> Self {
+        let mut reader = Reader::from_str(source);
+        reader.config_mut().trim_text(true);
+        Self {
+            reader,
+            buffer: Vec::new(),
+            version: None,
+        }
+    }
+
+    fn parse(
+        &mut self,
+        source_uri: Option<String>,
+        checksum: Option<String>,
+    ) -> Result<InvoiceDocument, ParseError> {
+        let detected = source_uri.as_deref().map(detect_path);
+        let source = SourceProvenance {
+            source_uri,
+            source_format: GaebFormat::GaebXml,
+            gaeb_version: None,
+            phase: detected.and_then(|format| format.phase).or_else(|| {
+                Some(GaebPhase {
+                    code: "89".to_owned(),
+                    label: Some("Rechnung".to_owned()),
+                })
+            }),
+            checksum,
+            parser_version: crate::VERSION.to_owned(),
+        };
+        let mut document = InvoiceDocument::new(source, InvoiceHeader::new("x89-unknown", "EUR"));
+
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(start)) => {
+                    let owned = start.into_owned();
+                    self.handle_document_start(&owned, &mut document)?;
+                }
+                Ok(Event::Empty(start)) => {
+                    let owned = start.into_owned();
+                    handle_document_empty(&owned, &mut document)?;
+                }
+                Ok(Event::Eof) => break,
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "x89_xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: None,
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+
+        document.source.gaeb_version.clone_from(&self.version);
+        document.recalculate_totals();
+        Ok(document)
+    }
+
+    fn handle_document_start(
+        &mut self,
+        start: &BytesStart<'_>,
+        document: &mut InvoiceDocument,
+    ) -> Result<(), ParseError> {
+        let local = local_name(start.name());
+        match local.as_str() {
+            "Version" => self.version = Some(self.read_text_for(start.name())?),
+            "Invoice" => document.header = invoice_header_from_attrs(start),
+            "Line" => document.lines.push(self.parse_line(start)?),
+            other if is_unsupported_tax(other) => document.findings.push(unsupported_finding(
+                "x89_unsupported_tax_field",
+                other,
+                &document.header.invoice_id,
+            )),
+            other if is_unsupported_payment(other) => document.findings.push(unsupported_finding(
+                "x89_unsupported_payment_field",
+                other,
+                &document.header.invoice_id,
+            )),
+            _ => {}
+        }
+        Ok(())
+    }
+
+    fn parse_line(&mut self, start: &BytesStart<'_>) -> Result<InvoiceLine, ParseError> {
+        let mut line = line_from_attrs(start)?;
+        let line_id = line.line_id.clone();
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(child)) => {
+                    let owned = child.into_owned();
+                    self.handle_line_start(&owned, &mut line)?;
+                }
+                Ok(Event::Empty(child)) => {
+                    let owned = child.into_owned();
+                    handle_line_empty(&owned, &mut line)?;
+                }
+                Ok(Event::End(end)) if matches!(local_name(end.name()).as_str(), "Line") => {
+                    break;
+                }
+                Ok(Event::Eof) => {
+                    return Err(ParseError {
+                        code: "x89_unclosed_invoice_line".to_owned(),
+                        message: "X89 invoice line ended before its closing tag".to_owned(),
+                        location: Some(line_id),
+                    });
+                }
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "x89_xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: Some(line_id),
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+        Ok(line)
+    }
+
+    fn handle_line_start(
+        &mut self,
+        child: &BytesStart<'_>,
+        line: &mut InvoiceLine,
+    ) -> Result<(), ParseError> {
+        let local = local_name(child.name());
+        match local.as_str() {
+            "Description" => line.description = Some(self.read_text_for(child.name())?),
+            "Qty" => line.quantity = parse_decimal(&self.read_text_for(child.name())?, &local)?,
+            "QU" => line.unit = self.read_text_for(child.name())?,
+            "UnitPrice" => {
+                line.unit_price = parse_decimal(&self.read_text_for(child.name())?, &local)?;
+            }
+            "NetAmount" => {
+                line.net_amount = Some(parse_decimal(&self.read_text_for(child.name())?, &local)?);
+            }
+            other if is_unsupported_tax(other) => line.findings.push(unsupported_finding(
+                "x89_unsupported_tax_field",
+                other,
+                &line.line_id,
+            )),
+            other if is_unsupported_payment(other) => line.findings.push(unsupported_finding(
+                "x89_unsupported_payment_field",
+                other,
+                &line.line_id,
+            )),
+            other => line.findings.push(unsupported_finding(
+                "x89_unsupported_invoice_line_field",
+                other,
+                &line.line_id,
+            )),
+        }
+        Ok(())
+    }
+
+    fn read_text_for(&mut self, end: QName<'_>) -> Result<String, ParseError> {
+        let text = self.reader.read_text(end).map_err(|error| ParseError {
+            code: "x89_xml_text_read_failed".to_owned(),
+            message: error.to_string(),
+            location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
+        })?;
+        text.decode()
+            .map(std::borrow::Cow::into_owned)
+            .map_err(|error| ParseError {
+                code: "x89_xml_text_decode_failed".to_owned(),
+                message: error.to_string(),
+                location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
+            })
+    }
+}
+
+fn handle_document_empty(
+    start: &BytesStart<'_>,
+    document: &mut InvoiceDocument,
+) -> Result<(), ParseError> {
+    let local = local_name(start.name());
+    match local.as_str() {
+        "Invoice" => document.header = invoice_header_from_attrs(start),
+        "Party" => document.parties.push(party_from_attrs(start)),
+        "Line" => document.lines.push(line_from_attrs(start)?),
+        "ContractRef" => document.contract_links.push(contract_from_attrs(start)),
+        "QuantityEvidence" => document
+            .quantity_evidence
+            .push(quantity_evidence_from_attrs(start)),
+        "Payment" => document.payment = payment_from_attrs(start),
+        other if is_unsupported_tax(other) => document.findings.push(unsupported_finding(
+            "x89_unsupported_tax_field",
+            other,
+            &document.header.invoice_id,
+        )),
+        other if is_unsupported_payment(other) => document.findings.push(unsupported_finding(
+            "x89_unsupported_payment_field",
+            other,
+            &document.header.invoice_id,
+        )),
+        _ => {}
+    }
+    Ok(())
+}
+
+fn line_from_attrs(start: &BytesStart<'_>) -> Result<InvoiceLine, ParseError> {
+    let line_id = attr_value(start, b"ID").unwrap_or_else(|| "x89-line".to_owned());
+    let ordinal = attr_value(start, b"RNo").unwrap_or_else(|| line_id.clone());
+    let unit = attr_value(start, b"Unit").unwrap_or_default();
+    let quantity = parse_optional_decimal(start, &[b"Qty"], "Qty")?.unwrap_or(Decimal::ZERO);
+    let unit_price =
+        parse_optional_decimal(start, &[b"UnitPrice"], "UnitPrice")?.unwrap_or(Decimal::ZERO);
+    let mut line = InvoiceLine::new(line_id, ordinal, unit, quantity, unit_price);
+    line.description = attr_value(start, b"Description");
+    if let Some(net_amount) = parse_optional_decimal(start, &[b"NetAmount"], "NetAmount")? {
+        line.net_amount = Some(net_amount);
+    }
+    Ok(line)
+}
+
+fn handle_line_empty(start: &BytesStart<'_>, line: &mut InvoiceLine) -> Result<(), ParseError> {
+    let local = local_name(start.name());
+    match local.as_str() {
+        "Tax" => line.tax = Some(tax_from_attrs(start)?),
+        "ContractRef" => line.contract = Some(contract_from_attrs(start)),
+        "QuantityEvidence" => {
+            line.quantity_evidence
+                .push(quantity_evidence_from_attrs(start));
+        }
+        other if is_unsupported_tax(other) => line.findings.push(unsupported_finding(
+            "x89_unsupported_tax_field",
+            other,
+            &line.line_id,
+        )),
+        other if is_unsupported_payment(other) => line.findings.push(unsupported_finding(
+            "x89_unsupported_payment_field",
+            other,
+            &line.line_id,
+        )),
+        other => line.findings.push(unsupported_finding(
+            "x89_unsupported_invoice_line_field",
+            other,
+            &line.line_id,
+        )),
+    }
+    Ok(())
+}
+
+fn invoice_header_from_attrs(start: &BytesStart<'_>) -> InvoiceHeader {
+    let mut header = InvoiceHeader::new(
+        attr_value(start, b"ID").unwrap_or_else(|| "x89-unknown".to_owned()),
+        attr_value(start, b"Currency").unwrap_or_else(|| "EUR".to_owned()),
+    );
+    header.invoice_date = attr_value(start, b"Date");
+    header.project_id = attr_value(start, b"ProjectID");
+    header.invoice_type = invoice_type(attr_value(start, b"Type").as_deref());
+    header
+}
+
+fn party_from_attrs(start: &BytesStart<'_>) -> InvoiceParty {
+    let role = party_role(attr_value(start, b"Role").as_deref().unwrap_or_default());
+    let mut party = InvoiceParty::new(
+        role,
+        attr_value(start, b"Name").unwrap_or_else(|| "unknown party".to_owned()),
+    );
+    party.endpoint_id = attr_value(start, b"EndpointID");
+    party.tax_id = attr_value(start, b"TaxID");
+    party
+}
+
+fn tax_from_attrs(start: &BytesStart<'_>) -> Result<TaxBreakdown, ParseError> {
+    let rate = parse_optional_decimal(start, &[b"Rate"], "Rate")?.unwrap_or(Decimal::ZERO);
+    let taxable_amount = parse_optional_decimal(start, &[b"TaxableAmount"], "TaxableAmount")?;
+    let tax_amount = parse_optional_decimal(start, &[b"Amount"], "TaxAmount")?;
+    Ok(TaxBreakdown {
+        category: TaxCategory::Vat,
+        rate_percent: rate,
+        taxable_amount,
+        tax_amount,
+    })
+}
+
+fn contract_from_attrs(start: &BytesStart<'_>) -> ContractReference {
+    ContractReference {
+        document_id: attr_value(start, b"DocumentID").unwrap_or_else(|| "x86-contract".to_owned()),
+        kind: contract_kind(attr_value(start, b"Kind").as_deref()),
+        relation: attr_value(start, b"Relation")
+            .unwrap_or_else(|| "X89 invoice references X86 contract award baseline".to_owned()),
+        ordinal: attr_value(start, b"RNo"),
+    }
+}
+
+fn quantity_evidence_from_attrs(start: &BytesStart<'_>) -> QuantityEvidenceReference {
+    QuantityEvidenceReference {
+        document_id: attr_value(start, b"DocumentID")
+            .unwrap_or_else(|| "x31-measurement".to_owned()),
+        kind: quantity_kind(attr_value(start, b"Kind").as_deref()),
+        relation: attr_value(start, b"Relation")
+            .unwrap_or_else(|| "X89 invoice references X31 measured quantity evidence".to_owned()),
+        ordinal: attr_value(start, b"RNo"),
+    }
+}
+
+fn payment_from_attrs(start: &BytesStart<'_>) -> PaymentApplication {
+    PaymentApplication {
+        terms: attr_value(start, b"Terms"),
+        due_date: attr_value(start, b"DueDate"),
+        payment_reference: attr_value(start, b"PaymentReference"),
+        buyer_reference: attr_value(start, b"BuyerReference"),
+        metadata: BTreeMap::new(),
+    }
+}
+
+fn parse_optional_decimal(
+    start: &BytesStart<'_>,
+    keys: &[&[u8]],
+    field: &str,
+) -> Result<Option<Decimal>, ParseError> {
+    keys.iter()
+        .find_map(|key| attr_value(start, key))
+        .map(|value| parse_decimal(&value, field))
+        .transpose()
+}
+
+fn parse_decimal(value: &str, field: &str) -> Result<Decimal, ParseError> {
+    value
+        .trim()
+        .replace(',', ".")
+        .parse::<Decimal>()
+        .map_err(|error| ParseError {
+            code: "x89_decimal_parse_failed".to_owned(),
+            message: format!("invalid decimal in {field}: {error}"),
+            location: Some(field.to_owned()),
+        })
+}
+
+fn invoice_type(value: Option<&str>) -> InvoiceType {
+    if value.unwrap_or_default().eq_ignore_ascii_case("progress") {
+        InvoiceType::ProgressInvoice
+    } else {
+        InvoiceType::Invoice
+    }
+}
+
+fn party_role(value: &str) -> InvoicePartyRole {
+    if value.eq_ignore_ascii_case("seller") {
+        InvoicePartyRole::Seller
+    } else if value.eq_ignore_ascii_case("buyer") {
+        InvoicePartyRole::Buyer
+    } else {
+        InvoicePartyRole::Unknown
+    }
+}
+
+fn contract_kind(value: Option<&str>) -> ContractBaselineKind {
+    if value.unwrap_or_default().eq_ignore_ascii_case("x86") {
+        ContractBaselineKind::X86Contract
+    } else {
+        ContractBaselineKind::Unknown
+    }
+}
+
+fn quantity_kind(value: Option<&str>) -> QuantityEvidenceKind {
+    if value.unwrap_or_default().eq_ignore_ascii_case("x31") {
+        QuantityEvidenceKind::X31Measurement
+    } else {
+        QuantityEvidenceKind::Unknown
+    }
+}
+
+fn is_unsupported_tax(local: &str) -> bool {
+    local == "UnsupportedTax"
+}
+
+fn is_unsupported_payment(local: &str) -> bool {
+    local == "UnsupportedPayment" || local == "DirectDebitMandate"
+}
+
+fn unsupported_finding(code: &str, field: &str, location: &str) -> ValidationFinding {
+    ValidationFinding::warning(
+        code,
+        format!("unsupported X89 field {field} was preserved as a finding"),
+    )
+    .at(location.to_owned())
+}
+
+fn local_name(name: QName<'_>) -> String {
+    String::from_utf8_lossy(name.as_ref())
+        .rsplit(':')
+        .next()
+        .unwrap_or_default()
+        .to_owned()
+}
+
+fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
+    start
+        .attributes()
+        .flatten()
+        .find(|attr| attr.key.as_ref() == key)
+        .map(|attr| String::from_utf8_lossy(attr.value.as_ref()).to_string())
+}
 
 /// A complete GAEB X89 invoice-domain document.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

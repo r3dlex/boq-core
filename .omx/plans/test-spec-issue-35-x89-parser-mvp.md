@@ -2,7 +2,17 @@
 
 ## Test intent
 
-Define safe fixture-readiness and regression-test expectations for issue #35 without introducing live downloads, paid certification work, or unsupported parser claims.
+Define safe fixture-readiness and regression-test expectations for issue #35 without introducing live downloads, paid certification work, unsupported parser claims, or XRechnung output claims.
+
+## Executable local tests
+
+- `test_x89_fixture_parses_invoice_header` verifies version, phase, invoice id/date/type/currency/project, parties, and buyer reference.
+- `test_x89_fixture_parses_line_items` verifies line ids, ordinals, descriptions, decimal comma parsing, units, unit prices, net/tax/gross totals, and child text fields.
+- `test_x89_links_to_ordinal_or_contract_item` verifies document and line links to X86 contract baselines and X31 quantity evidence.
+- `test_x89_unsupported_tax_or_payment_fields_emit_findings` verifies unsupported tax/payment constructs produce stable findings and no XRechnung generation.
+- `test_x89_parse_file_reads_invoice_fixture` verifies the file entrypoint and checksum provenance.
+- `test_x89_parser_reports_decimal_parse_errors` verifies invalid decimal inputs return `x89_decimal_parse_failed`.
+- `test_x89_parser_reports_malformed_lines` verifies malformed XML returns `x89_xml_parse_failed`.
 
 ## Ranked roadmap fixture/test mapping
 
@@ -15,7 +25,7 @@ Define safe fixture-readiness and regression-test expectations for issue #35 wit
 
 ## Executable local fixtures
 
-- None yet.
+- `tests/fixtures/synthetic/x89_invoice.X89` — license-safe local synthetic invoice fixture for parser MVP tests.
 
 ## Reference-only / planned gates
 
@@ -26,7 +36,7 @@ Define safe fixture-readiness and regression-test expectations for issue #35 wit
 
 ## Verification expectations
 
-- Unit/integration tests may read only local files already declared in `boq-core/gaeb/manifest.toml`.
+- Unit/integration tests may read only local files already declared in the repo or synthetic fixtures created for this issue.
 - Planned fixture rows require license-safe acquisition, checksum recording, and manifest updates before any parser test consumes them.
 - Documentation/schema/PDF rows can support review checklists but must not be asserted as parser executable fixtures.
-- A no-overclaim grep must reject wording that implies BVBS certification completion or supported parser status where the ledger says `planned-support` or `reference_only`.
+- A no-overclaim grep must reject wording that implies BVBS certification completion, XRechnung output support, or supported parser status where the ledger says `planned-support` or `reference_only`.
