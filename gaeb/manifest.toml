@@ -108,10 +108,10 @@ process_domain = "specification_authoring"
 gaeb_version = "gaeb_xml_3_3"
 phase = "x81"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/specification_authoring/x81"
-support_status = "future_track"
+support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "Follow-on Texterstellung fixture."
-test_mapping = ["future_texterstellung_x81_cataloged"]
+license_note = "BVBS Texterstellung X81 fixture has parser-readiness evidence for supported_parse_only rich-text/table import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion."
+test_mapping = ["test_text_x81_rich_text_blocks_preserved", "test_text_tables_normalize_to_document_blocks", "test_text_unsupported_layout_emits_findings", "test_texterstellung_support_promotion_requires_rich_text_evidence"]
 
 [[fixtures]]
 id = "official_gaeb_xml34_beta_schema"
@@ -290,10 +290,10 @@ process_domain = "specification_authoring"
 gaeb_version = "gaeb_xml_3_3"
 phase = "x82"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/specification_authoring/x82"
-support_status = "future_track"
+support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "Follow-on Texterstellung cost-estimate fixture."
-test_mapping = ["future_texterstellung_x82_cataloged"]
+license_note = "BVBS Texterstellung X82 fixture has parser-readiness evidence for supported_parse_only cost-estimate and rich-text import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion."
+test_mapping = ["test_text_x82_cost_estimate_metadata_preserved", "test_text_unsupported_layout_emits_findings", "test_text_tables_normalize_to_document_blocks", "test_texterstellung_support_promotion_requires_rich_text_evidence"]
 
 [[fixtures]]
 id = "bvbs_xml32_ava_x81"

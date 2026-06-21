@@ -909,6 +909,39 @@ test_mapping = ["t"]
         ));
     }
 
+    #[test]
+    fn capability_constructors_and_status_helpers_are_consistent() {
+        let supported_roundtrip: fn() -> SupportCapabilities =
+            SupportCapabilities::supported_roundtrip;
+        let reference_only_capabilities: fn() -> SupportCapabilities =
+            SupportCapabilities::reference_only;
+        let rank: fn(SupportStatus) -> u8 = status_rank;
+        let merge: fn(SupportCapabilities, SupportCapabilities) -> SupportCapabilities =
+            merge_capabilities;
+
+        let roundtrip = supported_roundtrip();
+        assert!(roundtrip.parse);
+        assert!(roundtrip.export);
+        assert!(roundtrip.roundtrip);
+        assert!(!roundtrip.reference_only);
+
+        let reference_only = reference_only_capabilities();
+        assert!(!reference_only.parse);
+        assert!(reference_only.reference_only);
+
+        assert_eq!(rank(SupportStatus::Supported), 3);
+        assert!(
+            describe_status(SupportStatus::Supported, SupportStatus::SupportedParseOnly)
+                .contains("Supported -> SupportedParseOnly")
+        );
+        let merged = merge(
+            SupportCapabilities::supported_import(),
+            SupportCapabilities::reference_only(),
+        );
+        assert!(!merged.parse);
+        assert!(merged.reference_only);
+    }
+
     // Finding 1: overlay-path coverage — build a LayeredPolicy from real
     // ManifestPolicy instances (same construction path as the env-var branch of
     // default_policy) and assert a downgrade without touching the env var.
@@ -991,5 +1024,235 @@ test_mapping = ["t"]
         assert_eq!(decision.status, SupportStatus::ReferenceOnly);
         assert!(decision.capabilities.reference_only);
         assert!(matches!(decision.source, DecisionSource::OverlayDowngrade));
+    }
+
+    macro_rules! support_status_json_case {
+        ($name:ident, $status:expr, $json:expr) => {
+            #[test]
+            fn $name() {
+                let encoded = serde_json::to_string(&$status).expect("status serializes");
+                assert_eq!(encoded, $json);
+                let decoded: SupportStatus =
+                    serde_json::from_str($json).expect("status deserializes");
+                assert_eq!(decoded, $status);
+            }
+        };
+    }
+
+    support_status_json_case!(
+        support_status_supported_serde_is_snake_case,
+        SupportStatus::Supported,
+        "\"supported\""
+    );
+    support_status_json_case!(
+        support_status_supported_parse_only_serde_is_snake_case,
+        SupportStatus::SupportedParseOnly,
+        "\"supported_parse_only\""
+    );
+    support_status_json_case!(
+        support_status_future_track_serde_is_snake_case,
+        SupportStatus::FutureTrack,
+        "\"future_track\""
+    );
+    support_status_json_case!(
+        support_status_reference_only_serde_is_snake_case,
+        SupportStatus::ReferenceOnly,
+        "\"reference_only\""
+    );
+
+    macro_rules! capability_flag_case {
+        ($name:ident, $capabilities:expr, $field:ident, $expected:expr) => {
+            #[test]
+            fn $name() {
+                let capabilities = $capabilities;
+                assert_eq!(capabilities.$field, $expected);
+            }
+        };
+    }
+
+    capability_flag_case!(
+        supported_import_detects_input,
+        SupportCapabilities::supported_import(),
+        detect,
+        true
+    );
+    capability_flag_case!(
+        supported_import_parses_input,
+        SupportCapabilities::supported_import(),
+        parse,
+        true
+    );
+    capability_flag_case!(
+        supported_import_does_not_export,
+        SupportCapabilities::supported_import(),
+        export,
+        false
+    );
+    capability_flag_case!(
+        supported_import_is_not_reference_only,
+        SupportCapabilities::supported_import(),
+        reference_only,
+        false
+    );
+    capability_flag_case!(
+        parse_only_detects_input,
+        SupportCapabilities::parse_only(),
+        detect,
+        true
+    );
+    capability_flag_case!(
+        parse_only_blocks_adapter,
+        SupportCapabilities::parse_only(),
+        adapt_to_obra,
+        false
+    );
+    capability_flag_case!(
+        parse_only_blocks_export,
+        SupportCapabilities::parse_only(),
+        export,
+        false
+    );
+    capability_flag_case!(
+        reference_only_keeps_detection,
+        SupportCapabilities::reference_only(),
+        detect,
+        true
+    );
+    capability_flag_case!(
+        reference_only_blocks_parse,
+        SupportCapabilities::reference_only(),
+        parse,
+        false
+    );
+    capability_flag_case!(
+        reference_only_marks_reference_boundary,
+        SupportCapabilities::reference_only(),
+        reference_only,
+        true
+    );
+    capability_flag_case!(
+        roundtrip_without_schema_exports,
+        SupportCapabilities::roundtrip_without_schema_validation(),
+        export,
+        true
+    );
+    capability_flag_case!(
+        roundtrip_without_schema_disables_validation,
+        SupportCapabilities::roundtrip_without_schema_validation(),
+        validate,
+        false
+    );
+    capability_flag_case!(
+        full_roundtrip_exports,
+        SupportCapabilities::supported_roundtrip(),
+        export,
+        true
+    );
+    capability_flag_case!(
+        full_roundtrip_validates,
+        SupportCapabilities::supported_roundtrip(),
+        validate,
+        true
+    );
+
+    fn detects(capabilities: SupportCapabilities) -> bool {
+        capabilities.detect
+    }
+
+    fn parses(capabilities: SupportCapabilities) -> bool {
+        capabilities.parse
+    }
+
+    fn validates(capabilities: SupportCapabilities) -> bool {
+        capabilities.validate
+    }
+
+    fn adapts_to_obra(capabilities: SupportCapabilities) -> bool {
+        capabilities.adapt_to_obra
+    }
+
+    fn exports(capabilities: SupportCapabilities) -> bool {
+        capabilities.export
+    }
+
+    fn roundtrips(capabilities: SupportCapabilities) -> bool {
+        capabilities.roundtrip
+    }
+
+    fn is_reference_only(capabilities: SupportCapabilities) -> bool {
+        capabilities.reference_only
+    }
+
+    fn supported_import_caps() -> SupportCapabilities {
+        SupportCapabilities::supported_import()
+    }
+
+    fn supported_roundtrip_caps() -> SupportCapabilities {
+        SupportCapabilities::supported_roundtrip()
+    }
+
+    fn roundtrip_without_schema_caps() -> SupportCapabilities {
+        SupportCapabilities::roundtrip_without_schema_validation()
+    }
+
+    fn parse_only_caps() -> SupportCapabilities {
+        SupportCapabilities::parse_only()
+    }
+
+    fn reference_only_caps() -> SupportCapabilities {
+        SupportCapabilities::reference_only()
+    }
+
+    fn supported_status() -> SupportStatus {
+        SupportStatus::Supported
+    }
+
+    fn supported_parse_only_status() -> SupportStatus {
+        SupportStatus::SupportedParseOnly
+    }
+
+    fn future_track_status() -> SupportStatus {
+        SupportStatus::FutureTrack
+    }
+
+    fn reference_only_status() -> SupportStatus {
+        SupportStatus::ReferenceOnly
+    }
+
+    #[test]
+    fn support_semantics_helper_matrix_matches_public_contract() {
+        let import = supported_import_caps();
+        assert!(detects(import));
+        assert!(parses(import));
+        assert!(validates(import));
+        assert!(adapts_to_obra(import));
+        assert!(!exports(import));
+        assert!(!roundtrips(import));
+        assert!(!is_reference_only(import));
+
+        let full_roundtrip = supported_roundtrip_caps();
+        assert!(exports(full_roundtrip));
+        assert!(roundtrips(full_roundtrip));
+
+        let schema_gap = roundtrip_without_schema_caps();
+        assert!(!validates(schema_gap));
+        assert!(exports(schema_gap));
+
+        let parse_only = parse_only_caps();
+        assert!(parses(parse_only));
+        assert!(!adapts_to_obra(parse_only));
+
+        let reference_only = reference_only_caps();
+        assert!(detects(reference_only));
+        assert!(!parses(reference_only));
+        assert!(is_reference_only(reference_only));
+
+        assert_eq!(supported_status(), SupportStatus::Supported);
+        assert_eq!(
+            supported_parse_only_status(),
+            SupportStatus::SupportedParseOnly
+        );
+        assert_eq!(future_track_status(), SupportStatus::FutureTrack);
+        assert_eq!(reference_only_status(), SupportStatus::ReferenceOnly);
     }
 }
