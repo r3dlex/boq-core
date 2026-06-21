@@ -158,6 +158,9 @@ impl<'a> XmlParser<'a> {
             title: Some(title.clone()),
             project_name: self.project_name.clone(),
         };
+        if let Some(version) = self.version.clone() {
+            self.record_legacy_compatibility_finding(&version);
+        }
         let support = crate::support::default_policy().decide(SupportQuery {
             format: GaebFormat::GaebXml,
             version: self.version.as_deref(),
@@ -175,6 +178,12 @@ impl<'a> XmlParser<'a> {
         let mut metadata = Metadata::new();
         if let Some(namespace) = &self.namespace {
             metadata.insert("gaeb.namespace".to_owned(), serde_json::json!(namespace));
+            if legacy_xml_version_from_namespace(namespace).is_some() {
+                metadata.insert(
+                    "gaeb.xml_version_inferred_from_namespace".to_owned(),
+                    serde_json::json!(true),
+                );
+            }
         }
         metadata.insert(
             "gaeb.support_policy".to_owned(),
@@ -240,8 +249,23 @@ impl<'a> XmlParser<'a> {
     fn capture_root(&mut self, start: &BytesStart<'_>) {
         for attr in start.attributes().flatten() {
             if attr.key.as_ref() == b"xmlns" {
-                self.namespace = Some(String::from_utf8_lossy(attr.value.as_ref()).to_string());
+                let namespace = String::from_utf8_lossy(attr.value.as_ref()).to_string();
+                if self.version.is_none() {
+                    self.version = legacy_xml_version_from_namespace(&namespace).map(str::to_owned);
+                }
+                self.namespace = Some(namespace);
             }
+        }
+    }
+
+    fn record_legacy_compatibility_finding(&mut self, version: &str) {
+        if matches!(version, "3.1" | "3.2") {
+            self.findings.push(ValidationFinding::warning(
+                "gaeb_xml_legacy_version_compatibility",
+                format!(
+                    "GAEB XML {version} compatibility is detected but remains gated by fixture support status; data is not silently coerced to GAEB XML 3.3"
+                ),
+            ));
         }
     }
 
@@ -846,6 +870,19 @@ impl<'a> XmlParser<'a> {
                 location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
             }),
         }
+    }
+}
+
+fn legacy_xml_version_from_namespace(namespace: &str) -> Option<&'static str> {
+    let normalized = namespace.replace('_', ".");
+    if normalized.contains("3.1") {
+        Some("3.1")
+    } else if normalized.contains("3.2") {
+        Some("3.2")
+    } else if normalized.contains("3.3") {
+        Some("3.3")
+    } else {
+        None
     }
 }
 

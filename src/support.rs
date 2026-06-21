@@ -216,7 +216,7 @@ struct IndexedEntry {
     id: String,
     process_domain: String,
     gaeb_version: String,
-    phase_code: String,
+    phase_code: Option<String>,
     target_dir: String,
     support_status: String,
 }
@@ -229,7 +229,7 @@ impl IndexedEntry {
         // together they ensure no manifest row can accidentally promote a
         // non-XML format.
         let gaeb_version = manifest::gaeb_xml_version(&entry.gaeb_version)?;
-        let phase_code = manifest::phase_code(&entry.phase)?;
+        let phase_code = manifest::phase_code(&entry.phase);
         Some(Self {
             id: entry.id.clone(),
             process_domain: entry.process_domain.clone(),
@@ -320,9 +320,10 @@ impl SupportPolicy for ManifestPolicy {
         };
 
         let phase_code = query.phase.map(|phase| phase.code.as_str());
-        if query.version != Some(entry.gaeb_version.as_str())
-            || phase_code != Some(entry.phase_code.as_str())
-        {
+        if query.version != Some(entry.gaeb_version.as_str()) {
+            return conservative_default();
+        }
+        if entry.phase_code.as_deref() != phase_code && entry.support_status != "reference_only" {
             return conservative_default();
         }
 
@@ -338,14 +339,14 @@ impl SupportPolicy for ManifestPolicy {
                 "supported parse-only fixture",
             ),
             "future_track" => (
-                SupportStatus::SupportedParseOnly,
-                SupportCapabilities::parse_only(),
-                "future-track fixture parsed without adapter/export promotion",
+                SupportStatus::FutureTrack,
+                SupportCapabilities::reference_only(),
+                "future-track fixture cataloged; parser compatibility remains gated",
             ),
             "reference_only" => (
-                SupportStatus::SupportedParseOnly,
-                SupportCapabilities::parse_only(),
-                "reference-only fixture parsed without support promotion",
+                SupportStatus::ReferenceOnly,
+                SupportCapabilities::reference_only(),
+                "reference-only fixture cataloged; parser support is not claimed",
             ),
             _ => (
                 SupportStatus::SupportedParseOnly,
