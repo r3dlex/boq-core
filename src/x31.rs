@@ -1017,3 +1017,128 @@ pub enum MeasurementAttachmentKind {
     /// Unknown/deferred attachment kind.
     Unknown,
 }
+
+#[cfg(test)]
+#[allow(clippy::expect_used)]
+mod tests {
+    use super::*;
+    use crate::model::{GaebFormat, GaebPhase};
+
+    fn source() -> SourceProvenance {
+        SourceProvenance {
+            source_uri: Some("measurement.x31".to_owned()),
+            source_format: GaebFormat::GaebXml,
+            gaeb_version: Some("3.3".to_owned()),
+            phase: Some(GaebPhase {
+                code: "31".to_owned(),
+                label: None,
+            }),
+            checksum: None,
+            parser_version: "test".to_owned(),
+        }
+    }
+
+    const X31_XML: &str = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>X31</Name><QtyTakeoff><MeasurementGroup ID="G-1"><FormulaRecord ID="FR-1" RNo="001.0010" Unit="m3"><Formula>2 * 6</Formula><Result>12,50</Result><Attachment ID="D-1" Type="drawing" HRef="drawings/detail-a.pdf" Checksum="sha256:abc"/><UnsupportedFeature>needs future parser</UnsupportedFeature></FormulaRecord></MeasurementGroup></QtyTakeoff></Project></GAEB>"#;
+
+    #[test]
+    fn parser_smoke_covers_private_x31_read_paths() {
+        let document = parse_str(
+            X31_XML,
+            Some("gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x31/internal.X31".to_owned()),
+        )
+        .expect("internal parser smoke parses");
+
+        assert_eq!(document.rows.len(), 1);
+        assert_eq!(
+            document.rows[0].result_quantity,
+            Some(Decimal::new(1250, 2))
+        );
+        assert_eq!(document.rows[0].attachment_ids, ["D-1"]);
+        assert_eq!(document.attachments.len(), 1);
+        assert!(document.findings.iter().any(|finding| {
+            finding.code == "x31_unsupported_feature"
+                && finding.location.as_deref() == Some("FR-1/UnsupportedFeature")
+        }));
+    }
+
+    #[test]
+    fn quantity_takeoff_helpers_filter_rows_and_record_attachment_gaps() {
+        let mut document = QuantityTakeoffDocument::new(source());
+        document.rows.push(MeasurementRow::formula(
+            "r1",
+            "001.0010",
+            "m",
+            MeasurementFormula::reb_vb_23003("1+2"),
+        ));
+        document.rows.push(MeasurementRow::formula(
+            "r2",
+            "001.0020",
+            "m",
+            MeasurementFormula::reb_vb_23003("3+4"),
+        ));
+
+        assert_eq!(document.rows_for_ordinal("001.0010").len(), 1);
+        assert!(document.rows_for_ordinal("missing").is_empty());
+
+        document.record_attachment_gap("plan-1", "not vendored");
+        assert_eq!(document.findings.len(), 1);
+        assert_eq!(document.findings[0].code, "x31_attachment_reference_only");
+    }
+
+    #[test]
+    fn measurement_row_and_formula_evaluation_helpers_are_stable() {
+        let with_result: fn(MeasurementRow, Decimal) -> MeasurementRow =
+            MeasurementRow::with_result;
+        let with_progress: fn(MeasurementRow, PhysicalProgress) -> MeasurementRow =
+            MeasurementRow::with_progress;
+        let quantity: fn(Decimal) -> FormulaEvaluation = FormulaEvaluation::quantity;
+        let progress = PhysicalProgress {
+            completed_quantity: Decimal::new(5, 0),
+            percent_complete: Some(Decimal::new(50, 0)),
+        };
+        let row = with_progress(
+            with_result(
+                MeasurementRow::formula(
+                    "r1",
+                    "001.0010",
+                    "m",
+                    MeasurementFormula::reb_vb_23003("2*3"),
+                ),
+                Decimal::new(6, 0),
+            ),
+            progress,
+        );
+
+        assert_eq!(row.result_quantity, Some(Decimal::new(6, 0)));
+        assert_eq!(row.progress, Some(progress));
+        assert_eq!(row.formula.system, RebFormulaSystem::RebVb23003);
+
+        let evaluated_quantity = quantity(Decimal::new(7, 0));
+        assert_eq!(evaluated_quantity.quantity, Some(Decimal::new(7, 0)));
+        assert!(evaluated_quantity.findings.is_empty());
+
+        let unevaluated = FormulaEvaluation::unevaluated("x31_test", "not supported", "row-1");
+        assert_eq!(unevaluated.quantity, None);
+        assert_eq!(unevaluated.findings[0].code, "x31_test");
+    }
+
+    #[test]
+    fn const_method_chaining_remains_source_compatible() {
+        let progress = PhysicalProgress {
+            completed_quantity: Decimal::new(5, 0),
+            percent_complete: Some(Decimal::new(50, 0)),
+        };
+        let row = MeasurementRow::formula(
+            "r1",
+            "001.0010",
+            "m",
+            MeasurementFormula::reb_vb_23003("2*3"),
+        )
+        .with_result(Decimal::new(6, 0))
+        .with_progress(progress);
+
+        assert_eq!(row.result_quantity, Some(Decimal::new(6, 0)));
+        assert_eq!(row.progress, Some(progress));
+        assert_eq!(row.formula.system, RebFormulaSystem::RebVb23003);
+    }
+}

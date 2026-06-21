@@ -21,9 +21,9 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use quick_xml::Reader;
 use quick_xml::events::{BytesStart, Event};
 use quick_xml::name::QName;
+use quick_xml::{Reader, Writer};
 use rust_decimal::Decimal;
 
 use crate::VERSION;
@@ -32,7 +32,7 @@ use crate::error::{ParseError, ValidationFinding};
 use crate::format::detect_path;
 use crate::model::{
     Boq, BoqItem, BoqNode, BoqNodeKind, GaebDocument, GaebDocumentSummary, GaebFormat, GaebPhase,
-    Metadata, RichText, SourceProvenance,
+    Metadata, RichText, RichTextFragment, SourceProvenance,
 };
 use crate::support::SupportQuery;
 
@@ -89,6 +89,12 @@ struct XmlParser<'a> {
     project_name: Option<String>,
     nodes: Vec<BoqNode>,
     findings: Vec<ValidationFinding>,
+    preserve_rich_descriptions: bool,
+}
+
+struct ParsedDescription {
+    plain_text: String,
+    rich_text: Option<RichText>,
 }
 
 impl<'a> XmlParser<'a> {
@@ -105,6 +111,7 @@ impl<'a> XmlParser<'a> {
             project_name: None,
             nodes: Vec::new(),
             findings: Vec::new(),
+            preserve_rich_descriptions: false,
         }
     }
 
@@ -113,6 +120,13 @@ impl<'a> XmlParser<'a> {
         source_uri: Option<String>,
         checksum: Option<String>,
     ) -> Result<GaebDocument, ParseError> {
+        self.preserve_rich_descriptions = source_uri.as_deref().is_some_and(|uri| {
+            uri.contains("specification_authoring")
+                || uri.contains("texterstellung")
+                || uri.contains("text_x81")
+                || uri.contains("text_x82")
+        });
+
         loop {
             match self.reader.read_event_into(&mut self.buffer) {
                 Ok(Event::Start(start)) => {
@@ -394,8 +408,8 @@ impl<'a> XmlParser<'a> {
                         "UP" => item.unit_price = self.read_optional_decimal_for(owned.name())?,
                         "IT" => item.total_price = self.read_optional_decimal_for(owned.name())?,
                         "Description" => {
-                            let description = self.read_description_text()?;
-                            if self.is_phase("84") && !description.is_empty() {
+                            let description = self.read_description(ordinal)?;
+                            if self.is_phase("84") && !description.plain_text.is_empty() {
                                 self.findings.push(
                                     ValidationFinding::warning(
                                         "gaeb_xml_bau_x84_tender_description_not_authoritative",
@@ -404,10 +418,12 @@ impl<'a> XmlParser<'a> {
                                     .at(format!("{ordinal}/Description")),
                                 );
                             }
-                            if !description.is_empty() {
-                                title.clone_from(&description);
-                                item.short_text.clone_from(&description);
-                                item.long_text = Some(RichText::Plain(description));
+                            if !description.plain_text.is_empty() {
+                                title.clone_from(&description.plain_text);
+                                item.short_text.clone_from(&description.plain_text);
+                            }
+                            if description.rich_text.is_some() {
+                                item.long_text = description.rich_text;
                             }
                         }
                         "BidderRemark" | "BieterBemerkung" | "Bieterangabe" | "Remark" => {
@@ -544,6 +560,19 @@ impl<'a> XmlParser<'a> {
         Ok((!text.is_empty()).then_some(text))
     }
 
+    fn read_description(&mut self, ordinal: &str) -> Result<ParsedDescription, ParseError> {
+        if self.preserve_rich_descriptions {
+            self.read_rich_description(ordinal)
+        } else {
+            let plain_text = self.read_description_text()?;
+            let rich_text = (!plain_text.is_empty()).then(|| RichText::Plain(plain_text.clone()));
+            Ok(ParsedDescription {
+                plain_text,
+                rich_text,
+            })
+        }
+    }
+
     fn read_description_text(&mut self) -> Result<String, ParseError> {
         let mut depth = 1_usize;
         let mut parts = Vec::new();
@@ -597,6 +626,186 @@ impl<'a> XmlParser<'a> {
             ));
         }
         Ok(parts.join("\n"))
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn read_rich_description(&mut self, ordinal: &str) -> Result<ParsedDescription, ParseError> {
+        let mut depth = 1_usize;
+        let mut plain_parts = Vec::new();
+        let mut inner_writer = Writer::new(Vec::new());
+        let mut table_writer: Option<Writer<Vec<u8>>> = None;
+        let mut table_depth = 0_usize;
+        let mut table_fragments = Vec::new();
+        let mut saw_markup = false;
+        let mut saw_layout_sensitive_markup = false;
+        let mut saw_text_complement = false;
+
+        loop {
+            match self.reader.read_event_into(&mut self.buffer) {
+                Ok(Event::Start(start)) => {
+                    let owned = start.into_owned();
+                    let local = local_name(owned.name());
+                    saw_markup = true;
+                    if local == "TextComplement" {
+                        saw_text_complement = true;
+                    }
+                    if has_layout_sensitive_attrs(&owned) || is_layout_sensitive_tag(&local) {
+                        saw_layout_sensitive_markup = true;
+                    }
+
+                    write_xml_event(
+                        &mut inner_writer,
+                        Event::Start(owned.clone()),
+                        "Description",
+                    )?;
+                    if let Some(writer) = table_writer.as_mut() {
+                        table_depth = table_depth.saturating_add(1);
+                        write_xml_event(writer, Event::Start(owned), "table")?;
+                    } else if local == "table" {
+                        let mut writer = Writer::new(Vec::new());
+                        table_depth = 1;
+                        write_xml_event(&mut writer, Event::Start(owned), "table")?;
+                        table_writer = Some(writer);
+                    }
+                    depth = depth.saturating_add(1);
+                }
+                Ok(Event::Empty(start)) => {
+                    let owned = start.into_owned();
+                    let local = local_name(owned.name());
+                    saw_markup = true;
+                    if local == "TextComplement" {
+                        saw_text_complement = true;
+                    }
+                    if has_layout_sensitive_attrs(&owned) || is_layout_sensitive_tag(&local) {
+                        saw_layout_sensitive_markup = true;
+                    }
+
+                    write_xml_event(
+                        &mut inner_writer,
+                        Event::Empty(owned.clone()),
+                        "Description",
+                    )?;
+                    if let Some(writer) = table_writer.as_mut() {
+                        write_xml_event(writer, Event::Empty(owned), "table")?;
+                    } else if local == "table" {
+                        let mut writer = Writer::new(Vec::new());
+                        write_xml_event(&mut writer, Event::Empty(owned), "table")?;
+                        table_fragments.push(writer_to_string(writer, "table")?);
+                    }
+                }
+                Ok(Event::Text(text)) => {
+                    let owned = text.into_owned();
+                    let decoded = owned.decode().map_err(|error| ParseError {
+                        code: "xml_text_decode_failed".to_owned(),
+                        message: error.to_string(),
+                        location: Some("Description".to_owned()),
+                    })?;
+                    let trimmed = decoded.trim();
+                    if !trimmed.is_empty() {
+                        plain_parts.push(trimmed.to_owned());
+                    }
+                    write_xml_event(&mut inner_writer, Event::Text(owned.clone()), "Description")?;
+                    if let Some(writer) = table_writer.as_mut() {
+                        write_xml_event(writer, Event::Text(owned), "table")?;
+                    }
+                }
+                Ok(Event::CData(cdata)) => {
+                    let owned = cdata.into_owned();
+                    saw_markup = true;
+                    write_xml_event(
+                        &mut inner_writer,
+                        Event::CData(owned.clone()),
+                        "Description",
+                    )?;
+                    if let Some(writer) = table_writer.as_mut() {
+                        write_xml_event(writer, Event::CData(owned), "table")?;
+                    }
+                }
+                Ok(Event::End(end)) => {
+                    let owned = end.into_owned();
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                    write_xml_event(&mut inner_writer, Event::End(owned.clone()), "Description")?;
+                    if let Some(writer) = table_writer.as_mut() {
+                        write_xml_event(writer, Event::End(owned), "table")?;
+                        table_depth = table_depth.saturating_sub(1);
+                        if table_depth == 0 {
+                            let Some(writer) = table_writer.take() else {
+                                return Err(ParseError {
+                                    code: "xml_fragment_capture_failed".to_owned(),
+                                    message: "table capture ended without an active writer"
+                                        .to_owned(),
+                                    location: Some("table".to_owned()),
+                                });
+                            };
+                            table_fragments.push(writer_to_string(writer, "table")?);
+                        }
+                    }
+                }
+                Ok(Event::Eof) => {
+                    return Err(ParseError {
+                        code: "xml_unclosed_description".to_owned(),
+                        message: "description ended before closing Description tag".to_owned(),
+                        location: None,
+                    });
+                }
+                Err(error) => {
+                    return Err(ParseError {
+                        code: "xml_parse_failed".to_owned(),
+                        message: error.to_string(),
+                        location: None,
+                    });
+                }
+                _ => {}
+            }
+            self.buffer.clear();
+        }
+
+        let plain_text = plain_parts.join("\n");
+        let inner_xml = writer_to_string(inner_writer, "Description")?;
+        let rich_text = if plain_text.is_empty() && inner_xml.is_empty() {
+            None
+        } else if table_fragments.is_empty() && saw_markup {
+            Some(RichText::XhtmlFragment(inner_xml))
+        } else if table_fragments.is_empty() {
+            Some(RichText::Plain(plain_text.clone()))
+        } else {
+            let mut fragments = Vec::with_capacity(table_fragments.len() + 2);
+            if !inner_xml.is_empty() {
+                fragments.push(RichTextFragment::Unknown(inner_xml));
+            }
+            if !plain_text.is_empty() {
+                fragments.push(RichTextFragment::Text(plain_text.clone()));
+            }
+            fragments.extend(table_fragments.into_iter().map(RichTextFragment::Table));
+            Some(RichText::Mixed(fragments))
+        };
+
+        if saw_layout_sensitive_markup {
+            self.findings.push(
+                ValidationFinding::warning(
+                    "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+                    "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+                )
+                .at(format!("{ordinal}/Description")),
+            );
+        }
+        if saw_text_complement {
+            self.findings.push(
+                ValidationFinding::warning(
+                    "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+                    "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+                )
+                .at(format!("{ordinal}/Description/TextComplement")),
+            );
+        }
+
+        Ok(ParsedDescription {
+            plain_text,
+            rich_text,
+        })
     }
 
     fn read_decimal_for(&mut self, end: QName<'_>) -> Result<Decimal, ParseError> {
@@ -657,6 +866,42 @@ fn is_malformed_xml_ordinal(raw: &str) -> bool {
     trimmed.is_empty() || trimmed.chars().any(char::is_whitespace)
 }
 
+fn write_xml_event(
+    writer: &mut Writer<Vec<u8>>,
+    event: Event<'_>,
+    location: &str,
+) -> Result<(), ParseError> {
+    writer.write_event(event).map_err(|error| ParseError {
+        code: "xml_fragment_capture_failed".to_owned(),
+        message: error.to_string(),
+        location: Some(location.to_owned()),
+    })
+}
+
+fn writer_to_string(writer: Writer<Vec<u8>>, location: &str) -> Result<String, ParseError> {
+    String::from_utf8(writer.into_inner()).map_err(|error| ParseError {
+        code: "xml_fragment_decode_failed".to_owned(),
+        message: error.to_string(),
+        location: Some(location.to_owned()),
+    })
+}
+
+fn has_layout_sensitive_attrs(start: &BytesStart<'_>) -> bool {
+    start.attributes().flatten().any(|attr| {
+        matches!(
+            attr.key.as_ref(),
+            b"style" | b"valign" | b"align" | b"cellpadding" | b"cellspacing" | b"width"
+        )
+    })
+}
+
+fn is_layout_sensitive_tag(local: &str) -> bool {
+    matches!(
+        local,
+        "br" | "TextComplement" | "ComplCaption" | "ComplBody" | "ComplTail"
+    )
+}
+
 fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
     start
         .attributes()
@@ -670,6 +915,7 @@ fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
 mod tests {
     use super::*;
     use crate::support::{SupportCapabilities, SupportStatus};
+    use quick_xml::events::BytesText;
     #[test]
     fn parses_minimal_ava_x81_document() {
         let document = parse_str(
@@ -1095,5 +1341,52 @@ mod tests {
         let error = parse_file("tests/fixtures/synthetic/does-not-exist.x81")
             .expect_err("missing XML file should fail");
         assert_eq!(error.code, "xml_read_failed");
+    }
+
+    #[test]
+    fn xml_fragment_helpers_preserve_text_and_layout_flags() {
+        let mut writer = Writer::new(Vec::new());
+        write_xml_event(
+            &mut writer,
+            Event::Text(BytesText::new("fragment text")),
+            "helper-test",
+        )
+        .expect("fragment text writes");
+        assert_eq!(
+            writer_to_string(writer, "helper-test").expect("fragment decodes"),
+            "fragment text"
+        );
+
+        let mut styled = BytesStart::new("span");
+        styled.push_attribute(("style", "font-weight:bold"));
+        assert!(has_layout_sensitive_attrs(&styled));
+        assert!(is_layout_sensitive_tag("TextComplement"));
+        assert!(!is_layout_sensitive_tag("p"));
+    }
+
+    #[test]
+    fn make_section_uses_stable_fallback_without_attributes() {
+        let start = BytesStart::new("BoQCtgy");
+        let section = XmlParser::make_section(&start, 7);
+        assert_eq!(section.ordinal, "section_7");
+        assert_eq!(section.title, "section_7");
+        assert_eq!(section.kind, BoqNodeKind::Chapter);
+    }
+
+    #[test]
+    fn schema_validation_findings_record_export_tooling_gap() {
+        let mut document = parse_str(
+            r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="A"/></BoQBody></BoQ></Project></GAEB>"#,
+            Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/schema-gap.X81".to_owned()),
+        )
+        .expect("document parses");
+        document.capabilities = SupportCapabilities::roundtrip_without_schema_validation();
+
+        let findings = schema_validation_findings(&document);
+        assert_eq!(findings.len(), 1);
+        assert_eq!(
+            findings[0].code,
+            "gaeb_xml_schema_validation_tooling_unavailable"
+        );
     }
 }

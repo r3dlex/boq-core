@@ -62,8 +62,8 @@ Scope: source-readiness ledger only; this PR does not download, vendor, execute,
 | R4-03 | Rank 4 | #39 | GAEB 2000 Sportheim demo gist | manifested | dangl_gaeb2000_sportheim_gist | future_track:`future_gaeb2000_sportheim_cataloged` |
 | R4-04 | Rank 4 | #40 | GAEB-Tools syntax/reference page | artifact-only/reference | — | reference_only |
 | R4-05 | Rank 4 | #40 | Sander-Doll GAEB 90/D83 overview | artifact-only/reference | — | reference_only |
-| R5-01 | Rank 5 | #32-#33 | BVBS Texterstellung X81 | manifested | bvbs_xml33_text_x81 | future_track:`future_texterstellung_x81_cataloged` |
-| R5-02 | Rank 5 | #32-#33 | BVBS Texterstellung X82 | manifested | bvbs_xml33_text_x82 | future_track:`future_texterstellung_x82_cataloged` |
+| R5-01 | Rank 5 | #32-#33 | BVBS Texterstellung X81 | manifested | bvbs_xml33_text_x81 | supported_parse_only:`test_text_x81_rich_text_blocks_preserved`, `test_text_tables_normalize_to_document_blocks`, `test_text_unsupported_layout_emits_findings`, `test_texterstellung_support_promotion_requires_rich_text_evidence` |
+| R5-02 | Rank 5 | #32-#33 | BVBS Texterstellung X82 | manifested | bvbs_xml33_text_x82 | supported_parse_only:`test_text_x82_cost_estimate_metadata_preserved`, `test_text_unsupported_layout_emits_findings`, `test_text_tables_normalize_to_document_blocks`, `test_texterstellung_support_promotion_requires_rich_text_evidence` |
 | R5-03 | Rank 5 | #32-#33 | Muster authoring verification guideline | artifact-only/reference | — | reference_only |
 | R5-04 | Rank 5 | #32-#33 | BVBS Texterstellung audit criteria | manifested | bvbs_xml33_texterstellung_criteria_pdf | reference_only |
 | R6-01 | Rank 6 | #41 | GAEB XML 3.3 Kosten/Kalkulation schema package | manifested | official_gaeb_xml33_kosten_und_kalkulation | reference_only |

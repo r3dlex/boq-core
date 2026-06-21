@@ -113,6 +113,8 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
         "bvbs_xml33_bau_x83",
         "bvbs_xml33_bau_x84",
         "bvbs_xml33_qty_x31",
+        "bvbs_xml33_text_x81",
+        "bvbs_xml33_text_x82",
     ] {
         assert!(
             supported_ids.contains(expected_supported),
@@ -131,6 +133,8 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
                     | "bvbs_xml33_bau_x83"
                     | "bvbs_xml33_bau_x84"
                     | "bvbs_xml33_qty_x31"
+                    | "bvbs_xml33_text_x81"
+                    | "bvbs_xml33_text_x82"
             )
     }) {
         assert!(
