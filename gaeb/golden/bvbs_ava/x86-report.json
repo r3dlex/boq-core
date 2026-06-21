@@ -43,7 +43,7 @@
       "unit": "psch",
       "unit_price": "5400.000",
       "total_price": "5400.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDBMIA",
@@ -52,7 +52,7 @@
       "unit": "St",
       "unit_price": "2.610",
       "total_price": "522.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDCFCI",
@@ -61,7 +61,7 @@
       "unit": "m2",
       "unit_price": "3.070",
       "total_price": "460.50",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDCMGI",
@@ -70,7 +70,7 @@
       "unit": "m3",
       "unit_price": "44.140",
       "total_price": "132.42",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDDGLA",
@@ -79,7 +79,7 @@
       "unit": "m2",
       "unit_price": "20.000",
       "total_price": "6000.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDDPKA",
@@ -88,7 +88,7 @@
       "unit": "m3",
       "unit_price": "20.000",
       "total_price": "720.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDEEOI",
@@ -97,7 +97,7 @@
       "unit": "m2",
       "unit_price": "83.100",
       "total_price": "1662.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBNDFCGA",
@@ -106,14 +106,14 @@
       "unit": "m2",
       "unit_price": "10.000",
       "total_price": "2000.00",
-      "long_text_kind": "plain"
+      "long_text_kind": "xhtml_fragment"
     }
   ],
   "findings": [
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDBHEA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -123,9 +123,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDBMIA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -135,9 +135,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDCFCI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -147,15 +147,21 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDCMGI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDDGLA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDDGLA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -165,9 +171,15 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDDPKA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDDPKA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -177,45 +189,63 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDEEOI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDEEOI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDFCGA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDFIPI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDFOIA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDGEJA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDGKCI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDGKCI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDHECI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDHECI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -243,21 +273,39 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDJOLA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDJOLA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDKDMI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDKDMI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDKJFI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDKJFI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -279,9 +327,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDLFJI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -303,9 +351,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDLLEA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -327,9 +375,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDLPPI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -345,9 +393,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDMEEI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -369,9 +417,15 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDMMLA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDMMLA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -393,9 +447,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDNECA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -417,9 +471,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDNJBI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -435,9 +489,15 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDOADA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNDOADA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -453,9 +513,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDOGEA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -471,9 +531,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDOLBA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -489,9 +549,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDOPPA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -507,9 +567,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNDPENA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -555,9 +615,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEAAAA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -603,9 +663,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEAGCI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -645,9 +705,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEANDI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -711,9 +771,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEBEAI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -777,9 +837,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEBKMI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -819,9 +879,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNECGHA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -849,9 +909,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNECLOI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -879,9 +939,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEDCGI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -897,9 +957,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEEAGI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -909,9 +969,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEEIHI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -921,9 +981,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEENKI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -933,9 +993,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEFCHI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -945,15 +1005,15 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEFPDI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEGEAI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -969,45 +1029,45 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEGIGI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEHEEA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEHJCI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEHNLA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEIJFI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEJFBA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNEJJPI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1017,9 +1077,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFALKI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1029,27 +1089,33 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFBELI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFBMDI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFCAJA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFFIMI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNFFIMI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -1059,9 +1125,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFGEMI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1071,9 +1137,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFHJOI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1083,9 +1149,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFIFLA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1095,9 +1161,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFJDJA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1107,33 +1173,27 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFKCHI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFLLAA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFMDOI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
-      "severity": "warning"
-    },
-    {
-      "code": "gaeb_xml_unsupported_item_field",
-      "location": "CBNFNMEI/CtlgAssign",
-      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFMLIA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1143,15 +1203,33 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_unsupported_item_field",
+      "location": "CBNFNMEI/CtlgAssign",
+      "message": "unsupported GAEB XML item field CtlgAssign was preserved as metadata",
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFNMEI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNFNMEI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNFOMKI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBNFOMKI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -1161,9 +1239,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNGAHFI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1173,9 +1251,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNGALJA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1185,9 +1263,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNGAPNI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     },
     {
@@ -1203,9 +1281,9 @@
       "severity": "warning"
     },
     {
-      "code": "gaeb_xml_description_plain_text_only",
-      "location": null,
-      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBNGBECI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
       "severity": "warning"
     }
   ],

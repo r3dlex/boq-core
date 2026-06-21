@@ -4,6 +4,85 @@ use std::path::Path;
 
 use boq_core::adapter::obra::ObraImportDocument;
 use boq_core::gaeb_xml;
+use boq_core::model::{RichText, RichTextFragment};
+
+#[test]
+fn test_ava_rich_text_preserves_plain_text_and_markup_findings() {
+    let document = gaeb_xml::parse_str(
+        r#"<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/3.3"><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0010" RNoPart="10"><Qty>1</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p style="font-weight:bold"><span>AVA rich text</span></p></Text></DetailTxt></CompleteText></Description></Item></BoQBody></BoQ></Project></GAEB>"#,
+        Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/rich.X81".to_owned()),
+    )
+    .expect("AVA rich text should parse");
+
+    let item = document.boq.nodes[0].item.as_ref().expect("item payload");
+    assert_eq!(item.short_text, "AVA rich text");
+    assert!(matches!(
+        item.long_text.as_ref(),
+        Some(RichText::XhtmlFragment(fragment))
+            if fragment.contains("font-weight:bold") && fragment.contains("AVA rich text")
+    ));
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_texterstellung_layout_preserved_not_rendered"
+            && finding.location.as_deref() == Some("001.0010/Description")
+    }));
+}
+
+#[test]
+fn test_ava_xhtml_table_is_structured_or_reported() {
+    let document = gaeb_xml::parse_str(
+        r#"<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/3.3"><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0020" RNoPart="20"><Qty>1</Qty><QU>St</QU><Description><CompleteText><DetailTxt><Text><p>Before table</p><table><tr><td><p>Cell A</p></td><td><p>Cell B</p></td></tr></table></Text></DetailTxt></CompleteText></Description></Item></BoQBody></BoQ></Project></GAEB>"#,
+        Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/table.X81".to_owned()),
+    )
+    .expect("AVA table rich text should parse");
+
+    let item = document.boq.nodes[0].item.as_ref().expect("item payload");
+    let Some(RichText::Mixed(fragments)) = item.long_text.as_ref() else {
+        assert!(matches!(item.long_text.as_ref(), Some(RichText::Mixed(_))));
+        return;
+    };
+    assert!(fragments.iter().any(|fragment| matches!(
+        fragment,
+        RichTextFragment::Text(text) if text.contains("Before table") && text.contains("Cell A")
+    )));
+    assert!(fragments.iter().any(|fragment| matches!(
+        fragment,
+        RichTextFragment::Table(markup) if markup.contains("<table>") && markup.contains("Cell B")
+    )));
+}
+
+#[test]
+fn test_xml_version_metadata_is_extracted() {
+    let document = gaeb_xml::parse_str(
+        r#"<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/3.3"><BoQ><Item ID="001"><Description>Versioned AVA</Description></Item></BoQ></GAEB>"#,
+        Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/versioned.X81".to_owned()),
+    )
+    .expect("versioned AVA should parse");
+
+    assert_eq!(document.summary.version.as_deref(), Some("3.3"));
+    assert_eq!(document.source.gaeb_version.as_deref(), Some("3.3"));
+    assert_eq!(
+        document.boq.metadata["gaeb.namespace"],
+        serde_json::json!("http://www.gaeb.de/GAEB_DA_XML/3.3")
+    );
+}
+
+#[test]
+fn test_unknown_ava_nodes_emit_structured_findings() {
+    let document = gaeb_xml::parse_str(
+        r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><BoQ><BoQBody><Item ID="001.0030" RNoPart="30"><Description>Known text</Description><UnknownAvaFeature><Nested>kept</Nested></UnknownAvaFeature></Item></BoQBody></BoQ></Project></GAEB>"#,
+        Some("gaeb/bvbs/gaeb_xml_3_3/ava/x81/unknown.X81".to_owned()),
+    )
+    .expect("unknown AVA field should parse with finding");
+
+    assert!(document.findings.iter().any(|finding| {
+        finding.code == "gaeb_xml_unsupported_item_field"
+            && finding.location.as_deref() == Some("001.0030/UnknownAvaFeature")
+    }));
+    assert_eq!(
+        document.boq.nodes[0].metadata["gaeb.unsupported.UnknownAvaFeature"],
+        serde_json::json!("kept")
+    );
+}
 
 #[test]
 fn ava_x81_imports_to_rich_model_and_obra_snapshot() {

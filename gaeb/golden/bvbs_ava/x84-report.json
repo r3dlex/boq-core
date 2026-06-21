@@ -79,7 +79,7 @@
       "unit": "",
       "unit_price": "20.000",
       "total_price": "6000.00",
-      "long_text_kind": "none"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBAFDNNA",
@@ -97,7 +97,7 @@
       "unit": "",
       "unit_price": "83.100",
       "total_price": "1662.00",
-      "long_text_kind": "none"
+      "long_text_kind": "xhtml_fragment"
     },
     {
       "ordinal": "CBAFEPNI",
@@ -111,9 +111,33 @@
   ],
   "findings": [
     {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBAFDENI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBAFDENI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+      "severity": "warning"
+    },
+    {
       "code": "gaeb_xml_unsupported_item_field",
       "location": "CBAFDNNA/DiscountPcnt",
       "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBAFEDGA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBAFEDGA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     },
     {
@@ -258,6 +282,30 @@
       "code": "gaeb_xml_unsupported_item_field",
       "location": "CBHMEALA/DiscountPcnt",
       "message": "unsupported GAEB XML item field DiscountPcnt was preserved as metadata",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBBGFHDI/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBBGFHDI/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_layout_preserved_not_rendered",
+      "location": "CBBGOJNA/Description",
+      "message": "Texterstellung layout/style markup was preserved in rich text but is not rendered or certified",
+      "severity": "warning"
+    },
+    {
+      "code": "gaeb_xml_texterstellung_text_complement_preserved_as_markup",
+      "location": "CBBGOJNA/Description/TextComplement",
+      "message": "Texterstellung text-complement markup was preserved as rich XML; no completion semantics are claimed",
       "severity": "warning"
     }
   ],
