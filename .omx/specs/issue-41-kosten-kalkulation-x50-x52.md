@@ -32,10 +32,10 @@ Before implementation, record or link a candidate boundary ADR deciding whether 
 - test_kosten_interactive_schema_charts_are_reference_only
 
 ## Acceptance criteria
-- [ ] Issue body links this spec, PRD, and test-spec.
-- [ ] PRD contains a per-source support matrix.
-- [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up records or links the candidate architecture decision above before code work begins.
+- [x] Issue body links this spec, PRD, and test-spec.
+- [x] PRD contains a per-source support matrix.
+- [x] Test-spec contains concrete red/green test names and promotion gates.
+- [x] ARCH-010 records the candidate architecture decision before parser/model promotion.
 
 ## Ranked roadmap source audit
 
@@ -48,3 +48,10 @@ This section binds issue #41 to the canonical source/status ledger. It does not 
 | R6-03 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R6-04 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R6-05 | #41 Kosten/Kalkulation X50-X52 | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+
+## Issue #41 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-010-kosten-kalkulation-boundary.md`.
+- Boundary matrix: `docs/fixtures/kosten-kalkulation-x50-x52-boundary.md`.
+- Tests: `tests/kosten_kalkulation_boundary.rs` locks official source rows, interactive chart reference-only policy, future cost-component obligations, X52 item-reference obligations, and support-policy `ReferenceOnly` behavior.
+- Support status: no X50/X51/X52 parser or adapter support is promoted; official rows remain `reference_only`.
