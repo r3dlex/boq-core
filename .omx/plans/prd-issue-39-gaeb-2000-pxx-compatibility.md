@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision required before implementation
-Create an ADR deciding a separate `gaeb2000` parser boundary with tag/keyword tokenization, distinct from GAEB XML and GAEB 90.
+ARCH-008 decides a separate `gaeb2000` parser boundary with tag/keyword tokenization, distinct from GAEB XML and GAEB 90.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -21,9 +21,9 @@ Create an ADR deciding a separate `gaeb2000` parser boundary with tag/keyword to
 | gaeb2000_xml_mapping_chart | interactive_schema | mapping_reference | GAEB 2.1 to XML mapping | reference_only | no CI dependency on external HTML | mapping reference only; not GAEB 2000 support evidence | reference_gaeb2000_mapping_chart |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
+- [x] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
+- [x] Create failing tests named in the test spec before changing parser/model behavior.
 - [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
@@ -36,7 +36,7 @@ Follow-ups should update issue #39 and its PRD/test-spec. Create a new GitHub is
 
 ## Acceptance criteria
 - [ ] Per-source matrix is preserved in future implementation PRs.
-- [ ] The candidate architecture decision is recorded or linked before parser/model code changes.
+- [x] The candidate architecture decision is recorded or linked before parser/model code changes.
 - [ ] Test-spec concrete tests are created or consciously deferred with rationale.
 - [ ] Protected-main gates remain green: fmt, clippy, tests, 95% coverage thresholds, fixture verify, Archgate, prek.
 
@@ -93,3 +93,9 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R4-03 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_gaeb2000_sportheim_gist | future_track | ['future_gaeb2000_sportheim_cataloged'] |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+
+## Delivery notes
+- ARCH-008 records the separate GAEB 2000/Pxx tokenizer/parser boundary.
+- `docs/fixtures/gaeb2000-pxx-compatibility-plan.md` documents GAEB 2000 syntax, phase mapping, source status, and follow-up implementation policy.
+- `tests/gaeb2000_compatibility.rs` covers catalog status, begin/end nesting diagnostics, P81-P86 phase detection, and mapping-chart reference-only boundaries.

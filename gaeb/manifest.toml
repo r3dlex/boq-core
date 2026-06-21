@@ -730,3 +730,45 @@ support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
 license_note = "Dangl GAEB 90 D83 example used for parse-only regression; verify repository license before vendoring."
 test_mapping = ["dangl_gaeb90_d83_parses_as_fixture_backed_parse_only"]
+
+[[fixtures]]
+id = "gaeb2000_priced_gist"
+source_url = "https://gist.github.com/GeorgDangl/29c8069c6fffac955f07d2c012249819"
+normalized_url = "https://gist.github.com/GeorgDangl/29c8069c6fffac955f07d2c012249819"
+source_family = "developer_examples"
+process_domain = "gaeb2000_examples"
+gaeb_version = "gaeb_2000"
+phase = "p86"
+target_dir = "gaeb/developer_examples/gaeb2000_priced_gist"
+support_status = "future_track"
+ci_policy = "download_on_demand"
+license_note = "Developer-maintained GAEB 2000 priced D86/P86 gist; future parser compatibility track; verify license before vendoring."
+test_mapping = ["future_gaeb2000_priced_gist_cataloged"]
+
+[[fixtures]]
+id = "dangl_ava_gaeb2000_examples"
+source_url = "https://github.com/Dangl-IT/Dangl.AVA.Examples"
+normalized_url = "https://github.com/Dangl-IT/Dangl.AVA.Examples"
+source_family = "developer_examples"
+process_domain = "gaeb2000_examples"
+gaeb_version = "gaeb_2000"
+phase = "mixed_pxx_dxx"
+target_dir = "gaeb/developer_examples/dangl_ava_gaeb2000_examples"
+support_status = "future_track"
+ci_policy = "download_on_demand"
+license_note = "Developer-maintained Dangl.AVA GAEB 2000/Pxx examples; future parser compatibility track; select fixtures only after license/checksum review."
+test_mapping = ["future_dangl_ava_gaeb2000_cataloged"]
+
+[[fixtures]]
+id = "gaeb2000_xml_mapping_chart"
+source_url = "https://www.gaeb-online.de/gaeb-datenaustausch/gaeb-xml/"
+normalized_url = "https://www.gaeb-online.de/gaeb-datenaustausch/gaeb-xml/"
+source_family = "interactive_schema"
+process_domain = "mapping_reference"
+gaeb_version = "gaeb_2000"
+phase = "mapping_reference"
+target_dir = "gaeb/interactive_schema/gaeb2000_xml_mapping_chart"
+support_status = "reference_only"
+ci_policy = "reference_only"
+license_note = "GAEB 2.1 to XML mapping reference only; not runtime parser support evidence."
+test_mapping = []

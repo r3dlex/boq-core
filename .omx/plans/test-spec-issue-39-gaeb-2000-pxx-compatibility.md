@@ -49,3 +49,9 @@ This section records how issue #39 may use the linked source rows as local fixtu
 | R4-01 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples | future_track | ['future_dangl_ava_examples_cataloged'] |
 | R4-02 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_ava_examples_cpp | future_track | ['future_dangl_cpp_examples_cataloged'] |
 | R4-03 | #39 GAEB 2000/Pxx compatibility | manifested | dangl_gaeb2000_sportheim_gist | future_track | ['future_gaeb2000_sportheim_cataloged'] |
+
+
+## Delivery notes
+- ARCH-008 records the separate GAEB 2000/Pxx tokenizer/parser boundary.
+- `docs/fixtures/gaeb2000-pxx-compatibility-plan.md` documents GAEB 2000 syntax, phase mapping, source status, and follow-up implementation policy.
+- `tests/gaeb2000_compatibility.rs` covers catalog status, begin/end nesting diagnostics, P81-P86 phase detection, and mapping-chart reference-only boundaries.
