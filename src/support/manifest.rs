@@ -262,6 +262,7 @@ fn validate_url(url: &str) -> Result<(), String> {
         "github.com",
         "gist.github.com",
         "www.gaeb-online.de",
+        "www.mwm.de",
     ];
     if !allowed.contains(&host.as_str()) {
         return Err(format!("fixture host is not allowlisted: {host}"));
@@ -291,7 +292,7 @@ pub fn gaeb_xml_version(value: &str) -> Option<String> {
 #[must_use]
 pub fn phase_code(value: &str) -> Option<String> {
     value
-        .strip_prefix('x')
+        .strip_prefix(['x', 'd', 'p'])
         .filter(|code| !code.is_empty() && code.chars().all(|ch| ch.is_ascii_digit()))
         .map(ToOwned::to_owned)
 }
@@ -570,6 +571,8 @@ test_mapping = ["t"]
     #[test]
     fn phase_code_maps_numeric_x_phases_only() {
         assert_eq!(phase_code("x81").as_deref(), Some("81"));
+        assert_eq!(phase_code("d83").as_deref(), Some("83"));
+        assert_eq!(phase_code("p86").as_deref(), Some("86"));
         assert_eq!(phase_code("schema"), None);
         assert_eq!(phase_code("x"), None);
     }
