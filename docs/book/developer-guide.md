@@ -60,7 +60,10 @@ baseline links, X31 quantity evidence links, totals, and audit findings separate
 from both the BoQ parser and any XRechnung envelope generator. A populated
 `InvoiceDocument` is not parser support, not an Obra adapter DTO, and not an
 XRechnung payload; use `InvoiceDocument::xrechnung_boundary()` to expose that
-boundary explicitly.
+boundary explicitly. Issue #36 records the planning-only bridge contract in
+`docs/fixtures/xrechnung-bridge-plan.md`: production XRechnung emission remains
+blocked until verified X31 quantities, X86 contract baselines, X89 invoice data,
+and a separate standards/dependency decision are available.
 
 For a new GAEB phase such as X83, X31, or X89:
 

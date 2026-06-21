@@ -12,15 +12,15 @@ A roadmap bridge maps verified GAEB X31/X86/X89 data toward XRechnung without pr
 - X31/X86/X89 models: prerequisite verified data.
 
 ## Requirements
-- [ ] Treat XRechnung as roadmap/reference until verified GAEB billing data exists.
-- [ ] Build required-field mapping matrix.
-- [ ] Feature-gate or omit export until criteria are met.
+- [x] Treat XRechnung as roadmap/reference until verified GAEB billing data exists.
+- [x] Build required-field mapping matrix.
+- [x] Feature-gate or omit export until criteria are met.
 
 ## Planned tests/checks
-- [ ] `test_xrechnung_bridge_plan_requires_verified_quantities`
-- [ ] `test_xrechnung_mapping_matrix_has_required_invoice_fields`
-- [ ] `test_xrechnung_export_is_feature_gated_or_absent`
-- [ ] `test_docs_do_not_claim_xrechnung_generation`
+- [x] `test_xrechnung_bridge_plan_requires_verified_quantities`
+- [x] `test_xrechnung_mapping_matrix_has_required_invoice_fields`
+- [x] `test_xrechnung_export_is_feature_gated_or_absent`
+- [x] `test_docs_do_not_claim_xrechnung_generation`
 
 ## Ranked roadmap source inventory binding
 
@@ -32,3 +32,16 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R2-05 | #34-#36 Rechnung/XRechnung bridge | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Tooling or guidance reference for roundtrip planning; not vendored or executed. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+## Delivery notes
+
+- No production XRechnung emission is implemented or claimed.
+- `docs/fixtures/xrechnung-bridge-plan.md` records mapping assumptions, legal/compliance boundaries, required X31/X86/X89 data, and separate standards/dependency evaluation gates.
+- Regression tests in `tests/xrechnung_bridge_plan.rs` keep the bridge plan, PRD, spec, and test spec synchronized.
+
+## Acceptance evidence
+
+- Mapping assumptions and legal/compliance boundaries live in `docs/fixtures/xrechnung-bridge-plan.md`.
+- Required upstream X31/X86/X89 verification data is listed in the bridge-plan matrix.
+- External e-invoicing standards and dependencies are explicitly deferred to a separate ADR/dependency decision.
+- No production XRechnung emission is implemented or claimed in issue #36.

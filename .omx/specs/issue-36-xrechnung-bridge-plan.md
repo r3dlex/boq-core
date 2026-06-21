@@ -28,3 +28,13 @@ Planning-only specification for the GAEB ranked roadmap source slice backing iss
 ## Implementation handoff
 
 Use `.omx/specs/gaeb-ranked-source-status-ledger.md` as the source of truth for dispositions. Update `boq-core/gaeb/manifest.toml` and a follow-up test spec before promoting any planned row to fixture-backed execution.
+
+## Delivery notes
+
+- No production XRechnung emission is implemented or claimed.
+- `docs/fixtures/xrechnung-bridge-plan.md` records mapping assumptions, legal/compliance boundaries, required X31/X86/X89 data, and separate standards/dependency evaluation gates.
+- Regression tests in `tests/xrechnung_bridge_plan.rs` keep the bridge plan, PRD, spec, and test spec synchronized.
+
+## Bridge mapping summary
+
+The bridge may consume only verified X31 quantity evidence, X86 contract baselines, and X89 invoice-domain data. XRechnung output remains blocked until a later standards/dependency decision selects the semantic profile, XML syntax binding, validation toolchain, and compliance owner. No production XRechnung emission is in scope for issue #36.
