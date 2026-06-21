@@ -11,7 +11,7 @@ The current roadmap identifies this source family, but future implementers need 
 A future implementation lane can start from this PRD without re-discovering source boundaries, support status, fixture policies, or pre-implementation candidate architecture decisions.
 
 ## Candidate architecture decision required before implementation
-Create a boundary ADR for Z-phase framework-contract handling before changing ordinary X83/X84 behavior.
+ARCH-012 records the boundary decision: Zeitvertrag X83Z/X84Z remains reference-only Z-phase framework-contract planning; future parser/model promotion requires safe fixtures and red/green tests, and ordinary X83/X84 behavior must not change in this issue.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -24,15 +24,15 @@ Create a boundary ADR for Z-phase framework-contract handling before changing or
 | schema_x83z_32_chart | interactive_schema | zeitvertrag | 3.2 X83Z | reference_only | no CI dependency on external HTML | schema chart only | reference_x83z_32_schema_chart |
 
 ## Functional requirements
-- [ ] Maintain or add fixture manifest entries for each non-documentation source with support_status from the matrix.
-- [ ] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
-- [ ] Create failing tests named in the test spec before changing parser/model behavior.
-- [ ] Promote support_status only in the same PR as passing implementation tests and review evidence.
+- [x] Maintain fixture manifest entries for each non-documentation source with support_status from the matrix.
+- [x] Add/keep reference-only gates for documentation, beta, executable, commercial, or interactive-only sources.
+- [x] Create boundary/negative tests named in the test spec before changing parser/model behavior; no parser/model behavior is promoted in this issue.
+- [x] Preserve reference_only support_status; promotion remains reserved for a future PR with passing implementation tests and review evidence.
 
 ## Non-goals and boundaries
-- [ ] No paid actions or external certification/payment/submission.
-- [ ] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
-- [ ] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
+- [x] No paid actions or external certification/payment/submission.
+- [x] No support overclaiming: support_status promotion requires failing tests, implementation, fixture verification, and review evidence.
+- [x] No duplicate issue explosion: update this issue unless a genuinely missing source family requires a new issue.
 
 ## Follow-up issue policy
 Follow-ups should update issue #43 and its PRD/test-spec. Create a new GitHub issue only when a genuinely new source family or independent implementation track is discovered.
@@ -99,3 +99,10 @@ This PRD is bound to the canonical ranked roadmap ledger in `.omx/specs/gaeb-ran
 | R7-06 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 
 Constraints: preserve PRD intent, avoid duplicate issue creation, avoid paid certification actions, and treat non-manifested rows as future safe-fixture or reference-only gates until explicitly promoted in the manifest and test plan.
+
+
+## Issue #43 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-012-zeitvertrag-z-phase-boundary.md`.
+- Boundary matrix: `docs/fixtures/zeitvertrag-x83z-x84z-boundary.md`.
+- Tests: `tests/zeitvertrag_boundary.rs` locks the manifested Zeitvertrag source rows, interactive chart reference-only policy, X83Z/X84Z not-misclassified-as-X83/X84 behavior, framework discount/premium obligations, and support-policy `ReferenceOnly` behavior.
+- Support status: no X83Z/X84Z parser or adapter support is promoted; official rows remain `reference_only`.

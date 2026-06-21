@@ -55,3 +55,10 @@ This section records how issue #43 may use the linked source rows as local fixtu
 | R7-04 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R7-05 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R7-06 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+
+## Issue #43 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-012-zeitvertrag-z-phase-boundary.md`.
+- Boundary matrix: `docs/fixtures/zeitvertrag-x83z-x84z-boundary.md`.
+- Tests: `tests/zeitvertrag_boundary.rs` locks the manifested Zeitvertrag source rows, interactive chart reference-only policy, X83Z/X84Z not-misclassified-as-X83/X84 behavior, framework discount/premium obligations, and support-policy `ReferenceOnly` behavior.
+- Support status: no X83Z/X84Z parser or adapter support is promoted; official rows remain `reference_only`.

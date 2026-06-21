@@ -8,7 +8,7 @@
 Plan this source family as an execution-ready future track while preserving support-status honesty.
 
 ## Candidate architecture decision before implementation
-Create a boundary ADR for Z-phase framework-contract handling before changing ordinary X83/X84 behavior.
+ARCH-012 records the boundary decision: Zeitvertrag X83Z/X84Z remains reference-only Z-phase framework-contract planning; future parser/model promotion requires safe fixtures and red/green tests, and ordinary X83/X84 behavior must not change in this issue.
 
 ## Per-source support matrix
 | Fixture/source id | Source family | Domain | Version/phase | support_status | CI/download policy | License/executable policy | Test mapping |
@@ -33,10 +33,10 @@ Create a boundary ADR for Z-phase framework-contract handling before changing or
 - test_zeitvertrag_interactive_schema_charts_are_reference_only
 
 ## Acceptance criteria
-- [ ] Issue body links this spec, PRD, and test-spec.
-- [ ] PRD contains a per-source support matrix.
-- [ ] Test-spec contains concrete red/green test names and promotion gates.
-- [ ] Any implementation follow-up starts with the candidate architecture decision above.
+- [x] Issue body links this spec, PRD, and test-spec.
+- [x] PRD contains a per-source support matrix.
+- [x] Test-spec contains concrete red/green test names and promotion gates.
+- [x] ARCH-012 records the candidate architecture decision before parser/model promotion.
 
 ## Ranked roadmap source audit
 
@@ -50,3 +50,10 @@ This section binds issue #43 to the canonical source/status ledger. It does not 
 | R7-04 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R7-05 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
 | R7-06 | #43 Zeitvertrag X83Z/X84Z | artifact-only/reference | artifact-only/reference: documentation/schema/tooling | reference_only | Schema/documentation reference for validation planning; not a parser fixture. |
+
+
+## Issue #43 delivery notes
+- Boundary ADR: `.archgate/adrs/ARCH-012-zeitvertrag-z-phase-boundary.md`.
+- Boundary matrix: `docs/fixtures/zeitvertrag-x83z-x84z-boundary.md`.
+- Tests: `tests/zeitvertrag_boundary.rs` locks the manifested Zeitvertrag source rows, interactive chart reference-only policy, X83Z/X84Z not-misclassified-as-X83/X84 behavior, framework discount/premium obligations, and support-policy `ReferenceOnly` behavior.
+- Support status: no X83Z/X84Z parser or adapter support is promoted; official rows remain `reference_only`.
