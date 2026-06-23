@@ -33,6 +33,8 @@ fn documentation_guides_cover_required_mvp_topics() {
         "X81",
         "X83",
         "Texterstellung",
+        "X89 Rechnung billing draft boundary",
+        "ObraBillingDraft",
         "supported_parse_only",
         "rich-text/table parser-readiness",
         "Obra",

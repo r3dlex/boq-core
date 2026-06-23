@@ -1,10 +1,11 @@
 //! X89 Rechnung invoice domain model.
 //!
-//! This module models GAEB Rechnung/X89 invoice data separately from the BoQ
-//! parser and separately from any XRechnung envelope generator. It is a typed
-//! design boundary for future parser work: constructing these structs does not
-//! promote any `gaeb/manifest.toml` entry, does not parse a fixture, and does
-//! not create an XRechnung payload.
+//! This module parses GAEB Rechnung/X89 invoice data into a source-domain model
+//! and can derive an [`ObraBillingDraft`] for Obra billing/import design. It is
+//! deliberately separate from the BoQ adapter and from any XRechnung envelope
+//! generator: parsing or adapting X89 data here does not promote any official
+//! `gaeb/manifest.toml` Rechnung entry, does not validate public-sector billing
+//! completeness, and does not create an XRechnung payload.
 //!
 //! ```
 //! use rust_decimal::Decimal;
@@ -232,18 +233,25 @@ impl<'a> X89Parser<'a> {
     }
 
     fn read_text_for(&mut self, end: QName<'_>) -> Result<String, ParseError> {
-        let text = self.reader.read_text(end).map_err(|error| ParseError {
-            code: "x89_xml_text_read_failed".to_owned(),
-            message: error.to_string(),
-            location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
-        })?;
-        text.decode()
-            .map(std::borrow::Cow::into_owned)
-            .map_err(|error| ParseError {
+        let text = match self.reader.read_text(end) {
+            Ok(text) => text,
+            Err(error) => {
+                return Err(ParseError {
+                    code: "x89_xml_text_read_failed".to_owned(),
+                    message: error.to_string(),
+                    location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
+                });
+            }
+        };
+
+        match text.decode() {
+            Ok(decoded) => Ok(decoded.into_owned()),
+            Err(error) => Err(ParseError {
                 code: "x89_xml_text_decode_failed".to_owned(),
                 message: error.to_string(),
                 location: Some(String::from_utf8_lossy(end.as_ref()).to_string()),
-            })
+            }),
+        }
     }
 }
 
@@ -473,6 +481,162 @@ fn attr_value(start: &BytesStart<'_>, key: &[u8]) -> Option<String> {
         .map(|attr| String::from_utf8_lossy(attr.value.as_ref()).to_string())
 }
 
+/// Obra-facing billing draft generated from parsed X89 invoice-domain data.
+///
+/// This DTO is an internal boundary candidate for Obra billing/import design. It
+/// preserves source provenance, deterministic keys, totals, line mappings, and
+/// loss findings, but it is not an XRechnung envelope and it does not make a
+/// public-sector billing readiness claim unless [`BillingReadiness`] is clean.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ObraBillingDraft {
+    /// Source provenance from the parsed X89 invoice.
+    pub source: SourceProvenance,
+    /// Stable draft key derived from source checksum/URI and invoice id.
+    pub deterministic_key: String,
+    /// Stable invoice identifier from the X89 source.
+    pub invoice_id: String,
+    /// Optional invoice issue date as source text.
+    pub invoice_date: Option<String>,
+    /// Invoice type classification.
+    pub invoice_type: InvoiceType,
+    /// ISO-like currency code used by monetary values.
+    pub currency: String,
+    /// Optional project or contract identifier.
+    pub project_id: Option<String>,
+    /// Parties participating in the invoice exchange.
+    pub parties: Vec<InvoiceParty>,
+    /// Obra billing line candidates.
+    pub lines: Vec<ObraBillingLine>,
+    /// Totals represented by or derived from the invoice data.
+    pub totals: InvoiceTotals,
+    /// Payment terms and payment-application metadata.
+    pub payment: PaymentApplication,
+    /// Loss and provenance report for billing adaptation.
+    pub loss_report: BillingLossReport,
+    /// Explicit public-sector billing readiness gate.
+    pub readiness: BillingReadiness,
+    /// Explicit XRechnung bridge boundary; generation remains absent here.
+    pub xrechnung_boundary: XRechnungBoundary,
+}
+
+impl ObraBillingDraft {
+    /// Creates an Obra billing draft from parsed X89 invoice data.
+    #[must_use]
+    pub fn from_x89(invoice: &InvoiceDocument) -> Self {
+        let mut audited = invoice.clone();
+        audited.record_public_sector_audit_findings();
+        let warnings = collect_billing_warnings(&audited);
+        let blocking_findings = billing_blocking_codes(&warnings);
+        let readiness = BillingReadiness {
+            ready_for_public_sector_billing: !audited.lines.is_empty()
+                && blocking_findings.is_empty(),
+            blocking_findings,
+        };
+        let seed = billing_seed(&audited);
+        let lines = audited
+            .lines
+            .iter()
+            .map(|line| ObraBillingLine::from_invoice_line(line, &seed))
+            .collect();
+
+        Self {
+            source: audited.source.clone(),
+            deterministic_key: deterministic_billing_key(
+                &seed,
+                "invoice",
+                &audited.header.invoice_id,
+            ),
+            invoice_id: audited.header.invoice_id.clone(),
+            invoice_date: audited.header.invoice_date.clone(),
+            invoice_type: audited.header.invoice_type,
+            currency: audited.header.currency.clone(),
+            project_id: audited.header.project_id.clone(),
+            parties: audited.parties.clone(),
+            lines,
+            totals: audited.totals,
+            payment: audited.payment.clone(),
+            loss_report: BillingLossReport {
+                warnings,
+                unsupported_fields: billing_unsupported_fields(&audited),
+                lossy_mappings: Vec::new(),
+            },
+            readiness,
+            xrechnung_boundary: audited.xrechnung_boundary(),
+        }
+    }
+}
+
+/// Obra billing line candidate derived from one X89 invoice line.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ObraBillingLine {
+    /// Stable line key derived from source seed and X89 line id.
+    pub deterministic_key: String,
+    /// Stable line identifier from the X89 source.
+    pub line_id: String,
+    /// Linked BoQ ordinal, when present.
+    pub boq_ordinal: Option<String>,
+    /// Optional line description.
+    pub description: Option<String>,
+    /// Invoiced quantity.
+    pub quantity: Decimal,
+    /// Quantity unit.
+    pub unit: String,
+    /// Unit price for this invoice line.
+    pub unit_price: Decimal,
+    /// Net line amount.
+    pub net_amount: Option<Decimal>,
+    /// Tax breakdown for this line.
+    pub tax: Option<TaxBreakdown>,
+    /// Contract baseline relation for this line.
+    pub contract: Option<ContractReference>,
+    /// Measurement/progress evidence used for this invoice line.
+    pub quantity_evidence: Vec<QuantityEvidenceReference>,
+    /// Line-level validation or audit findings.
+    pub findings: Vec<ValidationFinding>,
+    /// Line metadata for unmapped GAEB fields.
+    pub metadata: Metadata,
+}
+
+impl ObraBillingLine {
+    fn from_invoice_line(line: &InvoiceLine, seed: &str) -> Self {
+        Self {
+            deterministic_key: deterministic_billing_key(seed, "line", &line.line_id),
+            line_id: line.line_id.clone(),
+            boq_ordinal: line.ordinal.clone(),
+            description: line.description.clone(),
+            quantity: line.quantity,
+            unit: line.unit.clone(),
+            unit_price: line.unit_price,
+            net_amount: line.net_amount,
+            tax: line.tax,
+            contract: line.contract.clone(),
+            quantity_evidence: line.quantity_evidence.clone(),
+            findings: line.findings.clone(),
+            metadata: line.metadata.clone(),
+        }
+    }
+}
+
+/// Loss and provenance report for X89 billing adaptation.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BillingLossReport {
+    /// Recoverable warnings from document and line parsing/audit.
+    pub warnings: Vec<ValidationFinding>,
+    /// Unsupported field paths that block billing readiness until reviewed.
+    pub unsupported_fields: Vec<String>,
+    /// Known lossy mappings. Empty means no lossy mapping is currently claimed.
+    pub lossy_mappings: Vec<String>,
+}
+
+/// Public-sector billing readiness gate for an X89 billing draft.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BillingReadiness {
+    /// Whether the draft has all required evidence for public-sector billing.
+    pub ready_for_public_sector_billing: bool,
+    /// Stable finding codes that currently block public-sector billing readiness.
+    pub blocking_findings: Vec<String>,
+}
+
 /// A complete GAEB X89 invoice-domain document.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InvoiceDocument {
@@ -627,6 +791,57 @@ impl InvoiceDocument {
             required_bridge: "xrechnung-bridge".to_owned(),
         }
     }
+}
+
+fn billing_seed(invoice: &InvoiceDocument) -> String {
+    invoice
+        .source
+        .checksum
+        .clone()
+        .or_else(|| invoice.source.source_uri.clone())
+        .unwrap_or_else(|| invoice.header.invoice_id.clone())
+}
+
+fn deterministic_billing_key(seed: &str, namespace: &str, value: &str) -> String {
+    format!(
+        "x89-billing:{namespace}:{value}:{}",
+        sha256_hex(format!("{seed}:{namespace}:{value}").as_bytes())
+    )
+}
+
+fn collect_billing_warnings(invoice: &InvoiceDocument) -> Vec<ValidationFinding> {
+    invoice
+        .findings
+        .iter()
+        .cloned()
+        .chain(
+            invoice
+                .lines
+                .iter()
+                .flat_map(|line| line.findings.iter().cloned()),
+        )
+        .collect()
+}
+
+fn billing_blocking_codes(warnings: &[ValidationFinding]) -> Vec<String> {
+    let mut codes: Vec<String> = warnings
+        .iter()
+        .map(|finding| finding.code.clone())
+        .collect();
+    codes.sort();
+    codes.dedup();
+    codes
+}
+
+fn billing_unsupported_fields(invoice: &InvoiceDocument) -> Vec<String> {
+    let mut fields: Vec<String> = collect_billing_warnings(invoice)
+        .into_iter()
+        .filter(|finding| finding.code.contains("unsupported") || finding.code.contains("missing"))
+        .map(|finding| finding.location.unwrap_or(finding.code))
+        .collect();
+    fields.sort();
+    fields.dedup();
+    fields
 }
 
 /// Invoice header fields that identify the X89 invoice independently of lines.
