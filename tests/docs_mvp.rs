@@ -331,6 +331,28 @@ fn test_user_guide_links_supported_formats() {
 }
 
 #[test]
+fn test_user_guide_x89_status_uses_manifest_vocabulary() {
+    let guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
+    let x89_row = guide
+        .lines()
+        .find(|line| line.starts_with("| GAEB DA XML X89 Rechnung |"))
+        .expect("X89 user-guide support row exists");
+
+    assert!(
+        x89_row.contains("`reference_only`"),
+        "X89 status row must anchor on manifest support vocabulary: {x89_row}"
+    );
+    assert!(
+        x89_row.contains("not manifest support promotion"),
+        "X89 status row must distinguish contract evidence from manifest support: {x89_row}"
+    );
+    assert!(
+        !x89_row.contains("parser/billing-draft evidence; no manifest support promotion"),
+        "X89 status row must not use ad-hoc support status wording: {x89_row}"
+    );
+}
+
+#[test]
 fn test_user_guide_warns_reference_only_sources() {
     let guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
     for required in [

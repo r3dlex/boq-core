@@ -149,6 +149,25 @@ fn test_x89_fixture_adapts_to_obra_billing_draft_without_xrechnung() {
             .iter()
             .any(|finding| finding.code == "x89_unsupported_payment_field")
     );
+    assert!(
+        draft
+            .loss_report
+            .unsupported_fields
+            .iter()
+            .any(|field| field.ends_with("UnsupportedPayment")
+                || field.ends_with("DirectDebitMandate")),
+        "unsupported fields should preserve actual X89 field paths: {:?}",
+        draft.loss_report.unsupported_fields
+    );
+    assert!(
+        draft
+            .loss_report
+            .unsupported_fields
+            .iter()
+            .any(|field| field.ends_with("UnsupportedTax")),
+        "unsupported fields should preserve unsupported tax field paths: {:?}",
+        draft.loss_report.unsupported_fields
+    );
 }
 
 #[test]

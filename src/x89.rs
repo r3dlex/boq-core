@@ -462,7 +462,7 @@ fn unsupported_finding(code: &str, field: &str, location: &str) -> ValidationFin
         code,
         format!("unsupported X89 field {field} was preserved as a finding"),
     )
-    .at(location.to_owned())
+    .at(format!("{location}.{field}"))
 }
 
 fn local_name(name: QName<'_>) -> String {
