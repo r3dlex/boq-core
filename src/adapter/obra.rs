@@ -44,7 +44,8 @@ use sha2::{Digest, Sha256};
 
 use crate::error::ValidationFinding;
 use crate::model::{
-    BoqNode, BoqNodeKind, ClassificationSystem, GaebDocument, Metadata, RichText, SourceProvenance,
+    BoqNode, BoqNodeKind, CatalogSystem, ClassificationSystem, GaebDocument, Metadata, RichText,
+    SourceProvenance,
 };
 
 /// Obra import DTO root.
@@ -334,6 +335,16 @@ fn collect_node(
                         reference_price: item.unit_price,
                     });
                 }
+                for catalog_reference in annotations.price_catalog_references {
+                    classifications.push(ObraClassification {
+                        wbs_node_key: key.clone(),
+                        system_code: catalog_system_code(&catalog_reference.system),
+                        external_code: catalog_reference.code,
+                        external_title: catalog_reference.label,
+                        unit: Some(item.unit.clone()),
+                        reference_price: catalog_reference.unit_price,
+                    });
+                }
             }
             Err(finding) => warnings.push(finding),
         }
@@ -365,6 +376,17 @@ fn classification_system_code(system: &ClassificationSystem) -> String {
         ClassificationSystem::Stabu => "stabu".to_owned(),
         ClassificationSystem::Dqe => "dqe".to_owned(),
         ClassificationSystem::Custom(value) => value.clone(),
+    }
+}
+
+fn catalog_system_code(system: &CatalogSystem) -> String {
+    match system {
+        CatalogSystem::Sinapi => "sinapi".to_owned(),
+        CatalogSystem::Prezzario => "prezzario".to_owned(),
+        CatalogSystem::CatalogoConceptos => "catalogo_conceptos".to_owned(),
+        CatalogSystem::CuadroPrecios => "cuadro_precios".to_owned(),
+        CatalogSystem::Stabu => "stabu".to_owned(),
+        CatalogSystem::Custom(value) => value.clone(),
     }
 }
 

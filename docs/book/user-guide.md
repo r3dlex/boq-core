@@ -126,6 +126,12 @@ The `boq_core::nlsfb` module can apply a deterministic, fixture-backed NL-SfB cl
 
 The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external NL-SfB catalog data, and does not claim complete NL-SfB coverage. When a document is already adapter-capable, the Obra adapter can carry NL-SfB classifications as DTO evidence alongside the GAEB ordinal classification.
 
+## SINAPI catalog and BDI overlay
+
+The `boq_core::sinapi` module can apply a deterministic, fixture-backed SINAPI catalog and BDI overlay to parsed BoQ items. It writes synthetic SINAPI `PriceCatalogReference` values into `MultiStandardAnnotations` and preserves the mapping source as provenance.
+
+The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external SINAPI catalog data, and does not claim complete SINAPI coverage. When a document is already adapter-capable, the Obra adapter can carry SINAPI catalog code and reference price evidence alongside the GAEB ordinal classification.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.
