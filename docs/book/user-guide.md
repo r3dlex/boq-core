@@ -95,6 +95,19 @@ roundtrip, production path, or certification claim. Callers must continue to
 read `support_status`, `capabilities`, and manifest-backed evidence before
 enabling any downstream behavior.
 
+## DIN 276 classification overlay
+
+The `boq_core::din276` module can apply a deterministic, fixture-backed DIN 276
+classification overlay to parsed BoQ items. It writes DIN 276
+`ClassificationReference` values into `MultiStandardAnnotations` and preserves
+the mapping source as provenance.
+
+The overlay is evidence only. It does not change `support_status`, does not
+grant Obra adapter support to parse-only inputs, and does not claim complete DIN
+276 coverage. When a document is already adapter-capable, the Obra adapter can
+carry DIN 276 classifications as DTO evidence alongside the GAEB ordinal
+classification.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.
