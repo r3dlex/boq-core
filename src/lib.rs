@@ -71,6 +71,9 @@
 //! - STABU and RAW exchange evidence is available through the fixture-backed
 //!   [`stabu`] overlay. It adds synthetic Dutch classification and catalog annotations
 //!   only and does not promote support or grant adapter support to parse-only inputs.
+//! - DQE quantity-estimate evidence is available through the fixture-backed
+//!   [`dqe`] overlay. It adds synthetic French classification and quantity annotations
+//!   only and does not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -167,6 +170,7 @@ pub mod catalogo;
 pub mod checksum;
 pub mod csi_masterformat;
 pub mod din276;
+pub mod dqe;
 pub mod error;
 pub mod format;
 pub mod gaeb2000;

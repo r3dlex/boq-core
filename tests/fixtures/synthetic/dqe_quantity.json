@@ -1,0 +1,17 @@
+{
+  "source_uri": "tests/fixtures/synthetic/dqe_quantity.json",
+  "items": [
+    {
+      "match_text": "Concrete",
+      "dqe_code": "DQE-SYN-001",
+      "label": "Synthetic French concrete quantity estimate",
+      "quantity_reference": "DQE-QTY-SYN-001",
+      "quantity": "3.75",
+      "unit": "m3",
+      "estimate_basis": "avant-metre",
+      "calculation_note": "longueur * largeur * hauteur",
+      "loss_finding_code": "dqe_quantity_method_preserved_not_evaluated",
+      "loss_finding_message": "Synthetic DQE calculation note was preserved as evidence but not evaluated as official French quantity-estimate support"
+    }
+  ]
+}
