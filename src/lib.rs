@@ -41,6 +41,12 @@
 //!   capabilities say otherwise.
 //! - X31 quantity-takeoff concepts are represented by [`x31`] as parse-only
 //!   canonical quantity evidence without overloading BoQ item parser semantics.
+//! - Canonical BoQ items expose
+//!   [`model::MultiStandardAnnotations`] for future classification,
+//!   price/catalog, quantity, progress, provenance, and loss evidence. Empty
+//!   annotations are the parser default, and populated annotations do not
+//!   promote support or imply Obra adapter, export, billing, production, or
+//!   certification readiness.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest

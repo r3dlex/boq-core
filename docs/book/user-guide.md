@@ -79,6 +79,22 @@ assert!(item.short_text.contains("Concrete"));
 
 When input is malformed but recoverable, `findings` explain what was preserved, normalized, or not yet supported. For example, GAEB 90 short lines emit `gaeb90_line_length`, blank item ordinals emit `gaeb90_malformed_ordinal`, and generic rich XML descriptions outside supported fixture paths can emit `gaeb_xml_description_plain_text_only`.
 
+## Canonical multi-standard annotations
+
+Every `BoqItem` can carry typed `MultiStandardAnnotations` through the
+source-compatible `try_multi_standard()` and `set_multi_standard()` accessors.
+`try_multi_standard()` returns a finding when reserved metadata is malformed, so
+corrupted provenance or loss evidence is not silently hidden. Parsers leave this empty unless tested evidence explicitly attaches
+cross-standard context. The annotation model can carry classification
+references, price/catalog references, quantity references, progress references,
+source provenance, and loss findings for later Obra import design.
+
+These annotations are not support status. A populated annotation set does not
+promote a GAEB phase, catalog, billing flow, adapter conversion, export,
+roundtrip, production path, or certification claim. Callers must continue to
+read `support_status`, `capabilities`, and manifest-backed evidence before
+enabling any downstream behavior.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.
