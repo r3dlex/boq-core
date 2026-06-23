@@ -128,6 +128,24 @@ impl SupportCapabilities {
         }
     }
 
+    /// Creates a parser-backed Obra adapter capability set without validation/export/roundtrip.
+    ///
+    /// Use this for fixture-backed flows where the loss-aware model and Obra DTO
+    /// mapping are covered by tests, but schema validation, GAEB export, and
+    /// roundtrip fidelity remain explicitly unclaimed.
+    #[must_use]
+    pub const fn parse_with_obra_adapter() -> Self {
+        Self {
+            detect: true,
+            parse: true,
+            validate: false,
+            adapt_to_obra: true,
+            export: false,
+            roundtrip: false,
+            reference_only: false,
+        }
+    }
+
     /// Creates a reference-only capability set.
     #[must_use]
     pub const fn reference_only() -> Self {
@@ -334,6 +352,15 @@ impl SupportPolicy for ManifestPolicy {
                     SupportStatus::Supported,
                     SupportCapabilities::supported_import(),
                     "supported GAEB 90 adapter-compatible import fixture",
+                )
+            }
+            manifest::ManifestSupportStatus::SupportedParseOnly
+                if entry.process_domain == "construction_execution" =>
+            {
+                (
+                    SupportStatus::SupportedParseOnly,
+                    SupportCapabilities::parse_with_obra_adapter(),
+                    "supported parse-only Bau fixture with Obra adapter DTO readiness",
                 )
             }
             manifest::ManifestSupportStatus::SupportedParseOnly => (
@@ -543,6 +570,18 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_obra_adapter_keeps_validation_export_roundtrip_disabled() {
+        let capabilities = SupportCapabilities::parse_with_obra_adapter();
+        assert!(capabilities.detect);
+        assert!(capabilities.parse);
+        assert!(!capabilities.validate);
+        assert!(capabilities.adapt_to_obra);
+        assert!(!capabilities.export);
+        assert!(!capabilities.roundtrip);
+        assert!(!capabilities.reference_only);
+    }
+
+    #[test]
     fn reference_only_capabilities_do_not_claim_parser_support() {
         let capabilities = SupportCapabilities::reference_only();
         assert!(capabilities.detect);
@@ -634,8 +673,14 @@ mod tests {
         x83_query.phase = x83_phase.as_ref();
         let x83 = policy.decide(x83_query);
         assert_eq!(x83.status, SupportStatus::SupportedParseOnly);
-        assert_eq!(x83.capabilities, SupportCapabilities::parse_only());
-        assert!(x83.reason.contains("supported parse-only fixture"));
+        assert_eq!(
+            x83.capabilities,
+            SupportCapabilities::parse_with_obra_adapter()
+        );
+        assert!(
+            x83.reason
+                .contains("supported parse-only Bau fixture with Obra adapter DTO readiness")
+        );
         assert!(
             matches!(x83.source, DecisionSource::ManifestEntry { ref id } if id == "bvbs_xml33_bau_x83")
         );
@@ -648,8 +693,14 @@ mod tests {
         x84_query.phase = x84_phase.as_ref();
         let x84 = policy.decide(x84_query);
         assert_eq!(x84.status, SupportStatus::SupportedParseOnly);
-        assert_eq!(x84.capabilities, SupportCapabilities::parse_only());
-        assert!(x84.reason.contains("supported parse-only fixture"));
+        assert_eq!(
+            x84.capabilities,
+            SupportCapabilities::parse_with_obra_adapter()
+        );
+        assert!(
+            x84.reason
+                .contains("supported parse-only Bau fixture with Obra adapter DTO readiness")
+        );
         assert!(
             matches!(x84.source, DecisionSource::ManifestEntry { ref id } if id == "bvbs_xml33_bau_x84")
         );

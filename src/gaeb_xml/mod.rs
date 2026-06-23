@@ -1091,7 +1091,7 @@ mod tests {
             Some(&serde_json::json!({
                 "status": SupportStatus::SupportedParseOnly,
                 "reason":
-                    "manifest fixture bvbs_xml33_bau_x83: supported parse-only fixture",
+                    "manifest fixture bvbs_xml33_bau_x83: supported parse-only Bau fixture with Obra adapter DTO readiness",
             }))
         );
     }
@@ -1128,12 +1128,12 @@ mod tests {
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83/test.X83",
                 "83",
-                "manifest fixture bvbs_xml33_bau_x83: supported parse-only fixture".to_owned(),
+                "manifest fixture bvbs_xml33_bau_x83: supported parse-only Bau fixture with Obra adapter DTO readiness".to_owned(),
             ),
             (
                 "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84/test.X84",
                 "84",
-                "manifest fixture bvbs_xml33_bau_x84: supported parse-only fixture".to_owned(),
+                "manifest fixture bvbs_xml33_bau_x84: supported parse-only Bau fixture with Obra adapter DTO readiness".to_owned(),
             ),
         ] {
             let document = parse_str(
@@ -1158,7 +1158,8 @@ mod tests {
                     "reason": reason,
                 }))
             );
-            assert!(!document.capabilities.adapt_to_obra);
+            assert!(document.capabilities.adapt_to_obra);
+            assert!(!document.capabilities.validate);
             assert!(!document.capabilities.export);
             assert!(!document.capabilities.roundtrip);
         }

@@ -32,9 +32,11 @@
 //! - GAEB DA XML X81 and other XML phases are parsed through
 //!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
 //!   X84, and X86 AVA fixture paths are the current adapter-ready focus.
-//! - GAEB DA XML X83/X84 Bauausführung paths are recognized as parse-only
-//!   fixture-backed tracks when the manifest says so; adapter/export capability
-//!   remains disabled unless [`support::SupportCapabilities`] says otherwise.
+//! - GAEB DA XML X83/X84 Bauausführung paths are recognized as `supported_parse_only`
+//!   fixture-backed tracks when the manifest says so; Obra adapter DTO readiness
+//!   is capability-gated by [`support::SupportCapabilities::adapt_to_obra`],
+//!   while schema validation, export, and roundtrip remain disabled unless
+//!   capabilities say otherwise.
 //! - X31 quantity-takeoff concepts are represented by [`x31`] without overloading
 //!   BoQ item parser semantics.
 //! - X89 invoice concepts are represented by [`x89`] without generating
@@ -96,8 +98,8 @@
 //! # Ok::<(), boq_core::error::ParseError>(())
 //! ```
 //!
-//! Parse GAEB DA XML X83 as a loss-aware future-track document without
-//! implying adapter support:
+//! Parse GAEB DA XML X83 as a loss-aware Bau document whose Obra adapter DTO
+//! readiness remains explicit in capabilities:
 //!
 //! ```
 //! let source = r#"<GAEB><GAEBInfo><Version>3.3</Version></GAEBInfo><Project><Name>Bau X83</Name><BoQ><BoQBody><BoQCtgy ID="001" RNoPart="001"><Item ID="001.0010" RNoPart="10"><Qty>1.000</Qty><QU>m</QU><Description><CompleteText><DetailTxt><Text><p>Trench text</p></Text></DetailTxt></CompleteText></Description></Item></BoQCtgy></BoQBody></BoQ></Project></GAEB>"#;
@@ -107,7 +109,9 @@
 //! )?;
 //!
 //! assert_eq!(document.summary.phase.as_ref().map(|phase| phase.code.as_str()), Some("83"));
-//! assert!(!document.capabilities.adapt_to_obra);
+//! assert!(document.capabilities.adapt_to_obra);
+//! assert!(!document.capabilities.export);
+//! assert!(!document.capabilities.roundtrip);
 //! # Ok::<(), boq_core::error::ParseError>(())
 //! ```
 //!
