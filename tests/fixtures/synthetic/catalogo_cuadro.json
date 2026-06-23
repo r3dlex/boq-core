@@ -1,0 +1,19 @@
+{
+  "source_uri": "tests/fixtures/synthetic/catalogo_cuadro.json",
+  "items": [
+    {
+      "match_text": "Concrete",
+      "concept_code": "CONCEPTO-SYN-001",
+      "concept_label": "Synthetic Spanish concrete concept",
+      "cuadro_code": "CUADRO-SYN-001",
+      "price_label": "Synthetic cuadro de precios concrete service",
+      "unit_price": "126.45",
+      "currency": "EUR",
+      "unit": "m3",
+      "market_scope": "ES/MX",
+      "price_table_kind": "unit_price_decomposition",
+      "loss_finding_code": "catalogo_cuadro_price_factor_preserved_not_applied",
+      "loss_finding_message": "Synthetic price-table factor was preserved as evidence but not applied as official Catálogo/Cuadro support"
+    }
+  ]
+}

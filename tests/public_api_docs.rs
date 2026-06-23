@@ -228,6 +228,30 @@ fn prezzario_computo_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn catalogo_cuadro_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/catalogo.rs").expect("Catálogo/Cuadro docs exist");
+    for required in [
+        "Catálogo de Conceptos and Cuadro de Precios overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "Catálogo/Cuadro rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`catalogo`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing Catálogo/Cuadro boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn sinapi_catalog_contract_is_documented_without_support_promotion() {
     let module = fs::read_to_string("src/sinapi.rs").expect("SINAPI docs exist");
     for required in [
