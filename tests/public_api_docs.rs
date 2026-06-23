@@ -204,6 +204,30 @@ fn nlsfb_overlay_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn prezzario_computo_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/prezzario.rs").expect("Prezzario docs exist");
+    for required in [
+        "Computo Metrico and Prezzario overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "Prezzario rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`prezzario`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing Prezzario boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn sinapi_catalog_contract_is_documented_without_support_promotion() {
     let module = fs::read_to_string("src/sinapi.rs").expect("SINAPI docs exist");
     for required in [
