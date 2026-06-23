@@ -9,8 +9,7 @@
 //! The MVP is intentionally conservative:
 //!
 //! - GAEB DA XML 3.3 AVA paths are the certification-readiness focus.
-//! - GAEB 90 D81/D83 is parse-only unless tests and the fixture manifest
-//!   promote a more specific capability.
+//! - GAEB 90 has no blanket promotion: the selected Dangl GAEB 90 D83 fixture path is adapter-compatible when the manifest and tests say so, while D81 and unmanifested D83 inputs remain `supported_parse_only`.
 //! - X31 has parser-backed `supported_parse_only` canonical quantity evidence
 //!   for selected paths; it still does not imply Obra adapter DTO,
 //!   export, billing, full REB formula conformance, roundtrip, or certification
@@ -28,8 +27,7 @@
 //!   [`gaeb90::parse_bytes`] or [`gaeb90::parse_file`]. Legacy ANSI inputs can
 //!   use [`gaeb90::parse_bytes_with_encoding`] with
 //!   [`gaeb90::Gaeb90Encoding::Windows1252`] when the caller already knows the
-//!   source encoding. These paths are currently parse-only unless
-//!   [`support::SupportCapabilities`] says otherwise.
+//!   source encoding. The selected Dangl GAEB 90 D83 fixture path is adapter-compatible when [`support::SupportCapabilities::adapt_to_obra`] is true; D81 and unmanifested D83 inputs remain `supported_parse_only`, so there is no blanket GAEB 90 promotion.
 //! - GAEB DA XML X81 and other XML phases are parsed through
 //!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
 //!   X84, and X86 AVA fixture paths are the current adapter-ready focus.

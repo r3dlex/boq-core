@@ -138,21 +138,81 @@ fn test_mwm_rialto_is_reference_only_non_executed() {
 }
 
 #[test]
-fn test_issue_40_artifacts_bind_gap_analysis() {
-    let artifacts = [
+fn test_phase10_artifacts_bind_gap_analysis_and_current_issue() {
+    let legacy_artifacts = [
         include_str!("../.omx/plans/prd-issue-40-gaeb90-adapter-compatible-promotion.md"),
         include_str!("../.omx/specs/issue-40-gaeb90-adapter-compatible-promotion.md"),
         include_str!("../.omx/plans/test-spec-issue-40-gaeb90-adapter-compatible-promotion.md"),
     ];
-    for artifact in artifacts {
+    for artifact in legacy_artifacts {
         for expected in [
             "#40",
             "ARCH-009",
             "adapter-compatible",
             "mwm_rialto_gaeb90_demo",
         ] {
-            assert!(artifact.contains(expected), "artifact missing {expected}");
+            assert!(
+                artifact.contains(expected),
+                "legacy artifact missing {expected}"
+            );
         }
+    }
+
+    let current_prd = include_str!("../raw/prd/BOQ-PRD-006-gaeb90-adapter-promotion.md");
+    for expected in [
+        "PHASE-10",
+        "#102",
+        "selected Dangl GAEB 90 D83",
+        "D81 remains parse-only",
+        "mwm_rialto_gaeb90_demo",
+        "reference_only",
+        "no blanket GAEB 90 promotion",
+        "historical issue #40 gap-analysis artifacts",
+        "PHASE-10 / #102 is the current delivery tracker",
+    ] {
+        assert!(
+            current_prd.contains(expected),
+            "current PRD missing {expected}"
+        );
+    }
+
+    for forbidden in [
+        "promote GAEB 90 D81/D83 from parse-only to Obra-adapter-compatible",
+        "dangl_ava_gaeb90_examples (future_track",
+    ] {
+        assert!(
+            !current_prd.contains(forbidden),
+            "current PRD must not retain blanket or stale lineage wording: {forbidden}"
+        );
+    }
+}
+
+#[test]
+fn test_phase10_public_docs_name_selected_d83_adapter_boundary() {
+    let user_guide = include_str!("../docs/book/user-guide.md");
+    for expected in [
+        "selected Dangl GAEB 90 D83 fixture path",
+        "D81 remains parse-only",
+        "malformed or unmanifested GAEB 90 remains adapter-gated",
+        "mwm_rialto_gaeb90_demo",
+        "reference_only",
+    ] {
+        assert!(
+            user_guide.contains(expected),
+            "user guide missing {expected}"
+        );
+    }
+
+    let crate_docs = include_str!("../src/lib.rs");
+    for expected in [
+        "selected Dangl GAEB 90 D83 fixture path is adapter-compatible",
+        "D81 and unmanifested D83 inputs remain `supported_parse_only`",
+        "no blanket GAEB 90 promotion",
+    ] {
+        assert!(
+            crate_docs.contains(expected),
+            "crate docs missing {expected}"
+        );
     }
 }
 
