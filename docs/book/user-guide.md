@@ -43,11 +43,11 @@ assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
 | --- | --- | --- | --- |
 | GAEB DA XML 3.3 AVA | X81, X84, X86 | `supported` for selected AVA fixture-backed paths | Parse, inspect support capabilities, and use the Obra adapter only when `adapt_to_obra` is true. |
 | GAEB 90 | D81, D83 | `supported_parse_only` for parser MVP paths | Parse and inspect hierarchy/items; adapter/export/roundtrip are not implied. |
-| GAEB DA XML Bauausführung | X83, X84 | `future_track` unless a manifest row promotes a concrete fixture | Treat as planned compatibility work; do not describe as production support. |
+| GAEB DA XML Bauausführung | X83, X84 | `supported_parse_only` for selected construction-execution fixture-backed paths | Parse and use the Obra adapter only when `adapt_to_obra` is true; schema validation, export, roundtrip, production support, and certification remain unclaimed. |
 | GAEB XML 3.4 beta, X31, X89, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
 | External BVBS/GAEBXmlChecker evidence | Checker reports, certification notes | `reference_only` unless mirrored by tested parser behavior | Evidence helps readiness reviews but does not grant paid or official certification. |
 
-D81 and X81 represent service-description/design-stage BoQs. D83 and X83 represent request-for-quotation flows at the GAEB phase level. In this crate, current X83 fixture coverage remains `future_track`; the parser preserves phase metadata when it can detect the file extension.
+D81 and X81 represent service-description/design-stage BoQs. D83 and X83 represent request-for-quotation flows at the GAEB phase level. In this crate, selected Bauausführung X83/X84 fixture paths are parser-backed and Obra-adapter-ready only when `adapt_to_obra` is true; export, roundtrip, schema validation, production support, and certification remain unclaimed.
 
 ## Reading BoQ output
 

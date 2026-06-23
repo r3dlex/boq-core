@@ -68,8 +68,8 @@ phase = "x83"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83"
 support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "BVBS Bauausführung X83 fixture has parser-readiness evidence for supported_parse_only import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion."
-test_mapping = ["test_bau_x83_fixture_parses_to_boq_tree", "test_bau_x83_support_promotion_requires_evidence", "test_bau_x83_golden_report_matches"]
+license_note = "BVBS Bauausführung X83 fixture has parser-readiness and Obra adapter DTO evidence for supported_parse_only import coverage; readiness-only; no paid submission, schema validation, export, or roundtrip promotion."
+test_mapping = ["test_bau_x83_fixture_parses_to_boq_tree", "test_bau_x83_adapter_dto_is_supported_without_export_or_roundtrip", "test_bau_x83_support_promotion_requires_evidence", "test_bau_x83_golden_report_matches"]
 
 [[fixtures]]
 id = "bvbs_xml33_bau_x84"
@@ -82,8 +82,8 @@ phase = "x84"
 target_dir = "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84"
 support_status = "supported_parse_only"
 ci_policy = "download_on_demand"
-license_note = "BVBS Bauausführung X84 fixture has parser-readiness evidence for supported_parse_only bid import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion."
-test_mapping = ["test_bau_x84_prices_map_by_ordinal", "test_bau_x84_missing_descriptions_resolve_against_x83_baseline", "test_bau_x84_bidder_remarks_preserved", "test_bau_x84_unmatched_ordinal_emits_finding", "test_bau_x84_support_promotion_requires_bid_evidence"]
+license_note = "BVBS Bauausführung X84 fixture has parser-readiness and Obra adapter DTO evidence for supported_parse_only bid import coverage; readiness-only; no paid submission, schema validation, export, or roundtrip promotion."
+test_mapping = ["test_bau_x84_prices_map_by_ordinal", "test_bau_x84_adapter_dto_is_supported_without_export_or_roundtrip", "test_bau_x84_missing_descriptions_resolve_against_x83_baseline", "test_bau_x84_bidder_remarks_preserved", "test_bau_x84_unmatched_ordinal_emits_finding", "test_bau_x84_support_promotion_requires_bid_evidence"]
 
 [[fixtures]]
 id = "bvbs_xml33_qty_x31"

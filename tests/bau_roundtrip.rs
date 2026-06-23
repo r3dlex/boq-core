@@ -85,8 +85,14 @@ fn test_xml33_bau_x84_missing_ordinal_is_nonfatal_finding() {
 
 #[test]
 fn test_xml33_bau_x83_adapts_to_obra_dto_snapshot_when_supported() {
-    let adapted = ObraImportDocument::from_gaeb(&synthetic_roundtrip_ready(x83_document()))
-        .expect("x83 adapts");
+    let document = x83_document();
+    assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+    assert!(document.capabilities.adapt_to_obra);
+    assert!(!document.capabilities.validate);
+    assert!(!document.capabilities.export);
+    assert!(!document.capabilities.roundtrip);
+
+    let adapted = ObraImportDocument::from_gaeb(&document).expect("x83 adapts");
     assert_eq!(adapted.line_items.len(), 1);
     assert_eq!(adapted.line_items[0].quantity, Decimal::new(2500, 3));
     assert!(
@@ -98,8 +104,14 @@ fn test_xml33_bau_x83_adapts_to_obra_dto_snapshot_when_supported() {
 
 #[test]
 fn test_xml33_bau_x84_adapts_to_obra_dto_snapshot_when_supported() {
-    let adapted = ObraImportDocument::from_gaeb(&synthetic_roundtrip_ready(x84_document()))
-        .expect("x84 adapts");
+    let document = x84_document();
+    assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
+    assert!(document.capabilities.adapt_to_obra);
+    assert!(!document.capabilities.validate);
+    assert!(!document.capabilities.export);
+    assert!(!document.capabilities.roundtrip);
+
+    let adapted = ObraImportDocument::from_gaeb(&document).expect("x84 adapts");
     assert_eq!(adapted.line_items.len(), 1);
     assert_eq!(
         adapted.line_items[0].unit_price,
@@ -274,12 +286,14 @@ fn test_bvbs_bau_x83_x84_manifest_statuses_have_readiness_evidence() {
     let x83 = manifest_fixture(fixtures, "bvbs_xml33_bau_x83");
     assert_eq!(field(x83, "support_status"), "supported_parse_only");
     assert_eq!(field(x83, "phase"), "x83");
-    assert!(field(x83, "license_note").contains("parser-readiness evidence"));
+    assert!(field(x83, "license_note").contains("parser-readiness"));
+    assert!(field(x83, "license_note").contains("Obra adapter DTO evidence"));
     assert!(field(x83, "license_note").contains("readiness-only"));
     assert!(!field(x83, "license_note").contains("certification completed"));
 
     let x84 = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
     assert_eq!(field(x84, "support_status"), "supported_parse_only");
+    assert!(field(x84, "license_note").contains("Obra adapter DTO evidence"));
 }
 
 #[test]
@@ -359,7 +373,10 @@ fn test_bau_x83_extracts_project_and_boq_metadata() {
         Some("83")
     );
     assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
-    assert_eq!(document.capabilities, SupportCapabilities::parse_only());
+    assert_eq!(
+        document.capabilities,
+        SupportCapabilities::parse_with_obra_adapter()
+    );
     assert!(document.source.checksum.is_some());
     assert_eq!(
         document
@@ -426,13 +443,34 @@ fn test_bau_x83_unknown_nodes_emit_findings() {
 }
 
 #[test]
-fn test_bau_x83_adapter_compatibility_remains_capability_gated() {
+fn test_bau_x83_adapter_dto_is_supported_without_export_or_roundtrip() {
     let document = x83_document();
-    let finding = ObraImportDocument::from_gaeb(&document)
-        .expect_err("cataloged X83 parse-only fixture must not adapt to Obra");
+    assert!(document.capabilities.adapt_to_obra);
+    assert!(!document.capabilities.validate);
+    assert!(!document.capabilities.export);
+    assert!(!document.capabilities.roundtrip);
 
-    assert_eq!(finding.code, "obra_adapter_not_supported");
-    assert!(!document.capabilities.adapt_to_obra);
+    let adapted = ObraImportDocument::from_gaeb(&document)
+        .expect("cataloged X83 fixture has Obra adapter DTO readiness");
+    assert_eq!(adapted.line_items.len(), 1);
+    assert_eq!(adapted.loss_report.unsupported_fields, Vec::<String>::new());
+}
+
+#[test]
+fn test_bau_x84_adapter_dto_is_supported_without_export_or_roundtrip() {
+    let document = x84_document();
+    assert!(document.capabilities.adapt_to_obra);
+    assert!(!document.capabilities.validate);
+    assert!(!document.capabilities.export);
+    assert!(!document.capabilities.roundtrip);
+
+    let adapted = ObraImportDocument::from_gaeb(&document)
+        .expect("cataloged X84 fixture has Obra adapter DTO readiness");
+    assert_eq!(adapted.line_items.len(), 1);
+    assert_eq!(
+        adapted.line_items[0].unit_price,
+        Some(Decimal::new(3200, 3))
+    );
 }
 
 #[test]
@@ -450,7 +488,10 @@ fn test_bau_x83_fixture_parses_to_boq_tree() {
         Some("83")
     );
     assert_eq!(document.support_status, SupportStatus::SupportedParseOnly);
-    assert_eq!(document.capabilities, SupportCapabilities::parse_only());
+    assert_eq!(
+        document.capabilities,
+        SupportCapabilities::parse_with_obra_adapter()
+    );
     assert_eq!(document.boq.nodes[0].ordinal, "001");
     assert_eq!(document.boq.nodes[0].children[0].ordinal, "001.0010");
     assert_eq!(item.quantity, Decimal::new(2500, 3));
@@ -486,6 +527,7 @@ fn test_bau_x83_support_promotion_requires_evidence() {
         .expect("x83 test mappings");
     for expected in [
         "test_bau_x83_fixture_parses_to_boq_tree",
+        "test_bau_x83_adapter_dto_is_supported_without_export_or_roundtrip",
         "test_bau_x83_support_promotion_requires_evidence",
         "test_bau_x83_golden_report_matches",
     ] {
@@ -522,6 +564,7 @@ fn test_bau_x84_support_promotion_requires_bid_evidence() {
     let x84_fixture = manifest_fixture(fixtures, "bvbs_xml33_bau_x84");
     assert_eq!(field(x84_fixture, "support_status"), "supported_parse_only");
     assert!(field(x84_fixture, "license_note").contains("bid import coverage"));
+    assert!(field(x84_fixture, "license_note").contains("Obra adapter DTO evidence"));
     assert!(field(x84_fixture, "license_note").contains("readiness-only"));
     assert!(!field(x84_fixture, "license_note").contains("certification completed"));
     let mappings = x84_fixture
@@ -530,6 +573,7 @@ fn test_bau_x84_support_promotion_requires_bid_evidence() {
         .expect("x84 test mappings");
     for expected in [
         "test_bau_x84_prices_map_by_ordinal",
+        "test_bau_x84_adapter_dto_is_supported_without_export_or_roundtrip",
         "test_bau_x84_missing_descriptions_resolve_against_x83_baseline",
         "test_bau_x84_bidder_remarks_preserved",
         "test_bau_x84_unmatched_ordinal_emits_finding",
@@ -552,9 +596,10 @@ fn test_bau_x83_golden_report_matches() {
         "Status: `supported_parse_only` readiness",
         "Manifest fixture: `bvbs_xml33_bau_x83`",
         "test_bau_x83_fixture_parses_to_boq_tree",
+        "test_bau_x83_adapter_dto_is_supported_without_export_or_roundtrip",
         "readiness-only evidence",
-        "X84 bid import support is tracked separately by issue #27",
-        "Adapter/export/roundtrip capabilities are not promoted",
+        "DTO-readiness evidence",
+        "Schema validation, export, roundtrip, and certification capabilities are not promoted",
     ] {
         assert!(
             report.contains(expected),
@@ -583,7 +628,7 @@ fn x84_document() -> GaebDocument {
 
 const fn synthetic_roundtrip_ready(mut document: GaebDocument) -> GaebDocument {
     // Synthetic in-crate writer tests opt into export capability explicitly;
-    // cataloged BVBS Bau X83/X84 fixtures stay future-track until locked.
+    // cataloged BVBS Bau X83/X84 fixtures remain adapter-only until locked.
     document.support_status = SupportStatus::Supported;
     document.capabilities = SupportCapabilities::roundtrip_without_schema_validation();
     document
