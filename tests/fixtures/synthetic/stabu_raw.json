@@ -1,0 +1,18 @@
+{
+  "source_uri": "tests/fixtures/synthetic/stabu_raw.json",
+  "items": [
+    {
+      "match_text": "Concrete",
+      "stabu_code": "STABU-SYN-001",
+      "stabu_label": "Synthetic Dutch concrete work",
+      "raw_code": "RAW-SYN-001",
+      "raw_label": "Synthetic RAW exchange concrete work",
+      "unit_price": "175.25",
+      "currency": "EUR",
+      "unit": "m3",
+      "exchange_profile": "RAW2020",
+      "loss_finding_code": "stabu_raw_exchange_metadata_preserved_not_interpreted",
+      "loss_finding_message": "Synthetic RAW exchange metadata was preserved as evidence but not interpreted as official STABU/RAW support"
+    }
+  ]
+}

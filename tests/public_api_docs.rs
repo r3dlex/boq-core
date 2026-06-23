@@ -252,6 +252,30 @@ fn catalogo_cuadro_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn stabu_raw_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/stabu.rs").expect("STABU/RAW docs exist");
+    for required in [
+        "STABU / RAW exchange overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "STABU/RAW rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`stabu`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing STABU/RAW boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn sinapi_catalog_contract_is_documented_without_support_promotion() {
     let module = fs::read_to_string("src/sinapi.rs").expect("SINAPI docs exist");
     for required in [
