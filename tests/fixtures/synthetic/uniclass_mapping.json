@@ -1,0 +1,10 @@
+{
+  "source_uri": "tests/fixtures/synthetic/uniclass_mapping.json",
+  "rules": [
+    {
+      "match_text": "concrete",
+      "code": "Ss_25_10_30",
+      "label": "Synthetic concrete systems"
+    }
+  ]
+}
