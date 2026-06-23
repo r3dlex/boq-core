@@ -77,6 +77,37 @@ fn x89_billing_draft_contract_is_documented() {
 }
 
 #[test]
+fn multi_standard_model_contract_is_documented_without_support_promotion() {
+    let model = fs::read_to_string("src/model.rs").expect("model docs exist");
+    for required in [
+        "MultiStandardAnnotations",
+        "ClassificationReference",
+        "PriceCatalogReference",
+        "QuantityReference",
+        "ProgressReference",
+        "does not promote support",
+    ] {
+        assert!(
+            model.contains(required),
+            "model rustdoc missing multi-standard contract anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in [
+        "model::MultiStandardAnnotations",
+        "price/catalog",
+        "do not",
+        "promote support",
+    ] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing multi-standard support-honesty anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [
