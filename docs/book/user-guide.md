@@ -156,6 +156,12 @@ The `boq_core::dqe` module can apply a deterministic, fixture-backed DQE quantit
 
 The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external French DQE data, and does not claim complete DQE coverage. When a document is already adapter-capable, the Obra adapter can carry DQE classification evidence alongside the GAEB ordinal classification while preserving quantity-reference metadata on the line item.
 
+## Spreadsheet-neutral CSV exchange
+
+The `boq_core::spreadsheet` module can export parsed BoQ items to a dependency-free neutral CSV payload and apply CSV updates by matching GAEB OZ/item ordinal values. It preserves source provenance, support-status metadata, and loss-finding codes in the export, and it records update/ignored-column findings when applying updates.
+
+The helpers are evidence-only. They do not add XLSX/ODS dependencies, do not execute spreadsheet binaries, do not change `support_status`, do not grant Obra adapter support to parse-only inputs, and do not claim production spreadsheet roundtrip support. Updates without an OZ/item ordinal column or with empty OZ values fail closed rather than guessing by row order.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.

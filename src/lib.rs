@@ -74,6 +74,9 @@
 //! - DQE quantity-estimate evidence is available through the fixture-backed
 //!   [`dqe`] overlay. It adds synthetic French classification and quantity annotations
 //!   only and does not promote support or grant adapter support to parse-only inputs.
+//! - Spreadsheet-neutral CSV exchange is available through dependency-free
+//!   [`spreadsheet`] helpers. Rows are matched by OZ/item ordinal only and the helpers
+//!   do not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -180,6 +183,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod sinapi;
+pub mod spreadsheet;
 pub mod stabu;
 pub mod support;
 pub mod uniclass;
