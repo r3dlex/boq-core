@@ -144,6 +144,12 @@ The `boq_core::catalogo` module can apply a deterministic, fixture-backed Catál
 
 The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external Spain/Mexico catalog data, and does not claim complete Catálogo de Conceptos or Cuadro de Precios coverage. When a document is already adapter-capable, the Obra adapter can carry Catálogo/Cuadro catalog code and reference price evidence alongside the GAEB ordinal classification.
 
+## STABU and RAW exchange overlay
+
+The `boq_core::stabu` module can apply a deterministic, fixture-backed STABU and RAW exchange overlay to parsed BoQ items. It writes synthetic STABU `ClassificationReference` values and RAW/STABU `PriceCatalogReference` values into `MultiStandardAnnotations`, preserves the mapping source as provenance, and records exchange-profile handling as explicit loss findings.
+
+The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external Dutch STABU or RAW data, and does not claim complete STABU or RAW coverage. When a document is already adapter-capable, the Obra adapter can carry STABU classification and RAW catalog code evidence alongside the GAEB ordinal classification.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.

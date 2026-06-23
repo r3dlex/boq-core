@@ -68,6 +68,9 @@
 //! - Catálogo de Conceptos and Cuadro de Precios evidence is available through the fixture-backed
 //!   [`catalogo`] overlay. It adds synthetic concept-catalog and price-table annotations
 //!   only and does not promote support or grant adapter support to parse-only inputs.
+//! - STABU and RAW exchange evidence is available through the fixture-backed
+//!   [`stabu`] overlay. It adds synthetic Dutch classification and catalog annotations
+//!   only and does not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -173,6 +176,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod sinapi;
+pub mod stabu;
 pub mod support;
 pub mod uniclass;
 pub mod x31;
