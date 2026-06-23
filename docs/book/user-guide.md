@@ -45,6 +45,7 @@ assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
 | GAEB 90 | D81, D83 | `supported_parse_only` for parser MVP paths | Parse and inspect hierarchy/items; adapter/export/roundtrip are not implied. |
 | GAEB DA XML Bauausführung | X83, X84 | `supported_parse_only` for selected construction-execution fixture-backed paths | Parse and use the Obra adapter only when `adapt_to_obra` is true; schema validation, export, roundtrip, production support, and certification remain unclaimed. |
 | GAEB DA XML X31 Mengenermittlung | Selected quantity-takeoff paths with synthetic parser evidence | `supported_parse_only` | Parse formula/result rows into canonical quantity evidence with provenance and findings; no BVBS fixture conformance, Obra adapter DTO, export, billing, full REB formula conformance, roundtrip, production support, or certification is implied. |
+| GAEB DA XML Texterstellung | X81, X82 rich-text and table specification-authoring paths | `supported_parse_only` for selected rich-text/table parser-readiness paths | Parse and inspect rich text/table/text-complement preservation with loss findings; no Obra adapter DTO, visual rendering fidelity, export, roundtrip, production support, or certification is implied. |
 | GAEB XML 3.4 beta, X89, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
 | External BVBS/GAEBXmlChecker evidence | Checker reports, certification notes | `reference_only` unless mirrored by tested parser behavior | Evidence helps readiness reviews but does not grant paid or official certification. |
 
@@ -75,8 +76,13 @@ assert!(item.short_text.contains("Concrete"));
 # Ok::<(), boq_core::error::ParseError>(())
 ```
 
-When input is malformed but recoverable, `findings` explain what was preserved, normalized, or not yet supported. For example, GAEB 90 short lines emit `gaeb90_line_length`, blank item ordinals emit `gaeb90_malformed_ordinal`, and rich XML descriptions currently normalized to plain text emit `gaeb_xml_description_plain_text_only`.
+When input is malformed but recoverable, `findings` explain what was preserved, normalized, or not yet supported. For example, GAEB 90 short lines emit `gaeb90_line_length`, blank item ordinals emit `gaeb90_malformed_ordinal`, and generic rich XML descriptions outside supported fixture paths can emit `gaeb_xml_description_plain_text_only`.
 
+## Texterstellung rich-text evidence
+
+Texterstellung X81/X82 paths are parser-readiness evidence only. The XML parser preserves rich descriptions as `RichText::XhtmlFragment` or mixed text/table fragments, keeps X82 cost-estimate item quantities/prices as parser-visible metadata, and emits findings such as `gaeb_xml_texterstellung_layout_preserved_not_rendered` and `gaeb_xml_texterstellung_text_complement_preserved_as_markup` when markup is preserved without rendering or semantic completion.
+
+Callers must treat those findings as loss/provenance evidence. Texterstellung parser output is not an Obra adapter DTO, does not render page layout or exact fonts, does not export or roundtrip documents, and is not a BVBS certification claim.
 
 ## X31 quantity-takeoff evidence
 

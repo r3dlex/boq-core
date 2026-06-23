@@ -33,6 +33,9 @@
 //! - GAEB DA XML X81 and other XML phases are parsed through
 //!   [`gaeb_xml::parse_str`] or [`gaeb_xml::parse_file`]. GAEB DA XML X81,
 //!   X84, and X86 AVA fixture paths are the current adapter-ready focus.
+//! - Texterstellung X81/X82 paths have `supported_parse_only` rich-text/table parser-readiness evidence
+//!   for parser structure preservation; they do not imply Obra adapter DTO,
+//!   visual rendering, export, roundtrip, production, or certification support.
 //! - GAEB DA XML X83/X84 Bauausführung paths are recognized as `supported_parse_only`
 //!   fixture-backed tracks when the manifest says so; Obra adapter DTO readiness
 //!   is capability-gated by [`support::SupportCapabilities::adapt_to_obra`],
