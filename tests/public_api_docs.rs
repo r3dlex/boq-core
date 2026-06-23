@@ -252,6 +252,50 @@ fn catalogo_cuadro_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn spreadsheet_neutral_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/spreadsheet.rs").expect("spreadsheet docs exist");
+    for required in [
+        "Dependency-free spreadsheet-neutral CSV exchange helpers",
+        "matched by GAEB OZ/item ordinal only",
+        "do not promote support status",
+        "do not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "spreadsheet rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`spreadsheet`] helpers", "do not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing spreadsheet boundary anchor: {required}"
+        );
+    }
+
+    for artifact_path in [
+        ".omc/specs/obra-coverage/PHASE-23-spreadsheet-neutral-roundtrip.md",
+        "raw/prd/obra-coverage/PRD-PHASE-23-spreadsheet-neutral-roundtrip.md",
+        "raw/tickets/obra-coverage/ISSUE-PHASE-23-spreadsheet-neutral-roundtrip.md",
+    ] {
+        let artifact = fs::read_to_string(artifact_path).expect("PHASE-23 artifact exists");
+        assert!(
+            artifact.contains("dependency-free neutral CSV exchange"),
+            "{artifact_path} must describe PHASE-23 as CSV-neutral, not XLSX support"
+        );
+        assert!(
+            artifact.contains("XLSX/ODS readers, writers, binary fixtures, and spreadsheet dependencies remain out of scope"),
+            "{artifact_path} must keep XLSX/ODS support explicitly out of scope"
+        );
+        assert!(
+            !artifact.contains("XLSX/CSV neutral exchange"),
+            "{artifact_path} must not overclaim XLSX/CSV neutral exchange support"
+        );
+    }
+}
+
+#[test]
 fn dqe_quantity_contract_is_documented_without_support_promotion() {
     let module = fs::read_to_string("src/dqe.rs").expect("DQE docs exist");
     for required in [
