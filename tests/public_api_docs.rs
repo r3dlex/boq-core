@@ -132,6 +132,30 @@ fn din276_overlay_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn masterformat_overlay_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/csi_masterformat.rs").expect("MasterFormat docs exist");
+    for required in [
+        "CSI MasterFormat classification overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "MasterFormat rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`csi_masterformat`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing MasterFormat boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [
