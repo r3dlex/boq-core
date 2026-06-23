@@ -180,6 +180,30 @@ fn uniclass_overlay_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn nlsfb_overlay_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/nlsfb.rs").expect("NL-SfB docs exist");
+    for required in [
+        "NL-SfB classification overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "NL-SfB rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`nlsfb`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing NL-SfB boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [
