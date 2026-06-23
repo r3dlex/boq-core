@@ -1,0 +1,10 @@
+{
+  "source_uri": "tests/fixtures/synthetic/masterformat_mapping.json",
+  "rules": [
+    {
+      "match_text": "Concrete",
+      "code": "03 30 00",
+      "label": "Cast-in-Place Concrete"
+    }
+  ]
+}
