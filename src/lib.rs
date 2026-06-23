@@ -11,11 +11,12 @@
 //! - GAEB DA XML 3.3 AVA paths are the certification-readiness focus.
 //! - GAEB 90 D81/D83 is parse-only unless tests and the fixture manifest
 //!   promote a more specific capability.
-//! - X31, X89, GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
-//!   and Zeitvertrag are future or reference tracks until `gaeb/manifest.toml`
-//!   and tests say otherwise. The [`x31`] and [`x89`] modules are serializable
-//!   domain models for future quantity-takeoff and Rechnung work, not
-//!   support-status promotions.
+//! - X31 has parser-backed `supported_parse_only` canonical quantity evidence
+//!   for selected paths; it still does not imply Obra adapter DTO,
+//!   export, billing, full REB formula conformance, roundtrip, or certification
+//!   support. X89, GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
+//!   and Zeitvertrag remain future or reference tracks until `gaeb/manifest.toml`
+//!   and tests say otherwise.
 //! - BVBS and GAEBXmlChecker evidence must not be described as paid or official
 //!   certification.
 //!
@@ -37,8 +38,8 @@
 //!   is capability-gated by [`support::SupportCapabilities::adapt_to_obra`],
 //!   while schema validation, export, and roundtrip remain disabled unless
 //!   capabilities say otherwise.
-//! - X31 quantity-takeoff concepts are represented by [`x31`] without overloading
-//!   BoQ item parser semantics.
+//! - X31 quantity-takeoff concepts are represented by [`x31`] as parse-only
+//!   canonical quantity evidence without overloading BoQ item parser semantics.
 //! - X89 invoice concepts are represented by [`x89`] without generating
 //!   XRechnung envelopes or promoting parser support.
 //!

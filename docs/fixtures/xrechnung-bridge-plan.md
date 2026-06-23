@@ -13,7 +13,7 @@ validator tooling, dependency ownership, and legal/compliance responsibilities.
 
 The current source-domain boundary is:
 
-- X31 supplies measured quantity and progress evidence.
+- X31 supplies measured quantity and progress evidence, now carried as parse-only canonical quantity, provenance, and loss evidence.
 - X86 supplies contract-award baseline references.
 - X89 supplies invoice headers, parties, invoice lines, taxes, payment data, and
   unsupported billing findings.
@@ -26,7 +26,7 @@ The current source-domain boundary is:
 | Seller party | Name, endpoint or tax identifier, postal/legal identity if available | X89 `InvoicePartyRole::Seller` | Parsed from license-safe fixture or marked missing in audit findings. |
 | Buyer party | Name, buyer reference, endpoint if available | X89 `InvoicePartyRole::Buyer` | Parsed from license-safe fixture and reviewed for public-sector billing requirements. |
 | Contract baseline | X86 document id, ordinal relation, contract/bid baseline kind | X86 + X89 `ContractReference` | Matched by deterministic document id and ordinal before bridge use. |
-| Quantity evidence | X31 document id, ordinal relation, measured quantity/progress reference | X31 + X89 `QuantityEvidenceReference` | Matched by deterministic document id and ordinal; no bridge without measurement evidence. |
+| Quantity evidence | X31 document id, ordinal relation, measured/canonical quantity, unit, progress reference, provenance, and loss findings | X31 + X89 `QuantityEvidenceReference` | Matched by deterministic document id and ordinal; no bridge without measurement evidence; Obra adapter DTO and XRechnung output remain disabled. |
 | Invoice line | Line id, BoQ ordinal, unit, quantity, unit price, net amount | X89 `InvoiceLine` | Parsed, recalculated, and checked against totals. |
 | Tax breakdown | Tax category, rate, taxable amount, tax amount | X89 `TaxBreakdown` | Present for every bridged invoice line or explicitly blocked. |
 | Payment terms | Terms, due date, payment reference, buyer reference | X89 `PaymentApplication` | Present or explicitly blocked before public-sector output. |

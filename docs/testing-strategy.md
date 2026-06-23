@@ -16,12 +16,12 @@ The public BVBS material supplied for this project is tracked as five certificat
 
 1. AVA (X81/X84/X86) — first supported path.
 2. Bauausführung / construction execution (X83/X84) — follow-on.
-3. Mengenermittlung / quantity takeoff (X31/X86) — follow-on.
+3. Mengenermittlung / quantity takeoff (X31/X86) — X31 parser/canonical quantity evidence is `supported_parse_only` for selected synthetic-evidence paths; BVBS conformance remains download-on-demand/follow-on.
 4. Texterstellung / specification authoring (X81/X82) — follow-on.
 5. Legacy GAEB XML 3.2 AVA/Bauausführung fixtures — follow-on compatibility.
 6. GAEB XML Checker — reference-only tooling; catalog checksum/version, do not execute in CI by default.
 
-Only AVA XML 3.3 and explicit GAEB 90 parse-only fixtures may be promoted to supported status in the MVP. All other BVBS fixtures stay `future_track` or `reference_only` until a failing-test-first implementation and criteria matrix promote them.
+Only AVA XML 3.3, explicit GAEB 90 parse-only fixtures, Bauausführung parser/adapter-readiness slices, and the selected X31 parser-backed canonical quantity slice may be promoted in the MVP. Other BVBS fixtures stay `future_track` or `reference_only` until a failing-test-first implementation and criteria matrix promote them. X31 promotion here is synthetic parser evidence and does not claim BVBS fixture conformance.
 
 ## Non-certification fixture coverage
 

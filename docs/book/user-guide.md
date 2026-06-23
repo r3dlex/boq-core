@@ -44,7 +44,8 @@ assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
 | GAEB DA XML 3.3 AVA | X81, X84, X86 | `supported` for selected AVA fixture-backed paths | Parse, inspect support capabilities, and use the Obra adapter only when `adapt_to_obra` is true. |
 | GAEB 90 | D81, D83 | `supported_parse_only` for parser MVP paths | Parse and inspect hierarchy/items; adapter/export/roundtrip are not implied. |
 | GAEB DA XML Bauausführung | X83, X84 | `supported_parse_only` for selected construction-execution fixture-backed paths | Parse and use the Obra adapter only when `adapt_to_obra` is true; schema validation, export, roundtrip, production support, and certification remain unclaimed. |
-| GAEB XML 3.4 beta, X31, X89, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
+| GAEB DA XML X31 Mengenermittlung | Selected quantity-takeoff paths with synthetic parser evidence | `supported_parse_only` | Parse formula/result rows into canonical quantity evidence with provenance and findings; no BVBS fixture conformance, Obra adapter DTO, export, billing, full REB formula conformance, roundtrip, production support, or certification is implied. |
+| GAEB XML 3.4 beta, X89, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
 | External BVBS/GAEBXmlChecker evidence | Checker reports, certification notes | `reference_only` unless mirrored by tested parser behavior | Evidence helps readiness reviews but does not grant paid or official certification. |
 
 D81 and X81 represent service-description/design-stage BoQs. D83 and X83 represent request-for-quotation flows at the GAEB phase level. In this crate, selected Bauausführung X83/X84 fixture paths are parser-backed and Obra-adapter-ready only when `adapt_to_obra` is true; export, roundtrip, schema validation, production support, and certification remain unclaimed.
@@ -75,6 +76,13 @@ assert!(item.short_text.contains("Concrete"));
 ```
 
 When input is malformed but recoverable, `findings` explain what was preserved, normalized, or not yet supported. For example, GAEB 90 short lines emit `gaeb90_line_length`, blank item ordinals emit `gaeb90_malformed_ordinal`, and rich XML descriptions currently normalized to plain text emit `gaeb_xml_description_plain_text_only`.
+
+
+## X31 quantity-takeoff evidence
+
+X31 Mengenermittlung inputs are parser-backed with synthetic canonical-quantity evidence for selected paths; the cataloged BVBS X31 source remains download-on-demand evidence, not vendored conformance proof. The `x31` module preserves row provenance, formula source, explicit result quantities, units, attachment ids, parser findings, and X31-to-X86 ordinal link findings. Its progress report exposes canonical quantity evidence for later Obra import design, but `obra_import_supported` and `invoice_generated` stay `false`.
+
+Callers must treat missing result quantities, unmatched ordinals, unit mismatches, and unsupported X31 fields as loss findings. These reports are not Obra adapter DTOs and do not generate XRechnung, payment claims, exports, roundtrips, production support, or certification evidence.
 
 ## Obra adapter boundary
 
