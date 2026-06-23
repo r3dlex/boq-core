@@ -62,6 +62,9 @@
 //! - SINAPI catalog and BDI evidence is available through the fixture-backed
 //!   [`sinapi`] overlay. It adds synthetic price-catalog annotations only and
 //!   does not promote support or grant adapter support to parse-only inputs.
+//! - Computo Metrico and Prezzario evidence is available through the fixture-backed
+//!   [`prezzario`] overlay. It adds synthetic price-list and quantity annotations
+//!   only and does not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -164,6 +167,7 @@ pub mod gaeb90;
 pub mod gaeb_xml;
 pub mod model;
 pub mod nlsfb;
+pub mod prezzario;
 pub mod sinapi;
 pub mod support;
 pub mod uniclass;

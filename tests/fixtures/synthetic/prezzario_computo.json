@@ -1,0 +1,18 @@
+{
+  "source_uri": "tests/fixtures/synthetic/prezzario_computo.json",
+  "items": [
+    {
+      "match_text": "Concrete",
+      "prezzario_code": "PREZZARIO-SYN-001",
+      "label": "Synthetic Italian concrete service",
+      "unit_price": "145.67",
+      "currency": "EUR",
+      "quantity_reference": "COMPUTO-SYN-001",
+      "quantity": "2.50",
+      "unit": "m2",
+      "computo_formula": "1.25 * 2",
+      "loss_finding_code": "prezzario_computo_formula_preserved_not_evaluated",
+      "loss_finding_message": "Synthetic computo formula was preserved as evidence but not evaluated as regional measurement support"
+    }
+  ]
+}
