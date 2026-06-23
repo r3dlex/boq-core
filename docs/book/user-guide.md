@@ -150,6 +150,12 @@ The `boq_core::stabu` module can apply a deterministic, fixture-backed STABU and
 
 The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external Dutch STABU or RAW data, and does not claim complete STABU or RAW coverage. When a document is already adapter-capable, the Obra adapter can carry STABU classification and RAW catalog code evidence alongside the GAEB ordinal classification.
 
+## DQE French quantity-estimate overlay
+
+The `boq_core::dqe` module can apply a deterministic, fixture-backed DQE quantity-estimate overlay to parsed BoQ items. It writes synthetic DQE `ClassificationReference` values and DQE `QuantityReference` values into `MultiStandardAnnotations`, preserves the mapping source as provenance, and records unevaluated calculation-method handling as explicit loss findings.
+
+The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external French DQE data, and does not claim complete DQE coverage. When a document is already adapter-capable, the Obra adapter can carry DQE classification evidence alongside the GAEB ordinal classification while preserving quantity-reference metadata on the line item.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.
