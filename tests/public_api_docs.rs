@@ -204,6 +204,30 @@ fn nlsfb_overlay_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn sinapi_catalog_contract_is_documented_without_support_promotion() {
+    let module = fs::read_to_string("src/sinapi.rs").expect("SINAPI docs exist");
+    for required in [
+        "SINAPI catalog and BDI overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            module.contains(required),
+            "SINAPI rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`sinapi`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing SINAPI boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [

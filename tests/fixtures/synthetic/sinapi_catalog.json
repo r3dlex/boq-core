@@ -1,0 +1,14 @@
+{
+  "source_uri": "tests/fixtures/synthetic/sinapi_catalog.json",
+  "items": [
+    {
+      "match_text": "Concrete",
+      "code": "SINAPI-SYN-001",
+      "label": "Synthetic concrete service",
+      "unit_price": "123.45",
+      "currency": "BRL",
+      "bdi_percent": "27.50",
+      "bdi_source": "synthetic"
+    }
+  ]
+}
