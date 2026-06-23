@@ -65,6 +65,9 @@
 //! - Computo Metrico and Prezzario evidence is available through the fixture-backed
 //!   [`prezzario`] overlay. It adds synthetic price-list and quantity annotations
 //!   only and does not promote support or grant adapter support to parse-only inputs.
+//! - Catálogo de Conceptos and Cuadro de Precios evidence is available through the fixture-backed
+//!   [`catalogo`] overlay. It adds synthetic concept-catalog and price-table annotations
+//!   only and does not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -157,6 +160,7 @@
 )]
 
 pub mod adapter;
+pub mod catalogo;
 pub mod checksum;
 pub mod csi_masterformat;
 pub mod din276;
