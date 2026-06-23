@@ -1,0 +1,10 @@
+{
+  "source_uri": "tests/fixtures/synthetic/nlsfb_mapping.json",
+  "rules": [
+    {
+      "match_text": "concrete",
+      "code": "21.11",
+      "label": "Synthetic concrete construction"
+    }
+  ]
+}

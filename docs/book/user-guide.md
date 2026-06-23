@@ -120,6 +120,12 @@ The `boq_core::uniclass` module can apply a deterministic, fixture-backed Unicla
 
 The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external Uniclass catalog data, and does not claim complete Uniclass coverage. When a document is already adapter-capable, the Obra adapter can carry Uniclass classifications as DTO evidence alongside the GAEB ordinal classification.
 
+## NL-SfB classification overlay
+
+The `boq_core::nlsfb` module can apply a deterministic, fixture-backed NL-SfB classification overlay to parsed BoQ items. It writes NL-SfB `ClassificationReference` values into `MultiStandardAnnotations` and preserves the mapping source as provenance.
+
+The overlay is evidence only. It does not change `support_status`, does not grant Obra adapter support to parse-only inputs, does not acquire external NL-SfB catalog data, and does not claim complete NL-SfB coverage. When a document is already adapter-capable, the Obra adapter can carry NL-SfB classifications as DTO evidence alongside the GAEB ordinal classification.
+
 ## GAEB 90 adapter-compatible boundary
 
 The selected Dangl GAEB 90 D83 fixture path is the PHASE-10 adapter-compatible promotion. It is manifest-backed and test-backed, so callers may convert that parsed document to an Obra import DTO when `document.capabilities.adapt_to_obra` is true. The adapter output still carries source provenance, deterministic keys, parser findings, and loss-report fields.
