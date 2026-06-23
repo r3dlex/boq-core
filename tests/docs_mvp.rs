@@ -25,7 +25,18 @@ fn mdbook_documentation_mvp_scaffold_exists() {
 #[test]
 fn documentation_guides_cover_required_mvp_topics() {
     let user_guide = fs::read_to_string("docs/book/user-guide.md").expect("user guide exists");
-    for topic in ["GAEB 90", "GAEB DA XML", "D81", "D83", "X81", "X83", "Obra"] {
+    for topic in [
+        "GAEB 90",
+        "GAEB DA XML",
+        "D81",
+        "D83",
+        "X81",
+        "X83",
+        "Texterstellung",
+        "supported_parse_only",
+        "rich-text/table parser-readiness",
+        "Obra",
+    ] {
         assert!(
             user_guide.contains(topic),
             "user guide missing topic: {topic}"
@@ -202,6 +213,8 @@ fn docs_do_not_overclaim_certification_or_future_formats() {
         "X31 support is included",
         "X83 is supported",
         "X83 support is included",
+        "Texterstellung is supported",
+        "Texterstellung support is included",
         "X89 is supported",
         "X89 support is included",
         "GAEB XML 3.4 is supported",

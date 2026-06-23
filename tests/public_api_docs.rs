@@ -10,6 +10,8 @@ fn public_parse_entrypoints_are_documented_for_required_phases() {
         "GAEB 90 D83",
         "GAEB DA XML X81",
         "GAEB DA XML X83",
+        "Texterstellung X81/X82",
+        "`supported_parse_only` rich-text/table parser-readiness evidence",
         "gaeb90::parse_bytes",
         "gaeb_xml::parse_str",
     ] {
