@@ -1,9 +1,10 @@
 //! X31 quantity takeoff domain model.
 //!
 //! This module intentionally models measurement/progress data separately from
-//! [`crate::model::BoqItem`]. It is a domain boundary for future X31 parsing and
-//! X31/X86 baseline linking; it does not claim parser support or BVBS
-//! certification readiness by itself.
+//! [`crate::model::BoqItem`]. It is a domain boundary for fixture-backed X31
+//! parse-only quantity evidence and X31/X86 baseline linking; it does not claim
+//! Obra adapter output, billing output, or BVBS certification readiness by
+//! itself.
 //!
 //! ```
 //! use rust_decimal::Decimal;
@@ -305,18 +306,23 @@ fn checked_decimal(value: Option<Decimal>, operator: &str) -> Result<Decimal, Va
 
 /// Deterministic X31-to-X86 progress-link report.
 ///
-/// This report is billing-readiness evidence only. It does not create invoices,
-/// XRechnung payloads, adapter exports, or payment claims.
+/// This report is parser-backed canonical quantity evidence only. It preserves
+/// X31 provenance and loss findings for later Obra import design, but it does
+/// not create invoices, XRechnung payloads, adapter exports, or payment claims.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct X31X86ProgressReport {
+    /// X31 source provenance carried through the derived quantity report.
+    pub measurement_source: SourceProvenance,
     /// Baseline relation used for the link attempt.
     pub baseline: MeasurementBaselineLink,
     /// One row per X31 measurement row in deterministic source order.
     pub rows: Vec<X31X86ProgressRow>,
-    /// Audit findings for missing ordinals, unmatched baseline items, or mismatches.
+    /// Audit findings from the X31 parse plus linking/quantity integration findings.
     pub findings: Vec<ValidationFinding>,
     /// Explicit non-goal marker for downstream consumers.
     pub invoice_generated: bool,
+    /// Explicit non-goal marker: this is not yet an Obra import adapter DTO.
+    pub obra_import_supported: bool,
     /// Report-level metadata.
     pub metadata: Metadata,
 }
@@ -330,10 +336,18 @@ pub struct X31X86ProgressRow {
     pub ordinal: Option<String>,
     /// Link status.
     pub status: X31X86LinkStatus,
+    /// Canonical quantity exposed for later Obra import design.
+    pub canonical_quantity: Option<Decimal>,
+    /// Canonical quantity unit exposed with the measured quantity.
+    pub canonical_unit: String,
+    /// Provenance of the canonical quantity value.
+    pub canonical_quantity_source: X31CanonicalQuantitySource,
     /// X31 measured/result quantity.
     pub measured_quantity: Option<Decimal>,
     /// X31 unit.
     pub measured_unit: String,
+    /// X31 attachment ids referenced by the measurement row.
+    pub attachment_ids: Vec<String>,
     /// X86 baseline item quantity.
     pub baseline_quantity: Option<Decimal>,
     /// X86 baseline unit.
@@ -344,12 +358,24 @@ pub struct X31X86ProgressRow {
     pub progress_value: Option<Decimal>,
 }
 
+/// Source class for a canonical quantity row.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum X31CanonicalQuantitySource {
+    /// Quantity came from the X31 row's explicit result quantity.
+    MeasurementResult,
+    /// Formula source is preserved, but no safe result quantity is available.
+    FormulaSourceOnly,
+}
+
 /// Status of an X31 measurement row against an X86 baseline.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum X31X86LinkStatus {
-    /// Measurement row linked to a baseline item by ordinal without audit findings.
+    /// Measurement row linked to a baseline item by ordinal with an explicit quantity.
     Matched,
+    /// Measurement row linked by ordinal but has formula source only and no canonical quantity.
+    MissingCanonicalQuantity,
     /// The X31 row has no ordinal and cannot be linked.
     MissingMeasurementOrdinal,
     /// The X31 ordinal is absent from the X86 baseline.
@@ -372,18 +398,8 @@ pub fn link_x31_to_x86_baseline(
     let mut findings = Vec::new();
 
     for measurement in &measurements.rows {
-        let measured_quantity = measurement.result_quantity;
-        let mut row = X31X86ProgressRow {
-            row_id: measurement.row_id.clone(),
-            ordinal: measurement.ordinal.clone(),
-            status: X31X86LinkStatus::Matched,
-            measured_quantity,
-            measured_unit: measurement.unit.clone(),
-            baseline_quantity: None,
-            baseline_unit: None,
-            unit_price: None,
-            progress_value: None,
-        };
+        let mut row = progress_row_for_measurement(measurement);
+        findings.extend(canonical_quantity_findings(measurement));
 
         let Some(ordinal) = measurement.ordinal.as_deref() else {
             row.status = X31X86LinkStatus::MissingMeasurementOrdinal;
@@ -415,7 +431,8 @@ pub fn link_x31_to_x86_baseline(
             row.baseline_quantity = Some(item.quantity);
             row.baseline_unit = Some(item.unit.clone());
             row.unit_price = item.unit_price;
-            row.progress_value = measured_quantity
+            row.progress_value = measurement
+                .result_quantity
                 .zip(item.unit_price)
                 .and_then(|(quantity, unit_price)| quantity.checked_mul(unit_price));
 
@@ -433,7 +450,10 @@ pub fn link_x31_to_x86_baseline(
                 );
             }
 
-            if measured_quantity.is_some_and(|quantity| quantity > item.quantity) {
+            if measurement
+                .result_quantity
+                .is_some_and(|quantity| quantity > item.quantity)
+            {
                 row.status = X31X86LinkStatus::Mismatched;
                 findings.push(
                     ValidationFinding::warning(
@@ -449,31 +469,91 @@ pub fn link_x31_to_x86_baseline(
     }
 
     X31X86ProgressReport {
-        baseline: MeasurementBaselineLink {
-            document_id: baseline
-                .source
-                .checksum
-                .clone()
-                .or_else(|| baseline.source.source_uri.clone())
-                .unwrap_or_else(|| "x86-baseline".to_owned()),
-            kind: if baseline
-                .source
-                .phase
-                .as_ref()
-                .is_some_and(|phase| phase.code == "86")
-            {
-                BaselineKind::X86Contract
-            } else {
-                BaselineKind::Unknown
-            },
-            relation: "X31 measured quantities linked to X86 contract baseline by ordinal"
-                .to_owned(),
-        },
+        measurement_source: measurements.source.clone(),
+        baseline: baseline_link_for_report(baseline),
         rows,
-        findings,
+        findings: merged_measurement_findings(measurements, findings),
         invoice_generated: false,
-        metadata: BTreeMap::new(),
+        obra_import_supported: false,
+        metadata: BTreeMap::from([(
+            "x31.integration".to_owned(),
+            serde_json::json!("canonical_quantity_evidence"),
+        )]),
     }
+}
+
+fn progress_row_for_measurement(measurement: &MeasurementRow) -> X31X86ProgressRow {
+    let measured_quantity = measurement.result_quantity;
+    X31X86ProgressRow {
+        row_id: measurement.row_id.clone(),
+        ordinal: measurement.ordinal.clone(),
+        status: if measured_quantity.is_some() {
+            X31X86LinkStatus::Matched
+        } else {
+            X31X86LinkStatus::MissingCanonicalQuantity
+        },
+        canonical_quantity: measured_quantity,
+        canonical_unit: measurement.unit.clone(),
+        canonical_quantity_source: if measured_quantity.is_some() {
+            X31CanonicalQuantitySource::MeasurementResult
+        } else {
+            X31CanonicalQuantitySource::FormulaSourceOnly
+        },
+        measured_quantity,
+        measured_unit: measurement.unit.clone(),
+        attachment_ids: measurement.attachment_ids.clone(),
+        baseline_quantity: None,
+        baseline_unit: None,
+        unit_price: None,
+        progress_value: None,
+    }
+}
+
+fn canonical_quantity_findings(measurement: &MeasurementRow) -> Vec<ValidationFinding> {
+    if measurement.result_quantity.is_some() {
+        return Vec::new();
+    }
+    vec![
+        ValidationFinding::warning(
+            "x31_canonical_quantity_missing_result",
+            "X31 formula source was preserved, but no explicit result quantity is available for canonical quantity output",
+        )
+        .at(measurement.row_id.clone()),
+    ]
+}
+
+fn baseline_link_for_report(baseline: &GaebDocument) -> MeasurementBaselineLink {
+    MeasurementBaselineLink {
+        document_id: baseline
+            .source
+            .checksum
+            .clone()
+            .or_else(|| baseline.source.source_uri.clone())
+            .unwrap_or_else(|| "x86-baseline".to_owned()),
+        kind: if baseline
+            .source
+            .phase
+            .as_ref()
+            .is_some_and(|phase| phase.code == "86")
+        {
+            BaselineKind::X86Contract
+        } else {
+            BaselineKind::Unknown
+        },
+        relation: "X31 measured quantities linked to X86 contract baseline by ordinal".to_owned(),
+    }
+}
+
+fn merged_measurement_findings(
+    measurements: &QuantityTakeoffDocument,
+    link_findings: Vec<ValidationFinding>,
+) -> Vec<ValidationFinding> {
+    measurements
+        .findings
+        .iter()
+        .cloned()
+        .chain(link_findings)
+        .collect()
 }
 
 fn baseline_item_index(document: &GaebDocument) -> BTreeMap<String, &BoqNode> {

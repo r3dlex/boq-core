@@ -11,8 +11,11 @@ This book is the manual layer that complements Rust API documentation generated 
 
 ## Current support boundary
 
-The MVP targets GAEB DA XML 3.3 AVA certification-path readiness and GAEB 90
-parse-only support for selected D81/D83 fixtures. Follow-on domains such as X31
-quantity takeoff, X89 invoicing, GAEB XML 3.4 beta, Handel, Kosten/Kalkulation,
-and Zeitvertrag remain future or reference tracks unless `gaeb/manifest.toml` and
-tests explicitly promote them.
+The MVP targets GAEB DA XML 3.3 AVA certification-path readiness, GAEB 90
+parse-only support for selected D81/D83 fixtures, and parser-backed X31
+quantity-takeoff canonical quantity evidence for selected paths. X31 remains
+`supported_parse_only`: no BVBS fixture conformance, Obra adapter DTO, export,
+billing, full REB formula conformance, roundtrip, production support, or
+certification is implied. Follow-on domains such as X89 invoicing, GAEB XML 3.4
+beta, Handel, Kosten/Kalkulation, and Zeitvertrag remain future or reference
+tracks unless `gaeb/manifest.toml` and tests explicitly promote them.

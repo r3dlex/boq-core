@@ -11,7 +11,8 @@ use boq_core::support::{SupportCapabilities, SupportStatus};
 use boq_core::x31::{
     BaselineKind, MeasurementAttachment, MeasurementAttachmentKind, MeasurementBaselineLink,
     MeasurementFormula, MeasurementReference, MeasurementReferenceKind, MeasurementRow,
-    PhysicalProgress, QuantityTakeoffDocument, RebFormulaSystem, X31X86LinkStatus,
+    PhysicalProgress, QuantityTakeoffDocument, RebFormulaSystem, X31CanonicalQuantitySource,
+    X31X86LinkStatus,
 };
 use rust_decimal::Decimal;
 
@@ -206,7 +207,7 @@ fn test_bvbs_x31_support_promotion_requires_parser_evidence() {
         x31.get("license_note")
             .and_then(toml::Value::as_str)
             .expect("license note")
-            .contains("measurement-domain import coverage")
+            .contains("synthetic")
     );
     let mappings = x31
         .get("test_mapping")
@@ -217,6 +218,8 @@ fn test_bvbs_x31_support_promotion_requires_parser_evidence() {
         "test_bvbs_x31_formula_records_preserve_source",
         "test_bvbs_x31_attachments_are_detected",
         "test_x31_parser_reports_unsupported_features",
+        "test_x31_canonical_quantity_integration_preserves_provenance_and_loss_findings",
+        "test_x31_canonical_quantity_missing_result_is_loss_finding",
         "test_bvbs_x31_support_promotion_requires_parser_evidence",
     ] {
         assert!(
@@ -501,11 +504,93 @@ fn test_x31_links_to_x86_by_ordinal() {
 
     assert_eq!(report.baseline.kind, BaselineKind::X86Contract);
     assert_eq!(report.rows[0].status, X31X86LinkStatus::Matched);
+    assert_eq!(report.rows[0].canonical_quantity, Some(Decimal::new(6, 0)));
+    assert_eq!(report.rows[0].canonical_unit, "m3");
+    assert_eq!(
+        report.rows[0].canonical_quantity_source,
+        X31CanonicalQuantitySource::MeasurementResult
+    );
     assert_eq!(report.rows[0].baseline_quantity, Some(Decimal::new(10, 0)));
     assert_eq!(report.rows[0].unit_price, Some(Decimal::new(25, 0)));
     assert_eq!(report.rows[0].progress_value, Some(Decimal::new(150, 0)));
     assert!(report.findings.is_empty());
+    assert_eq!(
+        report.measurement_source.source_uri,
+        measurements.source.source_uri
+    );
     assert!(!report.invoice_generated);
+    assert!(!report.obra_import_supported);
+}
+
+#[test]
+fn test_x31_canonical_quantity_integration_preserves_provenance_and_loss_findings() {
+    let measurements =
+        boq_core::x31::parse_str(X31_XML, Some(X31_URI.to_owned())).expect("x31 fixture parses");
+    let baseline = x86_baseline_document(vec![x86_item(
+        "001.0010",
+        Decimal::new(10, 0),
+        "m3",
+        Some(Decimal::new(2, 0)),
+    )]);
+
+    let report = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(
+        report.measurement_source.source_uri.as_deref(),
+        Some(X31_URI)
+    );
+    assert_eq!(
+        report.rows[0].canonical_quantity,
+        Some(Decimal::new(1250, 2))
+    );
+    assert_eq!(report.rows[0].canonical_unit, "m3");
+    assert_eq!(report.rows[0].attachment_ids, ["D-1"]);
+    assert_eq!(
+        report.rows[0].canonical_quantity_source,
+        X31CanonicalQuantitySource::MeasurementResult
+    );
+    assert!(report.findings.iter().any(|finding| {
+        finding.code == "x31_unsupported_feature"
+            && finding.location.as_deref() == Some("FR-1/UnsupportedFeature")
+    }));
+    assert_eq!(
+        report
+            .metadata
+            .get("x31.integration")
+            .and_then(serde_json::Value::as_str),
+        Some("canonical_quantity_evidence")
+    );
+    assert!(!report.invoice_generated);
+    assert!(!report.obra_import_supported);
+}
+
+#[test]
+fn test_x31_canonical_quantity_missing_result_is_loss_finding() {
+    let mut measurements = QuantityTakeoffDocument::new(source());
+    measurements.rows.push(MeasurementRow::formula(
+        "M-FORMULA-ONLY",
+        "001.0010",
+        "m",
+        MeasurementFormula::reb_vb_23003("L * B"),
+    ));
+    let baseline = x86_baseline_document(vec![x86_item("001.0010", Decimal::new(1, 0), "m", None)]);
+
+    let report = boq_core::x31::link_x31_to_x86_baseline(&measurements, &baseline);
+
+    assert_eq!(
+        report.rows[0].status,
+        X31X86LinkStatus::MissingCanonicalQuantity
+    );
+    assert_eq!(report.rows[0].canonical_quantity, None);
+    assert_eq!(
+        report.rows[0].canonical_quantity_source,
+        X31CanonicalQuantitySource::FormulaSourceOnly
+    );
+    assert!(report.findings.iter().any(|finding| {
+        finding.code == "x31_canonical_quantity_missing_result"
+            && finding.location.as_deref() == Some("M-FORMULA-ONLY")
+    }));
+    assert!(!report.obra_import_supported);
 }
 
 #[test]
@@ -561,7 +646,13 @@ fn test_x31_unmatched_measurement_is_nonfatal() {
         report.rows[1].status,
         X31X86LinkStatus::MissingMeasurementOrdinal
     );
-    assert_eq!(report.findings.len(), 2);
+    assert_eq!(report.findings.len(), 3);
+    assert!(
+        report
+            .findings
+            .iter()
+            .any(|finding| finding.code == "x31_canonical_quantity_missing_result")
+    );
 }
 
 #[test]

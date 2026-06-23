@@ -11,5 +11,5 @@ All notable changes to `boq-core` are recorded here.
 
 ### Support status changes
 
-- No parser support, certification, or compatibility status has been promoted in this release planning entry.
+- Add X31 canonical quantity evidence for selected parser-backed paths as `supported_parse_only`; evidence is synthetic/parser-level and does not claim BVBS fixture conformance, Obra adapter DTO output, export, billing/XRechnung generation, full REB formula conformance, roundtrip, production support, or certification.
 - Future support-status changes must name the affected exchange formats, fixture evidence, tests or gates, and certification limitations.
