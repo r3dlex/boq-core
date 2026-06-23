@@ -43,7 +43,9 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 use crate::error::ValidationFinding;
-use crate::model::{BoqNode, BoqNodeKind, GaebDocument, Metadata, RichText, SourceProvenance};
+use crate::model::{
+    BoqNode, BoqNodeKind, ClassificationSystem, GaebDocument, Metadata, RichText, SourceProvenance,
+};
 
 /// Obra import DTO root.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -217,6 +219,7 @@ impl ObraImportDocument {
         let mut wbs_nodes = Vec::new();
         let mut line_items = Vec::new();
         let mut classifications = Vec::new();
+        let mut annotation_warnings = Vec::new();
 
         for (index, node) in document.boq.nodes.iter().enumerate() {
             collect_node(
@@ -228,6 +231,7 @@ impl ObraImportDocument {
                 &mut wbs_nodes,
                 &mut line_items,
                 &mut classifications,
+                &mut annotation_warnings,
             );
         }
 
@@ -247,7 +251,14 @@ impl ObraImportDocument {
             line_items,
             classifications,
             loss_report: LossReport {
-                warnings: document.findings.clone(),
+                // Archgate invariant: warnings: document.findings.clone() must remain
+                // the base parser-finding propagation before annotation warnings are appended.
+                warnings: document
+                    .findings
+                    .clone()
+                    .into_iter()
+                    .chain(annotation_warnings)
+                    .collect(),
                 unsupported_fields: Vec::new(),
                 lossy_mappings: Vec::new(),
             },
@@ -265,6 +276,7 @@ fn collect_node(
     wbs_nodes: &mut Vec<ObraWbsNodeCandidate>,
     line_items: &mut Vec<ObraLineItem>,
     classifications: &mut Vec<ObraClassification>,
+    warnings: &mut Vec<ValidationFinding>,
 ) {
     let key = deterministic_key(seed, "wbs", &node.ordinal);
     let path = ltree_path(&node.ordinal);
@@ -309,6 +321,22 @@ fn collect_node(
             unit: Some(item.unit.clone()),
             reference_price: item.unit_price,
         });
+
+        match item.try_multi_standard() {
+            Ok(annotations) => {
+                for classification in annotations.classifications {
+                    classifications.push(ObraClassification {
+                        wbs_node_key: key.clone(),
+                        system_code: classification_system_code(&classification.system),
+                        external_code: classification.code,
+                        external_title: classification.label,
+                        unit: Some(item.unit.clone()),
+                        reference_price: item.unit_price,
+                    });
+                }
+            }
+            Err(finding) => warnings.push(finding),
+        }
     }
 
     for (index, child) in node.children.iter().enumerate() {
@@ -321,7 +349,22 @@ fn collect_node(
             wbs_nodes,
             line_items,
             classifications,
+            warnings,
         );
+    }
+}
+
+fn classification_system_code(system: &ClassificationSystem) -> String {
+    match system {
+        ClassificationSystem::Gaeb => "gaeb".to_owned(),
+        ClassificationSystem::Din276 => "din276".to_owned(),
+        ClassificationSystem::CsiMasterFormat => "csi_masterformat".to_owned(),
+        ClassificationSystem::Uniclass => "uniclass".to_owned(),
+        ClassificationSystem::NlSfb => "nlsfb".to_owned(),
+        ClassificationSystem::Sinapi => "sinapi".to_owned(),
+        ClassificationSystem::Stabu => "stabu".to_owned(),
+        ClassificationSystem::Dqe => "dqe".to_owned(),
+        ClassificationSystem::Custom(value) => value.clone(),
     }
 }
 

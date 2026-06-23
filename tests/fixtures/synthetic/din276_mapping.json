@@ -1,0 +1,10 @@
+{
+  "source_uri": "tests/fixtures/synthetic/din276_mapping.json",
+  "rules": [
+    {
+      "match_text": "Concrete",
+      "code": "300",
+      "label": "Bauwerk - Baukonstruktionen"
+    }
+  ]
+}

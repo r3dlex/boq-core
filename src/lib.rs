@@ -47,6 +47,9 @@
 //!   annotations are the parser default, and populated annotations do not
 //!   promote support or imply Obra adapter, export, billing, production, or
 //!   certification readiness.
+//! - DIN 276 classification evidence is available through the fixture-backed
+//!   [`din276`] overlay. It adds canonical classification annotations only and
+//!   does not promote support or grant adapter support to parse-only inputs.
 //! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
 //!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
 //!   imply XRechnung generation, public-sector billing readiness, manifest
@@ -140,6 +143,7 @@
 
 pub mod adapter;
 pub mod checksum;
+pub mod din276;
 pub mod error;
 pub mod format;
 pub mod gaeb2000;

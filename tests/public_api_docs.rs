@@ -108,6 +108,30 @@ fn multi_standard_model_contract_is_documented_without_support_promotion() {
 }
 
 #[test]
+fn din276_overlay_contract_is_documented_without_support_promotion() {
+    let din276 = fs::read_to_string("src/din276.rs").expect("DIN 276 docs exist");
+    for required in [
+        "DIN 276 classification overlay",
+        "fixture-backed",
+        "does not promote",
+        "does not grant Obra adapter support",
+    ] {
+        assert!(
+            din276.contains(required),
+            "DIN 276 rustdoc missing support-honesty anchor: {required}"
+        );
+    }
+
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in ["[`din276`] overlay", "does not promote support"] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing DIN 276 boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [
