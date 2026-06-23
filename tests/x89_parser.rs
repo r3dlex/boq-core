@@ -117,6 +117,60 @@ fn test_x89_unsupported_tax_or_payment_fields_emit_findings() {
 }
 
 #[test]
+fn test_x89_fixture_adapts_to_obra_billing_draft_without_xrechnung() {
+    let invoice = boq_core::x89::parse_str(X89_FIXTURE, Some(X89_URI.to_owned()))
+        .expect("synthetic X89 fixture parses");
+
+    let draft = boq_core::x89::ObraBillingDraft::from_x89(&invoice);
+
+    assert_eq!(draft.invoice_id, "RE-2026-0042");
+    assert_eq!(draft.currency, "EUR");
+    assert_eq!(draft.lines.len(), 2);
+    assert_eq!(draft.lines[0].boq_ordinal.as_deref(), Some("001.0010"));
+    assert_eq!(draft.lines[0].net_amount, Some(Decimal::new(100_000, 2)));
+    assert_eq!(draft.totals.gross_amount, Decimal::new(149_000, 2));
+    assert!(draft.deterministic_key.starts_with("x89-billing:"));
+    assert!(draft.lines[0].deterministic_key.contains("L-1"));
+    assert_eq!(draft.source.source_uri.as_deref(), Some(X89_URI));
+    assert_eq!(draft.xrechnung_boundary.required_bridge, "xrechnung-bridge");
+    assert!(!draft.xrechnung_boundary.generated);
+    assert!(!draft.readiness.ready_for_public_sector_billing);
+    assert!(
+        draft
+            .readiness
+            .blocking_findings
+            .iter()
+            .any(|code| code == "x89_missing_tax_breakdown")
+    );
+    assert!(
+        draft
+            .loss_report
+            .warnings
+            .iter()
+            .any(|finding| finding.code == "x89_unsupported_payment_field")
+    );
+    assert!(
+        draft
+            .loss_report
+            .unsupported_fields
+            .iter()
+            .any(|field| field.ends_with("UnsupportedPayment")
+                || field.ends_with("DirectDebitMandate")),
+        "unsupported fields should preserve actual X89 field paths: {:?}",
+        draft.loss_report.unsupported_fields
+    );
+    assert!(
+        draft
+            .loss_report
+            .unsupported_fields
+            .iter()
+            .any(|field| field.ends_with("UnsupportedTax")),
+        "unsupported fields should preserve unsupported tax field paths: {:?}",
+        draft.loss_report.unsupported_fields
+    );
+}
+
+#[test]
 fn test_x89_parse_file_reads_invoice_fixture() {
     let invoice = boq_core::x89::parse_file(X89_URI).expect("synthetic X89 fixture file parses");
 

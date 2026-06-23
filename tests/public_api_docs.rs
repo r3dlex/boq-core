@@ -61,6 +61,22 @@ fn error_and_finding_semantics_are_documented() {
 }
 
 #[test]
+fn x89_billing_draft_contract_is_documented() {
+    let x89 = fs::read_to_string("src/x89.rs").expect("x89 docs exist");
+    for required in [
+        "ObraBillingDraft",
+        "BillingReadiness",
+        "XRechnung envelope",
+        "does not promote any official",
+    ] {
+        assert!(
+            x89.contains(required),
+            "X89 rustdoc missing billing draft boundary anchor: {required}"
+        );
+    }
+}
+
+#[test]
 fn obra_adapter_dto_contract_has_examples() {
     let adapter = fs::read_to_string("src/adapter/obra.rs").expect("adapter docs exist");
     for required in [

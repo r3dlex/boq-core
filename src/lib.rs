@@ -13,7 +13,7 @@
 //! - X31 has parser-backed `supported_parse_only` canonical quantity evidence
 //!   for selected paths; it still does not imply Obra adapter DTO,
 //!   export, billing, full REB formula conformance, roundtrip, or certification
-//!   support. X89, GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
+//!   support. GAEB XML 3.4 beta, GAEB 2000, Handel, Kosten/Kalkulation,
 //!   and Zeitvertrag remain future or reference tracks until `gaeb/manifest.toml`
 //!   and tests say otherwise.
 //! - BVBS and GAEBXmlChecker evidence must not be described as paid or official
@@ -41,6 +41,10 @@
 //!   capabilities say otherwise.
 //! - X31 quantity-takeoff concepts are represented by [`x31`] as parse-only
 //!   canonical quantity evidence without overloading BoQ item parser semantics.
+//! - X89 Rechnung paths have synthetic invoice-domain parser evidence and an
+//!   [`x89::ObraBillingDraft`] boundary for Obra billing design. This does not
+//!   imply XRechnung generation, public-sector billing readiness, manifest
+//!   support promotion, production support, export, roundtrip, or certification.
 //! - X89 invoice concepts are represented by [`x89`] without generating
 //!   XRechnung envelopes or promoting parser support.
 //!

@@ -46,7 +46,8 @@ assert_eq!(document.summary.format, boq_core::model::GaebFormat::Gaeb90);
 | GAEB DA XML Bauausführung | X83, X84 | `supported_parse_only` for selected construction-execution fixture-backed paths | Parse and use the Obra adapter only when `adapt_to_obra` is true; schema validation, export, roundtrip, production support, and certification remain unclaimed. |
 | GAEB DA XML X31 Mengenermittlung | Selected quantity-takeoff paths with synthetic parser evidence | `supported_parse_only` | Parse formula/result rows into canonical quantity evidence with provenance and findings; no BVBS fixture conformance, Obra adapter DTO, export, billing, full REB formula conformance, roundtrip, production support, or certification is implied. |
 | GAEB DA XML Texterstellung | X81, X82 rich-text and table specification-authoring paths | `supported_parse_only` for selected rich-text/table parser-readiness paths | Parse and inspect rich text/table/text-complement preservation with loss findings; no Obra adapter DTO, visual rendering fidelity, export, roundtrip, production support, or certification is implied. |
-| GAEB XML 3.4 beta, X89, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
+| GAEB DA XML X89 Rechnung | Synthetic invoice-domain parser and Obra billing draft boundary | official Rechnung manifest entries remain `reference_only`; synthetic parser/billing-draft contract evidence only, not manifest support promotion | Parse invoice-domain data, derive `ObraBillingDraft`, and inspect readiness/loss findings; no XRechnung generation, production billing readiness, export, roundtrip, or certification is implied. |
+| GAEB XML 3.4 beta, Handel, Kosten/Kalkulation, Zeitvertrag | Follow-on domains | `future_track` or `reference_only` | Catalog/reference evidence only until implementation, fixtures, and tests promote support. |
 | External BVBS/GAEBXmlChecker evidence | Checker reports, certification notes | `reference_only` unless mirrored by tested parser behavior | Evidence helps readiness reviews but does not grant paid or official certification. |
 
 D81 and X81 represent service-description/design-stage BoQs. D83 and X83 represent request-for-quotation flows at the GAEB phase level. In this crate, selected Bauausführung X83/X84 fixture paths are parser-backed and Obra-adapter-ready only when `adapt_to_obra` is true; export, roundtrip, schema validation, production support, and certification remain unclaimed.
@@ -95,6 +96,12 @@ Callers must treat those findings as loss/provenance evidence. Texterstellung pa
 X31 Mengenermittlung inputs are parser-backed with synthetic canonical-quantity evidence for selected paths; the cataloged BVBS X31 source remains download-on-demand evidence, not vendored conformance proof. The `x31` module preserves row provenance, formula source, explicit result quantities, units, attachment ids, parser findings, and X31-to-X86 ordinal link findings. Its progress report exposes canonical quantity evidence for later Obra import design, but `obra_import_supported` and `invoice_generated` stay `false`.
 
 Callers must treat missing result quantities, unmatched ordinals, unit mismatches, and unsupported X31 fields as loss findings. These reports are not Obra adapter DTOs and do not generate XRechnung, payment claims, exports, roundtrips, production support, or certification evidence.
+
+## X89 Rechnung billing draft boundary
+
+X89 Rechnung inputs can be parsed into `boq_core::x89::InvoiceDocument` and adapted into `boq_core::x89::ObraBillingDraft` for Obra billing design. The draft carries source provenance, deterministic invoice and line keys, parties, totals, payment metadata, line-level contract/X31 quantity evidence links, parser findings, and a billing readiness gate.
+
+The billing draft is not an XRechnung envelope and does not claim public-sector billing readiness by default. Missing X86 contract baselines, missing X31 quantity evidence, missing tax/payment data, or unsupported payment/tax fields remain blocking findings in `BillingReadiness`/`BillingLossReport`. Official Rechnung packages in the fixture manifest remain `reference_only` until separate manifest and fixture evidence promotes them.
 
 ## Obra adapter boundary
 
