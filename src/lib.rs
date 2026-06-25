@@ -84,6 +84,11 @@
 //! - X89 invoice concepts are represented by [`x89`] without generating
 //!   XRechnung envelopes or promoting parser support.
 //!
+//! - Service consumers can use [`service_contract`] or the `boq-core-service`
+//!   binary to obtain deterministic JSON parse/analyze reports. This contract
+//!   exposes provenance, diagnostics, support status, capabilities, and parser
+//!   version metadata without claiming production or certification readiness.
+//!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
 //! adapter, export, or roundtrip behavior.
@@ -182,6 +187,7 @@ pub mod gaeb_xml;
 pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
+pub mod service_contract;
 pub mod sinapi;
 pub mod spreadsheet;
 pub mod stabu;

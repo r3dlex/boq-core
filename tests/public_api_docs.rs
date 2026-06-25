@@ -469,3 +469,19 @@ fn public_modules_have_examples_or_doc_rationale() {
         );
     }
 }
+
+#[test]
+fn service_contract_json_boundary_is_documented_without_support_promotion() {
+    let lib = fs::read_to_string("src/lib.rs").expect("crate docs exist");
+    for required in [
+        "service_contract",
+        "boq-core-service",
+        "deterministic JSON parse/analyze reports",
+        "without claiming production or certification readiness",
+    ] {
+        assert!(
+            lib.contains(required),
+            "crate rustdoc missing service contract boundary anchor: {required}"
+        );
+    }
+}
