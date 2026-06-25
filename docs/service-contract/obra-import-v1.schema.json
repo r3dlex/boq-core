@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r3dlex.github.io/boq-core/schemas/obra-import-v1.schema.json",
+  "title": "boq-core Obra import service report v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "crate_version",
+    "status",
+    "provenance",
+    "support_status",
+    "capabilities",
+    "import_document",
+    "diagnostics",
+    "rejection",
+    "error",
+    "production_ready",
+    "certification_claims"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "boq-core.obra-import.v1"
+    },
+    "crate_version": {
+      "type": "string"
+    },
+    "status": {
+      "enum": ["ok", "blocked", "error"]
+    },
+    "provenance": {
+      "type": ["object", "null"]
+    },
+    "support_status": {
+      "enum": ["supported", "supported_parse_only", "future_track", "reference_only", null]
+    },
+    "capabilities": {
+      "type": ["object", "null"],
+      "properties": {
+        "detect": { "type": "boolean" },
+        "parse": { "type": "boolean" },
+        "validate": { "type": "boolean" },
+        "adapt_to_obra": { "type": "boolean" },
+        "export": { "type": "boolean" },
+        "roundtrip": { "type": "boolean" },
+        "reference_only": { "type": "boolean" }
+      }
+    },
+    "import_document": {
+      "type": ["object", "null"],
+      "description": "Obra adapter DTO; present only when status is ok."
+    },
+    "diagnostics": {
+      "type": "array"
+    },
+    "rejection": {
+      "type": ["object", "null"],
+      "required": ["code", "message", "support_status", "capabilities"],
+      "properties": {
+        "code": {
+          "enum": [
+            "obra_adapter_supported_parse_only",
+            "obra_adapter_future_track",
+            "obra_adapter_reference_only",
+            "obra_adapter_not_supported"
+          ]
+        },
+        "message": { "type": "string" },
+        "support_status": {
+          "enum": ["supported", "supported_parse_only", "future_track", "reference_only"]
+        },
+        "capabilities": { "type": "object" }
+      }
+    },
+    "error": {
+      "type": ["object", "null"]
+    },
+    "production_ready": {
+      "const": false
+    },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "ok" } } },
+      "then": {
+        "properties": {
+          "import_document": { "type": "object" },
+          "rejection": { "type": "null" },
+          "error": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "blocked" } } },
+      "then": {
+        "properties": {
+          "import_document": { "type": "null" },
+          "rejection": { "type": "object" },
+          "error": { "type": "null" }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "boq-core.obra-import.v1",
+  "crate_version": "0.1.0",
+  "status": "blocked",
+  "provenance": {
+    "source_uri": "tests/fixtures/synthetic/minimal.d81",
+    "source_format": "gaeb90",
+    "gaeb_version": "GAEB 90",
+    "phase": {
+      "code": "81",
+      "label": null
+    },
+    "checksum": "55c1efa84595355c366c28d6a1027b8d9173a3d6c6e02cec72a29c3c1a8cb979",
+    "parser_version": "0.1.0"
+  },
+  "support_status": "supported_parse_only",
+  "capabilities": {
+    "detect": true,
+    "parse": true,
+    "validate": false,
+    "adapt_to_obra": false,
+    "export": false,
+    "roundtrip": false,
+    "reference_only": false
+  },
+  "import_document": null,
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "obra_adapter_not_supported",
+      "message": "document support capabilities do not allow Obra adapter conversion",
+      "location": null
+    }
+  ],
+  "rejection": {
+    "code": "obra_adapter_supported_parse_only",
+    "message": "document is parse-only for this source; Obra adapter conversion is disabled",
+    "support_status": "supported_parse_only",
+    "capabilities": {
+      "detect": true,
+      "parse": true,
+      "validate": false,
+      "adapt_to_obra": false,
+      "export": false,
+      "roundtrip": false,
+      "reference_only": false
+    }
+  },
+  "error": null,
+  "production_ready": false,
+  "certification_claims": []
+}

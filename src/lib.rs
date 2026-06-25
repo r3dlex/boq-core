@@ -94,6 +94,11 @@
 //!   status and capability policy without downloading external fixtures or
 //!   claiming production/certification readiness.
 //!
+//! - Service consumers can use [`service_obra_import`] or the
+//!   `boq-core-service obra-import` command to obtain Obra import DTOs only
+//!   when support capabilities allow adapter conversion. Blocked conversions
+//!   return stable rejection codes and do not emit partial-success DTOs.
+//!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
 //! adapter, export, or roundtrip behavior.
@@ -193,6 +198,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod service_contract;
+pub mod service_obra_import;
 pub mod service_support_manifest;
 pub mod sinapi;
 pub mod spreadsheet;
