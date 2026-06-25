@@ -89,6 +89,11 @@
 //!   exposes provenance, diagnostics, support status, capabilities, and parser
 //!   version metadata without claiming production or certification readiness.
 //!
+//! - Service consumers can use [`service_support_manifest`] or the
+//!   `boq-core-service capabilities` command to obtain manifest-backed support
+//!   status and capability policy without downloading external fixtures or
+//!   claiming production/certification readiness.
+//!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
 //! adapter, export, or roundtrip behavior.
@@ -188,6 +193,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod service_contract;
+pub mod service_support_manifest;
 pub mod sinapi;
 pub mod spreadsheet;
 pub mod stabu;

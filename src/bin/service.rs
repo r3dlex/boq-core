@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 
 use boq_core::service_contract::{AnalyzeFormatHint, AnalyzeInput, analyze_bytes};
+use boq_core::service_support_manifest::export_embedded_support_manifest;
 
 fn main() {
     if let Err(error) = run() {
@@ -14,6 +15,15 @@ fn main() {
 fn run() -> Result<(), String> {
     let mut args = std::env::args().skip(1);
     let command = args.next().ok_or_else(usage)?;
+    if command == "capabilities" {
+        if args.next().is_some() {
+            return Err(usage());
+        }
+        let report = export_embedded_support_manifest().map_err(|error| error.to_string())?;
+        let json = serde_json::to_string_pretty(&report).map_err(|error| error.to_string())?;
+        println!("{json}");
+        return Ok(());
+    }
     if command != "analyze" {
         return Err(usage());
     }
@@ -43,5 +53,5 @@ fn run() -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: boq-core-service analyze <path> [--format gaeb-xml|gaeb90]".to_owned()
+    "usage: boq-core-service analyze <path> [--format gaeb-xml|gaeb90] | boq-core-service capabilities".to_owned()
 }

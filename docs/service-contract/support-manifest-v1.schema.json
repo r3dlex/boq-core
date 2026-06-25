@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/r3dlex/boq-core/service-contract/support-manifest-v1.schema.json",
+  "title": "boq-core support manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "crate_version",
+    "support_vocabulary",
+    "entries",
+    "production_ready",
+    "certification_claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "boq-core.support-manifest.v1" },
+    "crate_version": { "type": "string", "minLength": 1 },
+    "support_vocabulary": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "supported" },
+        { "const": "supported_parse_only" },
+        { "const": "future_track" },
+        { "const": "reference_only" }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "production_ready": { "const": false },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0,
+      "items": false
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "source_family",
+        "process_domain",
+        "gaeb_version",
+        "phase",
+        "target_dir",
+        "support_status",
+        "capabilities",
+        "source_policy",
+        "test_mapping"
+      ],
+      "properties": {
+        "fixture_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "source_family": { "type": "string", "minLength": 1 },
+        "process_domain": { "type": "string", "minLength": 1 },
+        "gaeb_version": { "type": "string", "minLength": 1 },
+        "phase": { "type": "string", "minLength": 1 },
+        "target_dir": { "type": "string", "pattern": "^gaeb/" },
+        "support_status": {
+          "enum": ["supported", "supported_parse_only", "future_track", "reference_only"]
+        },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "source_policy": { "$ref": "#/$defs/source_policy" },
+        "test_mapping": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detect",
+        "parse",
+        "validate",
+        "adapt_to_obra",
+        "export",
+        "roundtrip",
+        "certification",
+        "reference_only"
+      ],
+      "properties": {
+        "detect": { "type": "boolean" },
+        "parse": { "type": "boolean" },
+        "validate": { "type": "boolean" },
+        "adapt_to_obra": { "type": "boolean" },
+        "export": { "type": "boolean" },
+        "roundtrip": { "type": "boolean" },
+        "certification": { "const": false },
+        "reference_only": { "type": "boolean" }
+      }
+    },
+    "source_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ci_policy",
+        "license_note",
+        "has_archive_sha256",
+        "service_export_requires_external_download"
+      ],
+      "properties": {
+        "ci_policy": { "type": "string", "minLength": 1 },
+        "license_note": { "type": "string", "minLength": 1 },
+        "has_archive_sha256": { "type": "boolean" },
+        "service_export_requires_external_download": { "const": false }
+      }
+    }
+  }
+}
