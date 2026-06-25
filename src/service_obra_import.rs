@@ -121,6 +121,9 @@ pub fn convert_bytes_to_obra_import(input: &ObraImportInput<'_>) -> ServiceObraI
 /// Attempt service-facing Obra import DTO conversion for an already parsed document.
 #[must_use]
 pub fn report_from_document(document: &GaebDocument) -> ServiceObraImportReport {
+    if document.support_status != SupportStatus::Supported {
+        return blocked_report(document);
+    }
     match ObraImportDocument::try_from_gaeb(document) {
         Ok(import_document) => ServiceObraImportReport {
             schema_version: SERVICE_OBRA_IMPORT_SCHEMA_VERSION,
@@ -136,24 +139,39 @@ pub fn report_from_document(document: &GaebDocument) -> ServiceObraImportReport 
             production_ready: false,
             certification_claims: Vec::new(),
         },
-        Err(adapter_error) => {
-            let mut diagnostics = document.findings.clone();
-            diagnostics.push(adapter_error);
-            ServiceObraImportReport {
-                schema_version: SERVICE_OBRA_IMPORT_SCHEMA_VERSION,
-                crate_version: VERSION,
-                status: ObraImportStatus::Blocked,
-                provenance: Some(document.source.clone()),
-                support_status: Some(document.support_status),
-                capabilities: Some(document.capabilities),
-                import_document: None,
-                diagnostics,
-                rejection: Some(adapter_rejection(document)),
-                error: None,
-                production_ready: false,
-                certification_claims: Vec::new(),
-            }
-        }
+        Err(adapter_error) => blocked_report_with_adapter_error(document, adapter_error),
+    }
+}
+
+fn blocked_report(document: &GaebDocument) -> ServiceObraImportReport {
+    blocked_report_with_adapter_error(
+        document,
+        ValidationFinding::warning(
+            "obra_adapter_not_supported",
+            "document support status does not allow service Obra import conversion",
+        ),
+    )
+}
+
+fn blocked_report_with_adapter_error(
+    document: &GaebDocument,
+    adapter_error: ValidationFinding,
+) -> ServiceObraImportReport {
+    let mut diagnostics = document.findings.clone();
+    diagnostics.push(adapter_error);
+    ServiceObraImportReport {
+        schema_version: SERVICE_OBRA_IMPORT_SCHEMA_VERSION,
+        crate_version: VERSION,
+        status: ObraImportStatus::Blocked,
+        provenance: Some(document.source.clone()),
+        support_status: Some(document.support_status),
+        capabilities: Some(document.capabilities),
+        import_document: None,
+        diagnostics,
+        rejection: Some(adapter_rejection(document)),
+        error: None,
+        production_ready: false,
+        certification_claims: Vec::new(),
     }
 }
 
@@ -237,6 +255,26 @@ mod tests {
         assert!(report.import_document.is_none());
         assert!(!report.production_ready);
         assert!(report.certification_claims.is_empty());
+    }
+
+    #[test]
+    fn unit_report_from_document_blocks_parse_only_even_when_adapter_capability_is_true() {
+        let mut document = crate::gaeb90::parse_bytes(
+            include_bytes!("../tests/fixtures/synthetic/minimal.d81"),
+            Some("tests/fixtures/synthetic/minimal.d81".to_owned()),
+        )
+        .expect("minimal d81 parses");
+        document.support_status = SupportStatus::SupportedParseOnly;
+        document.capabilities = SupportCapabilities::parse_with_obra_adapter();
+
+        let report = report_from_document(&document);
+
+        assert_eq!(report.status, ObraImportStatus::Blocked);
+        assert_eq!(
+            report.rejection.expect("rejection").code,
+            ObraAdapterRejectionCode::ObraAdapterSupportedParseOnly
+        );
+        assert!(report.import_document.is_none());
     }
 
     #[test]

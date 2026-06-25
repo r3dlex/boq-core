@@ -4,9 +4,11 @@
 parsed GAEB document into Obra import DTOs. It is intentionally stricter than a
 best-effort adapter call:
 
-- `status: "ok"` includes a complete `import_document`.
+- `status: "ok"` includes a complete `import_document` and is emitted only
+  when `support_status` is exactly `supported` and capability flags allow Obra
+  adapter conversion.
 - `status: "blocked"` means parsing succeeded, but the manifest-backed support
-  status or capability flags do not allow Obra adapter conversion.
+  status or capability flags do not allow service Obra import conversion.
 - `status: "error"` means parsing failed before adapter conversion could be
   evaluated.
 
@@ -43,6 +45,9 @@ The `import_document` payload uses the public `adapter::obra` DTO:
 - `production_ready`: always `false`.
 - `certification_claims`: always empty.
 - No blocked conversion emits a partial-success `import_document`.
+- `supported_parse_only` inputs are blocked even when lower-level parser tests
+  expose adapter DTO evidence for internal readiness slices; service import
+  success is reserved for `supported` inputs.
 - No paid/external standards data, proprietary catalog download, credentials,
   production deployment, certification, complete-market-coverage, export, or
   roundtrip claim is made by this contract.

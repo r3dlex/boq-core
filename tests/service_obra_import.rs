@@ -128,6 +128,11 @@ fn obra_import_blocked_status_codes_cover_future_reference_and_supported_without
 
     let cases = [
         (
+            SupportStatus::SupportedParseOnly,
+            SupportCapabilities::parse_with_obra_adapter(),
+            ObraAdapterRejectionCode::ObraAdapterSupportedParseOnly,
+        ),
+        (
             SupportStatus::FutureTrack,
             SupportCapabilities::parse_only(),
             ObraAdapterRejectionCode::ObraAdapterFutureTrack,
@@ -196,6 +201,130 @@ fn obra_import_schema_docs_and_golden_fixtures_are_checked_in() {
     );
     assert_eq!(schema["properties"]["production_ready"]["const"], false);
     assert_eq!(schema["properties"]["certification_claims"]["maxItems"], 0);
+    assert_eq!(
+        schema["properties"]["import_document"]["oneOf"][0]["$ref"],
+        "#/$defs/obraImportDocument"
+    );
+    for def in [
+        "sourceProvenance",
+        "supportCapabilities",
+        "obraImportDocument",
+        "obraBoqDocument",
+        "obraWbsNodeCandidate",
+        "obraLineItem",
+        "obraClassification",
+        "lossReport",
+    ] {
+        assert!(
+            schema["$defs"].get(def).is_some(),
+            "missing schema $defs.{def}"
+        );
+    }
+    for required in ["deterministic_key", "title", "status", "metadata"] {
+        assert!(
+            schema["$defs"]["obraBoqDocument"]["required"]
+                .as_array()
+                .expect("required array")
+                .iter()
+                .any(|value| value == required),
+            "boq schema missing required {required}"
+        );
+    }
+}
+
+#[test]
+fn obra_import_golden_fixtures_match_schema_required_shapes() {
+    let supported: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string("tests/fixtures/service_contract/bvbs_ava_x81.obra_import.json")
+            .expect("supported golden"),
+    )
+    .expect("supported golden is valid JSON");
+    let blocked: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string("tests/fixtures/service_contract/minimal_d81.obra_import.json")
+            .expect("blocked golden"),
+    )
+    .expect("blocked golden is valid JSON");
+
+    assert_eq!(supported["schema_version"], "boq-core.obra-import.v1");
+    assert_eq!(supported["status"], "ok");
+    assert_eq!(supported["support_status"], "supported");
+    assert_eq!(supported["production_ready"], false);
+    assert!(
+        supported["certification_claims"]
+            .as_array()
+            .expect("claims")
+            .is_empty()
+    );
+    let import = &supported["import_document"];
+    for key in [
+        "source",
+        "boq",
+        "wbs_nodes",
+        "line_items",
+        "classifications",
+        "loss_report",
+    ] {
+        assert!(!import[key].is_null(), "supported import missing {key}");
+    }
+    assert!(
+        import["boq"]["deterministic_key"]
+            .as_str()
+            .is_some_and(|key| !key.is_empty())
+    );
+    assert!(
+        import["wbs_nodes"]
+            .as_array()
+            .expect("wbs nodes")
+            .iter()
+            .all(|node| node["deterministic_key"]
+                .as_str()
+                .is_some_and(|key| !key.is_empty())
+                && node["path"].as_str().is_some_and(|path| !path.is_empty()))
+    );
+    assert!(
+        import["line_items"]
+            .as_array()
+            .expect("line items")
+            .iter()
+            .all(|line| line["deterministic_key"]
+                .as_str()
+                .is_some_and(|key| !key.is_empty())
+                && line["wbs_node_key"]
+                    .as_str()
+                    .is_some_and(|key| !key.is_empty()))
+    );
+    assert!(
+        import["classifications"]
+            .as_array()
+            .expect("classifications")
+            .iter()
+            .all(|classification| classification["system_code"]
+                .as_str()
+                .is_some_and(|code| !code.is_empty()))
+    );
+    assert!(import["loss_report"]["warnings"].as_array().is_some());
+    assert!(
+        import["loss_report"]["unsupported_fields"]
+            .as_array()
+            .is_some()
+    );
+    assert!(import["loss_report"]["lossy_mappings"].as_array().is_some());
+
+    assert_eq!(blocked["schema_version"], "boq-core.obra-import.v1");
+    assert_eq!(blocked["status"], "blocked");
+    assert_eq!(blocked["support_status"], "supported_parse_only");
+    assert!(blocked["import_document"].is_null());
+    assert_eq!(
+        blocked["rejection"]["code"],
+        "obra_adapter_supported_parse_only"
+    );
+    assert_eq!(blocked["production_ready"], false);
+    assert!(
+        blocked["certification_claims"]
+            .as_array()
+            .expect("claims")
+            .is_empty()
+    );
 }
 
 #[test]

@@ -28,7 +28,7 @@
     {
       "severity": "warning",
       "code": "obra_adapter_not_supported",
-      "message": "document support capabilities do not allow Obra adapter conversion",
+      "message": "document support status does not allow service Obra import conversion",
       "location": null
     }
   ],
