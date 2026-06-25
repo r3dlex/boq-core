@@ -12,65 +12,26 @@ env:
   CARGO_HTTP_MULTIPLEXING: false
 
 jobs:
+  # ── Tier 1: self-hosted probe ─────────────────────────────────────────────
+  # Tries the full quality gate on the org self-hosted runner first.
+  # continue-on-error: true means a runner outage or flake doesn't block main;
+  # the gate job below propagates success only when this leg actually passes.
+  # timeout-minutes bounds a running (not queued) job; ensure a runner is always
+  # online to prevent the required check from hanging in queued state.
   _rust-quality-self-hosted:
     name: Rust quality gates (self-hosted probe)
-    # Self-hosted runners cannot be used as an automatic fallback when the
-    # runner pool is absent: a queued self-hosted job blocks the whole workflow.
-    # Keep the probe opt-in so the GitHub-hosted gate remains the deterministic CI.
-    if: github.event_name == 'push' && vars.ENABLE_SELF_HOSTED_RUST_PROBE == 'true'
     runs-on: [self-hosted, ubuntu-latest]
-    steps:
-      - uses: actions/setup-node@v4
-        id: setup_node
-        continue-on-error: true
-        with:
-          node-version: "22"
-      - name: Self-hosted quality gate
-        id: self_hosted_gate
-        continue-on-error: true
-        run: |
-          set -euo pipefail
-          retry() {
-            for attempt in 1 2 3; do
-              "$@" && return 0
-              sleep $((attempt * 10))
-            done
-            "$@"
-          }
-          git init .
-          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
-          git fetch --depth=1 origin "$GITHUB_SHA"
-          git checkout --detach FETCH_HEAD
-          retry rustup toolchain install stable --component rustfmt --component clippy --component llvm-tools-preview
-          retry cargo install cargo-llvm-cov --locked
-          retry cargo install prek --locked
-          retry npm install -g archgate
-          cargo fmt --check
-          cargo clippy --all-targets --all-features -- -D warnings
-          cargo test --all-features
-          cargo llvm-cov --all-features --summary-only \
-            --ignore-filename-regex 'src/bin/xtask.rs' \
-            --fail-under-lines 95 \
-            --fail-under-functions 95 \
-            --fail-under-regions 95
-          cargo run --bin xtask -- fixtures verify
-          archgate check --ci
-          prek run --all-files
-      - name: Report self-hosted probe failure
-        if: steps.setup_node.outcome != 'success' || steps.self_hosted_gate.outcome != 'success'
-        run: echo "::warning::Self-hosted Rust quality probe setup or execution failed."
-
-  rust-quality:
-    name: Rust quality gates
-    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    outputs:
+      passed: ${{ steps.gate.outputs.passed }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy, llvm-tools-preview
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install Rust toolchain
+        run: rustup toolchain install stable --component rustfmt --component clippy --component llvm-tools-preview
       - name: Install quality tools
         run: |
           retry() {
@@ -99,6 +60,108 @@ jobs:
       - name: Fixture manifest
         run: cargo run --bin xtask -- fixtures verify
       - name: Archgate
+        # No linux/arm64 archgate binary; advisory here.
+        # ADR enforcement on x64 always runs unconditionally in the canonical job.
+        continue-on-error: true
         run: archgate check --ci
       - name: Prek hooks
+        run: prek run --all-files
+      - name: Gate
+        id: gate
+        # Explicit success() guard: gate only fires when every mandatory step above
+        # succeeded. Combined with continue-on-error at job level, this is the only
+        # mechanism that distinguishes a real pass from a silenced failure.
+        if: success()
+        run: echo "passed=true" >> "$GITHUB_OUTPUT"
+
+  # ── Tier 2: gate router ───────────────────────────────────────────────────
+  # Reads the self-hosted probe result and propagates the routing signal.
+  _rust-quality-gate:
+    name: Rust quality gate router
+    needs: [_rust-quality-self-hosted]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Check self-hosted outcome
+        id: check
+        run: |
+          if [ "${{ needs._rust-quality-self-hosted.outputs.passed }}" = "true" ]; then
+            echo "Self-hosted leg passed — Rust steps skipped; archgate still runs on x64."
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Self-hosted leg did not pass — running full GH-hosted fallback."
+          fi
+
+  # ── Tier 3: canonical GH-hosted fallback ─────────────────────────────────
+  # always() is required: without it a failed/skipped self-hosted job would
+  # cause this job to be skipped too, and a skipped required check is not
+  # treated as passed by branch protection — PRs would be permanently blocked.
+  #
+  # archgate (checkout + node + archgate steps) always runs here on GH-hosted
+  # x64 regardless of the self-hosted gate, because archgate has no linux/arm64
+  # binary and ADR enforcement must happen on every run.
+  # Branch protection watches the job name "Rust quality gates", not the job id.
+  rust-quality:
+    name: Rust quality gates
+    needs: [_rust-quality-gate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Route
+        run: |
+          if [ "${{ needs._rust-quality-gate.outputs.passed }}" = "true" ]; then
+            echo "Self-hosted leg passed — running archgate only on GH-hosted x64."
+          else
+            echo "Self-hosted leg did not pass — running full GH-hosted fallback."
+          fi
+      # checkout, node, and archgate always run — ADR enforcement on x64 on every run.
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install archgate
+        run: npm install -g archgate
+      - name: Archgate
+        run: archgate check --ci
+      # ── Rust steps below are skipped when the self-hosted leg already passed ──
+      - uses: dtolnay/rust-toolchain@stable
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        with:
+          components: rustfmt, clippy, llvm-tools-preview
+      - name: Install quality tools
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: |
+          retry() {
+            for attempt in 1 2 3; do
+              "$@" && return 0
+              sleep $((attempt * 10))
+            done
+            "$@"
+          }
+          retry cargo install cargo-llvm-cov --locked
+          retry cargo install prek --locked
+      - name: Format
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: cargo fmt --check
+      - name: Clippy
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Test
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: cargo test --all-features
+      - name: Coverage threshold
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: |
+          cargo llvm-cov --all-features --summary-only \
+            --ignore-filename-regex 'src/bin/xtask.rs' \
+            --fail-under-lines 95 \
+            --fail-under-functions 95 \
+            --fail-under-regions 95
+      - name: Fixture manifest
+        if: needs._rust-quality-gate.outputs.passed != 'true'
+        run: cargo run --bin xtask -- fixtures verify
+      - name: Prek hooks
+        if: needs._rust-quality-gate.outputs.passed != 'true'
         run: prek run --all-files
