@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 
 use boq_core::service_contract::{AnalyzeFormatHint, AnalyzeInput, analyze_bytes};
+use boq_core::service_export_boundary::export_boundary_report;
 use boq_core::service_market_overlays::export_market_overlay_readiness;
 use boq_core::service_obra_import::{ObraImportInput, convert_bytes_to_obra_import};
 use boq_core::service_support_manifest::export_embedded_support_manifest;
@@ -31,6 +32,15 @@ fn run() -> Result<(), String> {
             return Err(usage());
         }
         let report = export_market_overlay_readiness();
+        let json = serde_json::to_string_pretty(&report).map_err(|error| error.to_string())?;
+        println!("{json}");
+        return Ok(());
+    }
+    if command == "export-boundaries" {
+        if args.next().is_some() {
+            return Err(usage());
+        }
+        let report = export_boundary_report();
         let json = serde_json::to_string_pretty(&report).map_err(|error| error.to_string())?;
         println!("{json}");
         return Ok(());
@@ -74,5 +84,24 @@ fn run() -> Result<(), String> {
 }
 
 fn usage() -> String {
-    "usage: boq-core-service analyze <path> [--format gaeb-xml|gaeb90] | boq-core-service obra-import <path> [--format gaeb-xml|gaeb90] | boq-core-service capabilities | boq-core-service market-overlays".to_owned()
+    "usage: boq-core-service analyze <path> [--format gaeb-xml|gaeb90] | boq-core-service obra-import <path> [--format gaeb-xml|gaeb90] | boq-core-service capabilities | boq-core-service market-overlays | boq-core-service export-boundaries".to_owned()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::usage;
+
+    #[test]
+    fn usage_lists_all_service_contract_commands() {
+        let usage = usage();
+        for command in [
+            "analyze",
+            "obra-import",
+            "capabilities",
+            "market-overlays",
+            "export-boundaries",
+        ] {
+            assert!(usage.contains(command), "usage missing {command}");
+        }
+    }
 }

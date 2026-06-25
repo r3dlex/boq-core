@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r3dlex.github.io/boq-core/schemas/export-boundary-v1.schema.json",
+  "title": "boq-core export boundary report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "crate_version",
+    "neutral_csv",
+    "blocked_formats",
+    "capability_flags",
+    "production_ready",
+    "certification_claims",
+    "external_spreadsheet_dependency",
+    "support_boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "boq-core.export-boundary.v1"
+    },
+    "crate_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "neutral_csv": {
+      "$ref": "#/$defs/neutralCsv"
+    },
+    "blocked_formats": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/blockedFormat"
+      }
+    },
+    "capability_flags": {
+      "$ref": "#/$defs/capabilityFlags"
+    },
+    "production_ready": {
+      "const": false
+    },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "external_spreadsheet_dependency": {
+      "const": false
+    },
+    "support_boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "neutralCsv": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_key",
+        "implemented",
+        "export_supported",
+        "update_supported",
+        "match_key",
+        "fail_closed_error_codes",
+        "service_contracts",
+        "support_boundary"
+      ],
+      "properties": {
+        "contract_key": {
+          "const": "oz_matched_csv_neutral"
+        },
+        "implemented": {
+          "const": true
+        },
+        "export_supported": {
+          "const": true
+        },
+        "update_supported": {
+          "const": true
+        },
+        "match_key": {
+          "const": "oz"
+        },
+        "fail_closed_error_codes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "spreadsheet_neutral_missing_oz_column",
+              "spreadsheet_neutral_duplicate_header",
+              "spreadsheet_neutral_missing_oz_value",
+              "spreadsheet_neutral_invalid_csv"
+            ]
+          }
+        },
+        "service_contracts": {
+          "type": "array",
+          "items": {
+            "const": "boq-core.service-analyze.v1"
+          }
+        },
+        "support_boundary": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "blockedFormat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "reason",
+        "implemented",
+        "production_supported"
+      ],
+      "properties": {
+        "format": {
+          "enum": [
+            "xlsx",
+            "ods",
+            "gaeb-export-roundtrip"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implemented": {
+          "const": false
+        },
+        "production_supported": {
+          "const": false
+        }
+      }
+    },
+    "capabilityFlags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "neutral_csv_export",
+        "neutral_csv_update",
+        "xlsx_export",
+        "ods_export",
+        "gaeb_export_roundtrip",
+        "production_spreadsheet_roundtrip",
+        "certification"
+      ],
+      "properties": {
+        "neutral_csv_export": {
+          "const": true
+        },
+        "neutral_csv_update": {
+          "const": true
+        },
+        "xlsx_export": {
+          "const": false
+        },
+        "ods_export": {
+          "const": false
+        },
+        "gaeb_export_roundtrip": {
+          "const": false
+        },
+        "production_spreadsheet_roundtrip": {
+          "const": false
+        },
+        "certification": {
+          "const": false
+        }
+      }
+    }
+  }
+}
