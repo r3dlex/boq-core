@@ -1,6 +1,6 @@
 #![allow(missing_docs, clippy::expect_used)]
 
-use std::process::Command;
+use std::{fs, process::Command};
 
 use boq_core::service_contract::{AnalyzeFormatHint, AnalyzeInput, AnalyzeStatus, analyze_bytes};
 use boq_core::support::SupportStatus;
@@ -190,4 +190,123 @@ fn service_cli_reports_read_errors_without_success() {
     assert_eq!(output.status.code(), Some(2));
     assert!(String::from_utf8_lossy(&output.stderr).contains("failed to read"));
     assert!(output.stdout.is_empty());
+}
+
+#[test]
+fn service_contract_schema_and_golden_fixtures_are_checked_in() {
+    for path in [
+        "docs/service-contract/service-analyze-v1.md",
+        "docs/service-contract/service-analyze-v1.schema.json",
+        "tests/fixtures/service_contract/minimal_ava.analyze.json",
+        "tests/fixtures/service_contract/minimal_d81.analyze.json",
+    ] {
+        assert!(
+            fs::metadata(path).is_ok(),
+            "missing service contract artifact: {path}"
+        );
+    }
+
+    let docs =
+        fs::read_to_string("docs/service-contract/service-analyze-v1.md").expect("contract docs");
+    for required in [
+        "boq-core.service-analyze.v1",
+        "service-analyze-v1.schema.json",
+        "minimal_ava.analyze.json",
+        "minimal_d81.analyze.json",
+        "production_ready`: always `false`",
+        "certification_claims`: always empty",
+    ] {
+        assert!(
+            docs.contains(required),
+            "service contract docs missing: {required}"
+        );
+    }
+
+    let schema: serde_json::Value = serde_json::from_str(
+        &fs::read_to_string("docs/service-contract/service-analyze-v1.schema.json")
+            .expect("schema"),
+    )
+    .expect("schema is valid JSON");
+    assert_eq!(
+        schema["properties"]["schema_version"]["const"],
+        "boq-core.service-analyze.v1"
+    );
+    assert_eq!(schema["properties"]["production_ready"]["const"], false);
+    assert_eq!(schema["properties"]["certification_claims"]["maxItems"], 0);
+}
+
+#[test]
+fn library_reports_match_checked_in_golden_fixtures() {
+    let cases = [
+        (
+            include_bytes!("fixtures/synthetic/minimal_ava.x81").as_slice(),
+            "tests/fixtures/synthetic/minimal_ava.x81",
+            AnalyzeFormatHint::GaebXml,
+            "tests/fixtures/service_contract/minimal_ava.analyze.json",
+        ),
+        (
+            include_bytes!("fixtures/synthetic/minimal.d81").as_slice(),
+            "tests/fixtures/synthetic/minimal.d81",
+            AnalyzeFormatHint::Gaeb90,
+            "tests/fixtures/service_contract/minimal_d81.analyze.json",
+        ),
+    ];
+
+    for (bytes, source_uri, format_hint, golden_path) in cases {
+        let report = analyze_bytes(&AnalyzeInput {
+            bytes,
+            source_uri: Some(source_uri.to_owned()),
+            format_hint: Some(format_hint),
+        });
+        let actual = serde_json::to_value(&report).expect("report serializes");
+        let expected: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(golden_path).expect("golden fixture readable"),
+        )
+        .expect("golden fixture is valid JSON");
+        assert_eq!(actual, expected, "golden mismatch for {golden_path}");
+    }
+}
+
+#[test]
+fn service_cli_output_matches_checked_in_golden_fixtures() {
+    let exe = std::env::var("CARGO_BIN_EXE_boq-core-service").expect("service binary path");
+    let cases = [
+        (
+            [
+                "analyze",
+                "tests/fixtures/synthetic/minimal_ava.x81",
+                "--format",
+                "gaeb-xml",
+            ],
+            "tests/fixtures/service_contract/minimal_ava.analyze.json",
+        ),
+        (
+            [
+                "analyze",
+                "tests/fixtures/synthetic/minimal.d81",
+                "--format",
+                "gaeb90",
+            ],
+            "tests/fixtures/service_contract/minimal_d81.analyze.json",
+        ),
+    ];
+
+    for (args, golden_path) in cases {
+        let output = Command::new(&exe)
+            .args(args)
+            .output()
+            .expect("service cli runs");
+        assert!(
+            output.status.success(),
+            "stderr={}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let actual: serde_json::Value =
+            serde_json::from_slice(&output.stdout).expect("valid cli json");
+        let expected: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(golden_path).expect("golden fixture readable"),
+        )
+        .expect("golden fixture is valid JSON");
+        assert_eq!(actual, expected, "cli golden mismatch for {golden_path}");
+    }
 }

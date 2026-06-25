@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/r3dlex/boq-core/service-contract/service-analyze-v1.schema.json",
+  "title": "boq-core service analyze report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "crate_version",
+    "status",
+    "document",
+    "diagnostics",
+    "error",
+    "production_ready",
+    "certification_claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "boq-core.service-analyze.v1" },
+    "crate_version": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["ok", "error"] },
+    "document": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/document_report" }
+      ]
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    },
+    "error": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/parse_error" }
+      ]
+    },
+    "production_ready": { "const": false },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0,
+      "items": false
+    }
+  },
+  "$defs": {
+    "document_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "provenance", "support_status", "capabilities", "top_level_node_count"],
+      "properties": {
+        "summary": { "$ref": "#/$defs/document_summary" },
+        "provenance": { "$ref": "#/$defs/source_provenance" },
+        "support_status": {
+          "enum": ["supported", "supported_parse_only", "future_track", "reference_only"]
+        },
+        "capabilities": { "$ref": "#/$defs/capabilities" },
+        "top_level_node_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "document_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "version", "phase", "title", "project_name"],
+      "properties": {
+        "format": { "enum": ["gaeb90", "gaeb2000", "gaeb_xml"] },
+        "version": { "type": ["string", "null"] },
+        "phase": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/phase" }] },
+        "title": { "type": ["string", "null"] },
+        "project_name": { "type": ["string", "null"] }
+      }
+    },
+    "source_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_uri", "source_format", "gaeb_version", "phase", "checksum", "parser_version"],
+      "properties": {
+        "source_uri": { "type": ["string", "null"] },
+        "source_format": { "enum": ["gaeb90", "gaeb2000", "gaeb_xml"] },
+        "gaeb_version": { "type": ["string", "null"] },
+        "phase": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/phase" }] },
+        "checksum": { "type": ["string", "null"] },
+        "parser_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[0-9A-Za-z_-]+$" },
+        "label": { "type": ["string", "null"] }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detect", "parse", "validate", "adapt_to_obra", "export", "roundtrip", "reference_only"],
+      "properties": {
+        "detect": { "type": "boolean" },
+        "parse": { "type": "boolean" },
+        "validate": { "type": "boolean" },
+        "adapt_to_obra": { "type": "boolean" },
+        "export": { "type": "boolean" },
+        "roundtrip": { "type": "boolean" },
+        "reference_only": { "type": "boolean" }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["severity", "code", "message", "location"],
+      "properties": {
+        "severity": { "enum": ["info", "warning", "error"] },
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "location": { "type": ["string", "null"] }
+      }
+    },
+    "parse_error": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["code", "message", "location"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "location": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

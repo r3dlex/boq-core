@@ -1,0 +1,50 @@
+{
+  "schema_version": "boq-core.service-analyze.v1",
+  "crate_version": "0.1.0",
+  "status": "ok",
+  "document": {
+    "summary": {
+      "format": "gaeb_xml",
+      "version": "3.3",
+      "phase": {
+        "code": "81",
+        "label": null
+      },
+      "title": "Minimal AVA",
+      "project_name": "Minimal AVA"
+    },
+    "provenance": {
+      "source_uri": "tests/fixtures/synthetic/minimal_ava.x81",
+      "source_format": "gaeb_xml",
+      "gaeb_version": "3.3",
+      "phase": {
+        "code": "81",
+        "label": null
+      },
+      "checksum": "359fbe1fa2692618ae0a0a3fbd7b93f55952dec36e70042ed5095c145e3f7da4",
+      "parser_version": "0.1.0"
+    },
+    "support_status": "supported_parse_only",
+    "capabilities": {
+      "detect": true,
+      "parse": true,
+      "validate": false,
+      "adapt_to_obra": false,
+      "export": false,
+      "roundtrip": false,
+      "reference_only": false
+    },
+    "top_level_node_count": 1
+  },
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "gaeb_xml_description_plain_text_only",
+      "message": "description rich markup was normalized to plain text; original XML is not yet roundtripped",
+      "location": null
+    }
+  ],
+  "error": null,
+  "production_ready": false,
+  "certification_claims": []
+}
