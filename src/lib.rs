@@ -99,6 +99,11 @@
 //!   when support capabilities allow adapter conversion. Blocked conversions
 //!   return stable rejection codes and do not emit partial-success DTOs.
 //!
+//! - Service consumers can use [`service_market_overlays`] or the
+//!   `boq-core-service market-overlays` command to obtain the fixture-backed
+//!   market overlay readiness matrix for SINAPI/Prezzario/Catálogo/STABU/DQE
+//!   evidence without downloading external catalogs or promoting support.
+//!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
 //! adapter, export, or roundtrip behavior.
@@ -198,6 +203,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod service_contract;
+pub mod service_market_overlays;
 pub mod service_obra_import;
 pub mod service_support_manifest;
 pub mod sinapi;

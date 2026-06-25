@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r3dlex.github.io/boq-core/schemas/market-overlays-v1.schema.json",
+  "title": "boq-core market overlay readiness report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "crate_version",
+    "overlays",
+    "production_ready",
+    "certification_claims",
+    "external_catalog_download_required",
+    "support_boundary"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "boq-core.market-overlays.v1"
+    },
+    "crate_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "overlays": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "$ref": "#/$defs/overlay"
+      }
+    },
+    "production_ready": {
+      "const": false
+    },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "external_catalog_download_required": {
+      "const": false
+    },
+    "support_boundary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "overlay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overlay_key",
+        "label",
+        "module",
+        "evidence_fixture",
+        "service_contracts",
+        "supported_metadata",
+        "loss_findings",
+        "current_support_boundary",
+        "promotes_support_status",
+        "grants_adapter_support_to_parse_only",
+        "complete_market_coverage_claimed"
+      ],
+      "properties": {
+        "overlay_key": {
+          "enum": [
+            "sinapi-bdi",
+            "prezzario-computo",
+            "catalogo-cuadro",
+            "stabu-raw",
+            "dqe-quantity"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "module": {
+          "type": "string",
+          "pattern": "^boq_core::"
+        },
+        "evidence_fixture": {
+          "type": "string",
+          "pattern": "^tests/fixtures/synthetic/"
+        },
+        "service_contracts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "boq-core.service-analyze.v1",
+              "boq-core.obra-import.v1"
+            ]
+          }
+        },
+        "supported_metadata": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "loss_findings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "current_support_boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "promotes_support_status": {
+          "const": false
+        },
+        "grants_adapter_support_to_parse_only": {
+          "const": false
+        },
+        "complete_market_coverage_claimed": {
+          "const": false
+        }
+      }
+    }
+  }
+}
