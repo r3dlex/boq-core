@@ -104,6 +104,11 @@
 //!   market overlay readiness matrix for SINAPI/Prezzario/Catálogo/STABU/DQE
 //!   evidence without downloading external catalogs or promoting support.
 //!
+//! - Service consumers can use [`service_export_boundary`] or the
+//!   `boq-core-service export-boundaries` command to inspect neutral CSV export
+//!   and update evidence separately from blocked XLSX/ODS/production
+//!   spreadsheet or GAEB roundtrip support.
+//!
 //! Public callers should inspect [`model::GaebDocument::support_status`] and
 //! [`model::GaebDocument::capabilities`] before assuming validation, Obra
 //! adapter, export, or roundtrip behavior.
@@ -203,6 +208,7 @@ pub mod model;
 pub mod nlsfb;
 pub mod prezzario;
 pub mod service_contract;
+pub mod service_export_boundary;
 pub mod service_market_overlays;
 pub mod service_obra_import;
 pub mod service_support_manifest;
