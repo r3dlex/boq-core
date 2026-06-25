@@ -1,0 +1,1539 @@
+{
+  "schema_version": "boq-core.support-manifest.v1",
+  "crate_version": "0.1.0",
+  "support_vocabulary": [
+    "supported",
+    "supported_parse_only",
+    "future_track",
+    "reference_only"
+  ],
+  "entries": [
+    {
+      "fixture_id": "avacloud_demo_node",
+      "source_family": "developer_examples",
+      "process_domain": "generated_gaeb_examples",
+      "gaeb_version": "mixed",
+      "phase": "mixed",
+      "target_dir": "gaeb/developer_examples/avacloud_demo_node",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "AVACloud Node.js generated GAEB examples; verify repository license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_avacloud_demo_node_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_gaeb_xml_checker",
+      "source_family": "bvbs",
+      "process_domain": "tooling_reference",
+      "gaeb_version": "gaeb_xml_checker",
+      "phase": "tool",
+      "target_dir": "gaeb/tools/bvbs_gaeb_xml_checker",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "External checker tool; catalog checksum/version and decide invocation policy before use.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml31_bau_criteria_pdf",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_1",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "criteria_pdf",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/criteria_pdf",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.1 Bauausfuehrung criteria PDF; compatibility evidence only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml31_bau_criteria_supplement",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_1",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "criteria_supplement",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/criteria_supplement",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.1 Bauausfuehrung supplemental criteria list; compatibility evidence only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml31_bau_pdf",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_1",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.1 Bauausfuehrung visual PDF; manual/reference evidence only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml31_bau_x83",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_1",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "x83",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/x83",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.1 BVBS Bauausfuehrung X83 fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_xml31_bau_sources_are_cataloged_before_parser_promotion"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml31_bau_x84",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_1",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "x84",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_1/legacy_xml_3_1/construction_execution/x84",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.1 BVBS Bauausfuehrung X84 fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_xml31_bau_sources_are_cataloged_before_parser_promotion"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml32_ava_x81",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "x81",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/ava/x81",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 BVBS AVA fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_legacy_xml32_ava_x81_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml32_ava_x84",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "x84",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/ava/x84",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 BVBS AVA fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_legacy_xml32_ava_x84_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml32_ava_x86",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "x86",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/ava/x86",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 BVBS AVA fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_legacy_xml32_ava_x86_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml32_bau_criteria_pdf",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "criteria_pdf",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/criteria_pdf",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 Bauausfuehrung criteria PDF; compatibility evidence only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml32_bau_pdf",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 Bauausfuehrung visual PDF; manual/reference evidence only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml32_bau_x83",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "x83",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/x83",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 BVBS Bauausfuehrung fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_legacy_xml32_bau_x83_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml32_bau_x84",
+      "source_family": "bvbs",
+      "process_domain": "legacy_xml_3_2",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "x84",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_2/legacy_xml_3_2/construction_execution/x84",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Legacy GAEB XML 3.2 BVBS Bauausfuehrung X84 fixture; future compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_xml32_bau_sources_are_cataloged_before_parser_promotion"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_ava_pdf",
+      "source_family": "bvbs",
+      "process_domain": "ava",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/ava/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Reference criteria PDF; catalog for manual criteria matrix mapping.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml33_ava_x81",
+      "source_family": "bvbs",
+      "process_domain": "ava",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x81",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/ava/x81",
+      "support_status": "supported",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": true,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official BVBS certification fixture; verify redistribution terms before committing payload.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "ava_x81_imports_to_rich_model_and_obra_snapshot"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_ava_x84",
+      "source_family": "bvbs",
+      "process_domain": "ava",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x84",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/ava/x84",
+      "support_status": "supported",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": true,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official BVBS certification fixture; verify redistribution terms before committing payload.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "ava_x84_imports_priced_bid_snapshot"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_ava_x86",
+      "source_family": "bvbs",
+      "process_domain": "ava",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x86",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/ava/x86",
+      "support_status": "supported",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": true,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official BVBS certification fixture; verify redistribution terms before committing payload.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "ava_x86_imports_contract_award_snapshot"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_bau_criteria_pdf",
+      "source_family": "bvbs",
+      "process_domain": "construction_execution",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "criteria_pdf",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/construction_execution/criteria_pdf",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Bauausfuehrung criteria PDF; maps readiness checks without certification claims.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml33_bau_pdf",
+      "source_family": "bvbs",
+      "process_domain": "construction_execution",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/construction_execution/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Bauausfuehrung reference PDF; manual criteria mapping input.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml33_bau_x83",
+      "source_family": "bvbs",
+      "process_domain": "construction_execution",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x83",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x83",
+      "support_status": "supported_parse_only",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": false,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Bauausführung X83 fixture has parser-readiness and Obra adapter DTO evidence for supported_parse_only import coverage; readiness-only; no paid submission, schema validation, export, or roundtrip promotion.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_bau_x83_fixture_parses_to_boq_tree",
+        "test_bau_x83_adapter_dto_is_supported_without_export_or_roundtrip",
+        "test_bau_x83_support_promotion_requires_evidence",
+        "test_bau_x83_golden_report_matches"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_bau_x84",
+      "source_family": "bvbs",
+      "process_domain": "construction_execution",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x84",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/construction_execution/x84",
+      "support_status": "supported_parse_only",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": false,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Bauausführung X84 fixture has parser-readiness and Obra adapter DTO evidence for supported_parse_only bid import coverage; readiness-only; no paid submission, schema validation, export, or roundtrip promotion.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_bau_x84_prices_map_by_ordinal",
+        "test_bau_x84_adapter_dto_is_supported_without_export_or_roundtrip",
+        "test_bau_x84_missing_descriptions_resolve_against_x83_baseline",
+        "test_bau_x84_bidder_remarks_preserved",
+        "test_bau_x84_unmatched_ordinal_emits_finding",
+        "test_bau_x84_support_promotion_requires_bid_evidence"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_mengenermittlung_criteria_pdf",
+      "source_family": "bvbs",
+      "process_domain": "quantity_takeoff",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Mengenermittlung criteria PDF; reference/manual matrix input.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml33_qty_results_pdf",
+      "source_family": "bvbs",
+      "process_domain": "quantity_takeoff",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "pdf_results",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/pdf_results",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Mengenermittlung result proof PDF; manual criteria mapping input.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "bvbs_xml33_qty_x31",
+      "source_family": "bvbs",
+      "process_domain": "quantity_takeoff",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x31",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x31",
+      "support_status": "supported_parse_only",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Mengenermittlung X31 source is cataloged for download-on-demand; current supported_parse_only parser-readiness and canonical quantity evidence is synthetic and readiness-only; no paid submission, Obra adapter DTO, export, full REB formula conformance, or roundtrip promotion.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_bvbs_x31_parses_measurement_groups",
+        "test_bvbs_x31_formula_records_preserve_source",
+        "test_bvbs_x31_attachments_are_detected",
+        "test_x31_parser_reports_unsupported_features",
+        "test_x31_canonical_quantity_integration_preserves_provenance_and_loss_findings",
+        "test_x31_canonical_quantity_missing_result_is_loss_finding",
+        "test_bvbs_x31_support_promotion_requires_parser_evidence"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_qty_x86",
+      "source_family": "bvbs",
+      "process_domain": "quantity_takeoff",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x86",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/quantity_takeoff/x86",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Future quantity takeoff X86 contract-base fixture.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_quantity_takeoff_x86_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_text_x81",
+      "source_family": "bvbs",
+      "process_domain": "specification_authoring",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x81",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/specification_authoring/x81",
+      "support_status": "supported_parse_only",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Texterstellung X81 fixture has parser-readiness evidence for supported_parse_only rich-text/table import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_text_x81_rich_text_blocks_preserved",
+        "test_text_tables_normalize_to_document_blocks",
+        "test_text_unsupported_layout_emits_findings",
+        "test_texterstellung_support_promotion_requires_rich_text_evidence"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_text_x82",
+      "source_family": "bvbs",
+      "process_domain": "specification_authoring",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "x82",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/specification_authoring/x82",
+      "support_status": "supported_parse_only",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Texterstellung X82 fixture has parser-readiness evidence for supported_parse_only cost-estimate and rich-text import coverage; readiness-only; no paid submission, adapter, export, or roundtrip promotion.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "test_text_x82_cost_estimate_metadata_preserved",
+        "test_text_unsupported_layout_emits_findings",
+        "test_text_tables_normalize_to_document_blocks",
+        "test_texterstellung_support_promotion_requires_rich_text_evidence"
+      ]
+    },
+    {
+      "fixture_id": "bvbs_xml33_texterstellung_criteria_pdf",
+      "source_family": "bvbs",
+      "process_domain": "specification_authoring",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "pdf_reference",
+      "target_dir": "gaeb/bvbs/gaeb_xml_3_3/specification_authoring/pdf_reference",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "BVBS Texterstellung criteria PDF; reference/manual matrix input.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "dangl_ava_examples",
+      "source_family": "developer_examples",
+      "process_domain": "multi_format_examples",
+      "gaeb_version": "mixed",
+      "phase": "mixed",
+      "target_dir": "gaeb/developer_examples/dangl_ava_examples",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained examples; verify repository license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_dangl_ava_examples_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "dangl_ava_examples_cpp",
+      "source_family": "developer_examples",
+      "process_domain": "native_interop_examples",
+      "gaeb_version": "mixed",
+      "phase": "mixed",
+      "target_dir": "gaeb/developer_examples/dangl_ava_examples_cpp",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained C++ interop examples; verify repository license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_dangl_cpp_examples_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "dangl_ava_gaeb2000_examples",
+      "source_family": "developer_examples",
+      "process_domain": "gaeb2000_examples",
+      "gaeb_version": "gaeb_2000",
+      "phase": "mixed_pxx_dxx",
+      "target_dir": "gaeb/developer_examples/dangl_ava_gaeb2000_examples",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained Dangl.AVA GAEB 2000/Pxx examples; future parser compatibility track; select fixtures only after license/checksum review.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_dangl_ava_gaeb2000_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "dangl_ava_gaeb90_d83",
+      "source_family": "developer_examples",
+      "process_domain": "gaeb90_examples",
+      "gaeb_version": "gaeb_90",
+      "phase": "d83",
+      "target_dir": "gaeb/developer_examples/dangl_ava_examples/gaeb90/d83",
+      "support_status": "supported",
+      "capabilities": {
+        "detect": true,
+        "parse": true,
+        "validate": true,
+        "adapt_to_obra": true,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": false
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Dangl GAEB 90 D83 example used for fixture-backed adapter-compatible import promotion; verify repository license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "dangl_gaeb90_d83_parses_as_fixture_backed_adapter_compatible",
+        "test_gaeb90_d81_d83_hierarchy_extraction_red_tests"
+      ]
+    },
+    {
+      "fixture_id": "dangl_gaeb2000_sportheim_gist",
+      "source_family": "developer_examples",
+      "process_domain": "gaeb2000_examples",
+      "gaeb_version": "gaeb_2000",
+      "phase": "d86",
+      "target_dir": "gaeb/developer_examples/dangl_sportheim_gist",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained GAEB 2000 Sportheim gist; future parser compatibility track.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_gaeb2000_sportheim_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "dangl_oenorm_examples",
+      "source_family": "developer_examples",
+      "process_domain": "oenorm_conversion_examples",
+      "gaeb_version": "mixed",
+      "phase": "mixed",
+      "target_dir": "gaeb/developer_examples/dangl_oenorm_examples",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained OENORM/GAEB conversion examples; verify repository license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_dangl_oenorm_examples_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "gaeb2000_priced_gist",
+      "source_family": "developer_examples",
+      "process_domain": "gaeb2000_examples",
+      "gaeb_version": "gaeb_2000",
+      "phase": "p86",
+      "target_dir": "gaeb/developer_examples/gaeb2000_priced_gist",
+      "support_status": "future_track",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Developer-maintained GAEB 2000 priced D86/P86 gist; future parser compatibility track; verify license before vendoring.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": [
+        "future_gaeb2000_priced_gist_cataloged"
+      ]
+    },
+    {
+      "fixture_id": "gaeb2000_xml_mapping_chart",
+      "source_family": "interactive_schema",
+      "process_domain": "mapping_reference",
+      "gaeb_version": "gaeb_2000",
+      "phase": "mapping_reference",
+      "target_dir": "gaeb/interactive_schema/gaeb2000_xml_mapping_chart",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "reference_only",
+        "license_note": "GAEB 2.1 to XML mapping reference only; not runtime parser support evidence.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "gaeb_online_generator_exe",
+      "source_family": "productivity_templates",
+      "process_domain": "spreadsheet_reference",
+      "gaeb_version": "template",
+      "phase": "exe",
+      "target_dir": "gaeb/productivity_templates/gaeb_online",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Windows executable reference only; must never be executed in CI.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "gaeb_online_import_template",
+      "source_family": "productivity_templates",
+      "process_domain": "spreadsheet_reference",
+      "gaeb_version": "template",
+      "phase": "xlsx",
+      "target_dir": "gaeb/productivity_templates/gaeb_online",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Spreadsheet template reference; not parser-core certification fixture.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "mwm_rialto_gaeb90_demo",
+      "source_family": "commercial_demo",
+      "process_domain": "spreadsheet_middleware",
+      "gaeb_version": "gaeb_90",
+      "phase": "roundtrip_reference",
+      "target_dir": "gaeb/commercial_demo/mwm_rialto_gaeb90_demo",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "reference_only",
+        "license_note": "Commercial MWM/Rialto GAEB 90/2000/XML conversion demo; reference only and never executed or downloaded in CI.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml31_muster_2007_11",
+      "source_family": "official_gaeb",
+      "process_domain": "musterdateien",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "sample_files",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_1/musterdateien_2007_11",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.1 sample files; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml31_muster_2009_12",
+      "source_family": "official_gaeb",
+      "process_domain": "musterdateien",
+      "gaeb_version": "gaeb_xml_3_1",
+      "phase": "sample_files",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_1/musterdateien_2009_12",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.1 sample files; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_kalkulation",
+      "source_family": "official_gaeb",
+      "process_domain": "kalkulation",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/kalkulation",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 costing schema package; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_leistungsverzeichnis",
+      "source_family": "official_gaeb",
+      "process_domain": "leistungsverzeichnis",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/leistungsverzeichnis",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 bill-of-quantities schema package; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_mengenermittlung",
+      "source_family": "official_gaeb",
+      "process_domain": "mengenermittlung",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/mengenermittlung",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 quantity-takeoff schema package; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_rechnung",
+      "source_family": "official_gaeb",
+      "process_domain": "rechnung",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/rechnung",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 invoice schema package; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_zeitvertrag",
+      "source_family": "official_gaeb",
+      "process_domain": "zeitvertrag",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/zeitvertrag",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 time-contract schema package; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml32_zeitvertrag_examples",
+      "source_family": "official_gaeb",
+      "process_domain": "zeitvertrag",
+      "gaeb_version": "gaeb_xml_3_2",
+      "phase": "sample_files",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_2/zeitvertrag_examples",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.2 time-contract sample files; legacy reference.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_handel",
+      "source_family": "official_gaeb",
+      "process_domain": "handel",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/handel",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 trade/commerce schema package; reference until X93-X97 support is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_kosten_und_kalkulation",
+      "source_family": "official_gaeb",
+      "process_domain": "kosten_und_kalkulation",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/kosten_und_kalkulation",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 costing/calculation schema package; reference until X50-X52 support is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_leistungsverzeichnis",
+      "source_family": "official_gaeb",
+      "process_domain": "leistungsverzeichnis",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/leistungsverzeichnis",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 bill-of-quantities schema/sample package; reference until schema validation is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_mengenermittlung",
+      "source_family": "official_gaeb",
+      "process_domain": "mengenermittlung",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/mengenermittlung",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 quantity-takeoff schema/sample package; reference until X31 support is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_rechnung",
+      "source_family": "official_gaeb",
+      "process_domain": "rechnung",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/rechnung",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 invoice schema/sample package; reference until X89/Rechnung support is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml33_zeitvertrag",
+      "source_family": "official_gaeb",
+      "process_domain": "zeitvertrag",
+      "gaeb_version": "gaeb_xml_3_3",
+      "phase": "schema_package",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_3/zeitvertrag",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "Official GAEB XML 3.3 time-contract schema/sample package; reference until Zeitvertrag support is implemented.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml34_beta_changelog",
+      "source_family": "official_gaeb",
+      "process_domain": "schema_reference",
+      "gaeb_version": "gaeb_xml_3_4_beta",
+      "phase": "changelog",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_4_beta/changelog",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "GAEB 3.4 beta changelog; reference only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    },
+    {
+      "fixture_id": "official_gaeb_xml34_beta_schema",
+      "source_family": "official_gaeb",
+      "process_domain": "schema_reference",
+      "gaeb_version": "gaeb_xml_3_4_beta",
+      "phase": "schema",
+      "target_dir": "gaeb/official_gaeb/gaeb_xml_3_4_beta/schemata",
+      "support_status": "reference_only",
+      "capabilities": {
+        "detect": true,
+        "parse": false,
+        "validate": false,
+        "adapt_to_obra": false,
+        "export": false,
+        "roundtrip": false,
+        "certification": false,
+        "reference_only": true
+      },
+      "source_policy": {
+        "ci_policy": "download_on_demand",
+        "license_note": "GAEB 3.4 beta/test-only schema package; reference only.",
+        "has_archive_sha256": false,
+        "service_export_requires_external_download": false
+      },
+      "test_mapping": []
+    }
+  ],
+  "production_ready": false,
+  "certification_claims": []
+}

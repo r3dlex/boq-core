@@ -7,7 +7,7 @@
 
 use std::fmt;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// Embedded canonical fixture manifest TOML.
 ///
@@ -62,7 +62,7 @@ pub struct FixtureEntry {
 /// governed by ARCH-002. Runtime policy decisions convert it to
 /// [`crate::support::SupportStatus`] only after process-domain and format
 /// rules are applied.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ManifestSupportStatus {
     /// Manifest row claims full support for the named fixture scope.
