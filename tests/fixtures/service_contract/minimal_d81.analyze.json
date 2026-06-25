@@ -1,0 +1,43 @@
+{
+  "schema_version": "boq-core.service-analyze.v1",
+  "crate_version": "0.1.0",
+  "status": "ok",
+  "document": {
+    "summary": {
+      "format": "gaeb90",
+      "version": "GAEB 90",
+      "phase": {
+        "code": "81",
+        "label": null
+      },
+      "title": "Synthetic GAEB 90 D81",
+      "project_name": "Synthetic GAEB 90 D81"
+    },
+    "provenance": {
+      "source_uri": "tests/fixtures/synthetic/minimal.d81",
+      "source_format": "gaeb90",
+      "gaeb_version": "GAEB 90",
+      "phase": {
+        "code": "81",
+        "label": null
+      },
+      "checksum": "55c1efa84595355c366c28d6a1027b8d9173a3d6c6e02cec72a29c3c1a8cb979",
+      "parser_version": "0.1.0"
+    },
+    "support_status": "supported_parse_only",
+    "capabilities": {
+      "detect": true,
+      "parse": true,
+      "validate": false,
+      "adapt_to_obra": false,
+      "export": false,
+      "roundtrip": false,
+      "reference_only": false
+    },
+    "top_level_node_count": 1
+  },
+  "diagnostics": [],
+  "error": null,
+  "production_ready": false,
+  "certification_claims": []
+}
