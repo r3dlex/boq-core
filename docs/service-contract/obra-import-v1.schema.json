@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r3dlex.github.io/boq-core/schemas/obra-import-v1.schema.json",
+  "title": "boq-core Obra import service report v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "crate_version",
+    "status",
+    "provenance",
+    "support_status",
+    "capabilities",
+    "import_document",
+    "diagnostics",
+    "rejection",
+    "error",
+    "production_ready",
+    "certification_claims"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "boq-core.obra-import.v1"
+    },
+    "crate_version": {
+      "type": "string"
+    },
+    "status": {
+      "enum": ["ok", "blocked", "error"]
+    },
+    "provenance": {
+      "oneOf": [{ "$ref": "#/$defs/sourceProvenance" }, { "type": "null" }]
+    },
+    "support_status": {
+      "enum": ["supported", "supported_parse_only", "future_track", "reference_only", null]
+    },
+    "capabilities": {
+      "oneOf": [{ "$ref": "#/$defs/supportCapabilities" }, { "type": "null" }]
+    },
+    "import_document": {
+      "oneOf": [{ "$ref": "#/$defs/obraImportDocument" }, { "type": "null" }],
+      "description": "Obra adapter DTO; present only when status is ok."
+    },
+    "diagnostics": {
+      "type": "array"
+    },
+    "rejection": {
+      "type": ["object", "null"],
+      "required": ["code", "message", "support_status", "capabilities"],
+      "properties": {
+        "code": {
+          "enum": [
+            "obra_adapter_supported_parse_only",
+            "obra_adapter_future_track",
+            "obra_adapter_reference_only",
+            "obra_adapter_not_supported"
+          ]
+        },
+        "message": { "type": "string" },
+        "support_status": {
+          "enum": ["supported", "supported_parse_only", "future_track", "reference_only"]
+        },
+        "capabilities": { "$ref": "#/$defs/supportCapabilities" }
+      }
+    },
+    "error": {
+      "type": ["object", "null"]
+    },
+    "production_ready": {
+      "const": false
+    },
+    "certification_claims": {
+      "type": "array",
+      "maxItems": 0
+    }
+  },
+  "$defs": {
+    "sourceProvenance": {
+      "type": "object",
+      "required": [
+        "source_uri",
+        "source_format",
+        "gaeb_version",
+        "phase",
+        "checksum",
+        "parser_version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source_uri": { "type": ["string", "null"] },
+        "source_format": { "enum": ["gaeb_xml", "gaeb90", "gaeb2000"] },
+        "gaeb_version": { "type": ["string", "null"] },
+        "phase": { "type": ["object", "null"] },
+        "checksum": { "type": ["string", "null"] },
+        "parser_version": { "type": "string" }
+      }
+    },
+    "supportCapabilities": {
+      "type": "object",
+      "required": [
+        "detect",
+        "parse",
+        "validate",
+        "adapt_to_obra",
+        "export",
+        "roundtrip",
+        "reference_only"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "detect": { "type": "boolean" },
+        "parse": { "type": "boolean" },
+        "validate": { "type": "boolean" },
+        "adapt_to_obra": { "type": "boolean" },
+        "export": { "type": "boolean" },
+        "roundtrip": { "type": "boolean" },
+        "reference_only": { "type": "boolean" }
+      }
+    },
+    "obraImportDocument": {
+      "type": "object",
+      "required": [
+        "source",
+        "boq",
+        "wbs_nodes",
+        "line_items",
+        "classifications",
+        "loss_report"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "$ref": "#/$defs/sourceProvenance" },
+        "boq": { "$ref": "#/$defs/obraBoqDocument" },
+        "wbs_nodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/obraWbsNodeCandidate" }
+        },
+        "line_items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/obraLineItem" }
+        },
+        "classifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/obraClassification" }
+        },
+        "loss_report": { "$ref": "#/$defs/lossReport" }
+      }
+    },
+    "obraBoqDocument": {
+      "type": "object",
+      "required": [
+        "deterministic_key",
+        "title",
+        "status",
+        "total_amount",
+        "currency",
+        "generated_at",
+        "notes",
+        "metadata"
+      ],
+      "properties": {
+        "deterministic_key": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "status": { "enum": ["draft", "approved", "issued"] },
+        "total_amount": { "type": ["string", "null"] },
+        "currency": { "type": ["string", "null"] },
+        "generated_at": { "type": ["string", "null"] },
+        "notes": { "type": ["string", "null"] },
+        "metadata": { "type": "object" }
+      }
+    },
+    "obraWbsNodeCandidate": {
+      "type": "object",
+      "required": [
+        "deterministic_key",
+        "parent_key",
+        "code",
+        "title",
+        "level",
+        "path",
+        "sort_order",
+        "node_type",
+        "metadata"
+      ],
+      "properties": {
+        "deterministic_key": { "type": "string", "minLength": 1 },
+        "parent_key": { "type": ["string", "null"] },
+        "code": { "type": "string" },
+        "title": { "type": "string" },
+        "level": { "type": "integer", "minimum": 0 },
+        "path": { "type": "string", "minLength": 1 },
+        "sort_order": { "type": "integer" },
+        "node_type": { "enum": ["chapter", "item", "resource", "assembly"] },
+        "metadata": { "type": "object" }
+      }
+    },
+    "obraLineItem": {
+      "type": "object",
+      "required": [
+        "deterministic_key",
+        "wbs_node_key",
+        "description",
+        "long_text",
+        "quantity",
+        "unit",
+        "unit_price",
+        "total_price",
+        "notes",
+        "metadata"
+      ],
+      "properties": {
+        "deterministic_key": { "type": "string", "minLength": 1 },
+        "wbs_node_key": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "long_text": {},
+        "quantity": { "type": "string" },
+        "unit": { "type": "string" },
+        "unit_price": { "type": ["string", "null"] },
+        "total_price": { "type": ["string", "null"] },
+        "notes": { "type": ["string", "null"] },
+        "metadata": { "type": "object" }
+      }
+    },
+    "obraClassification": {
+      "type": "object",
+      "required": [
+        "wbs_node_key",
+        "system_code",
+        "external_code",
+        "external_title",
+        "unit",
+        "reference_price"
+      ],
+      "properties": {
+        "wbs_node_key": { "type": "string", "minLength": 1 },
+        "system_code": { "type": "string", "minLength": 1 },
+        "external_code": { "type": "string" },
+        "external_title": { "type": ["string", "null"] },
+        "unit": { "type": ["string", "null"] },
+        "reference_price": { "type": ["string", "null"] }
+      }
+    },
+    "lossReport": {
+      "type": "object",
+      "required": ["warnings", "unsupported_fields", "lossy_mappings"],
+      "additionalProperties": false,
+      "properties": {
+        "warnings": { "type": "array" },
+        "unsupported_fields": { "type": "array", "items": { "type": "string" } },
+        "lossy_mappings": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "ok" } } },
+      "then": {
+        "properties": {
+          "import_document": { "type": "object" },
+          "rejection": { "type": "null" },
+          "error": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "blocked" } } },
+      "then": {
+        "properties": {
+          "import_document": { "type": "null" },
+          "rejection": { "type": "object" },
+          "error": { "type": "null" }
+        }
+      }
+    }
+  ]
+}
