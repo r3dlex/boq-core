@@ -2,10 +2,11 @@
 
 use std::{collections::BTreeSet, fs, process::Command};
 
+use boq_core::service_contract::{AnalyzeFormatHint, AnalyzeInput, analyze_bytes};
 use boq_core::service_support_manifest::{
     SERVICE_SUPPORT_MANIFEST_SCHEMA_VERSION, SUPPORT_VOCABULARY, export_embedded_support_manifest,
 };
-use boq_core::support::manifest;
+use boq_core::support::{SupportStatus, manifest};
 
 #[test]
 fn support_manifest_export_preserves_exact_vocabulary_and_support_honesty() {
@@ -109,6 +110,114 @@ fn support_manifest_export_includes_expected_service_gating_rows() {
 }
 
 #[test]
+fn non_paid_service_contract_rows_are_exported_without_downloads() {
+    let report = export_embedded_support_manifest().expect("embedded manifest exports");
+    let by_id = report
+        .entries
+        .iter()
+        .map(|entry| (entry.fixture_id.as_str(), entry))
+        .collect::<std::collections::BTreeMap<_, _>>();
+
+    let gaeb90 = by_id
+        .get("non_paid_synthetic_gaeb90_d81")
+        .expect("non-paid GAEB90 row");
+    assert_eq!(gaeb90.source_family, "non_paid_synthetic");
+    assert_eq!(gaeb90.support_status.as_str(), "supported_parse_only");
+    assert!(gaeb90.capabilities.detect);
+    assert!(gaeb90.capabilities.parse);
+    assert!(!gaeb90.capabilities.validate);
+    assert!(!gaeb90.capabilities.adapt_to_obra);
+    assert!(!gaeb90.capabilities.certification);
+    assert!(!gaeb90.source_policy.has_archive_sha256);
+    assert!(
+        !gaeb90
+            .source_policy
+            .service_export_requires_external_download
+    );
+
+    let gaeb_xml = by_id
+        .get("non_paid_synthetic_gaeb_xml_x81")
+        .expect("non-paid GAEB XML row");
+    assert_eq!(gaeb_xml.source_family, "non_paid_synthetic");
+    assert_eq!(gaeb_xml.support_status.as_str(), "supported");
+    assert!(gaeb_xml.capabilities.detect);
+    assert!(gaeb_xml.capabilities.parse);
+    assert!(gaeb_xml.capabilities.validate);
+    assert!(gaeb_xml.capabilities.adapt_to_obra);
+    assert!(!gaeb_xml.capabilities.certification);
+    assert!(!gaeb_xml.source_policy.has_archive_sha256);
+    assert!(
+        !gaeb_xml
+            .source_policy
+            .service_export_requires_external_download
+    );
+
+    for entry in [gaeb90, gaeb_xml] {
+        assert_eq!(entry.source_policy.ci_policy, "repository_fixture");
+        assert!(
+            entry
+                .source_policy
+                .license_note
+                .contains("no paid standards data")
+        );
+        assert!(!entry.test_mapping.is_empty());
+    }
+}
+
+#[test]
+fn non_paid_manifest_rows_match_exact_runtime_fixture_paths() {
+    let report = export_embedded_support_manifest().expect("embedded manifest exports");
+
+    let cases = [
+        (
+            "non_paid_synthetic_gaeb90_d81",
+            "gaeb/non_paid/synthetic/gaeb90/d81/minimal.d81",
+            AnalyzeFormatHint::Gaeb90,
+        ),
+        (
+            "non_paid_synthetic_gaeb_xml_x81",
+            "gaeb/non_paid/synthetic/gaeb_xml/x81/minimal_ava.x81",
+            AnalyzeFormatHint::GaebXml,
+        ),
+    ];
+
+    for (fixture_id, path, format_hint) in cases {
+        let entry = report
+            .entries
+            .iter()
+            .find(|entry| entry.fixture_id == fixture_id)
+            .expect("manifest row exported");
+        let bytes = fs::read(path).expect("non-paid fixture path is checked in");
+        let analysis = analyze_bytes(&AnalyzeInput {
+            bytes: &bytes,
+            source_uri: Some(path.to_owned()),
+            format_hint: Some(format_hint),
+        });
+        let document = analysis.document.expect("analysis document");
+
+        assert_eq!(
+            support_status_str(document.support_status),
+            entry.support_status.as_str()
+        );
+        assert_eq!(document.capabilities.detect, entry.capabilities.detect);
+        assert_eq!(document.capabilities.parse, entry.capabilities.parse);
+        assert_eq!(document.capabilities.validate, entry.capabilities.validate);
+        assert_eq!(
+            document.capabilities.adapt_to_obra,
+            entry.capabilities.adapt_to_obra
+        );
+        assert_eq!(document.capabilities.export, entry.capabilities.export);
+        assert_eq!(
+            document.capabilities.roundtrip,
+            entry.capabilities.roundtrip
+        );
+        assert!(!entry.capabilities.certification);
+        assert!(!analysis.production_ready);
+        assert!(analysis.certification_claims.is_empty());
+    }
+}
+
+#[test]
 fn manifest_parser_rejects_unknown_support_vocabulary() {
     let toml_text = r#"
 [[fixtures]]
@@ -185,4 +294,13 @@ fn support_manifest_cli_output_matches_golden_fixture() {
     )
     .expect("golden JSON");
     assert_eq!(actual, expected);
+}
+
+const fn support_status_str(status: SupportStatus) -> &'static str {
+    match status {
+        SupportStatus::Supported => "supported",
+        SupportStatus::SupportedParseOnly => "supported_parse_only",
+        SupportStatus::FutureTrack => "future_track",
+        SupportStatus::ReferenceOnly => "reference_only",
+    }
 }

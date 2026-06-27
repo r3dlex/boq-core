@@ -115,6 +115,8 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
         "bvbs_xml33_qty_x31",
         "bvbs_xml33_text_x81",
         "bvbs_xml33_text_x82",
+        "non_paid_synthetic_gaeb90_d81",
+        "non_paid_synthetic_gaeb_xml_x81",
     ] {
         assert!(
             supported_ids.contains(expected_supported),
@@ -135,6 +137,8 @@ fn support_statuses_prevent_overclaiming_follow_on_tracks() {
                     | "bvbs_xml33_qty_x31"
                     | "bvbs_xml33_text_x81"
                     | "bvbs_xml33_text_x82"
+                    | "non_paid_synthetic_gaeb90_d81"
+                    | "non_paid_synthetic_gaeb_xml_x81"
             )
     }) {
         assert!(

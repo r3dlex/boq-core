@@ -787,3 +787,31 @@ support_status = "reference_only"
 ci_policy = "reference_only"
 license_note = "Commercial MWM/Rialto GAEB 90/2000/XML conversion demo; reference only and never executed or downloaded in CI."
 test_mapping = []
+
+[[fixtures]]
+id = "non_paid_synthetic_gaeb90_d81"
+source_url = "https://github.com/r3dlex/boq-core/blob/main/gaeb/non_paid/synthetic/gaeb90/d81/minimal.d81"
+normalized_url = "https://github.com/r3dlex/boq-core/blob/main/gaeb/non_paid/synthetic/gaeb90/d81/minimal.d81"
+source_family = "non_paid_synthetic"
+process_domain = "gaeb90_examples"
+gaeb_version = "gaeb90"
+phase = "d81"
+target_dir = "gaeb/non_paid/synthetic/gaeb90/d81"
+support_status = "supported_parse_only"
+ci_policy = "repository_fixture"
+license_note = "Repository-local synthetic GAEB90 fixture used for deterministic service-contract evidence; no paid standards data or external certification service."
+test_mapping = ["analyze_gaeb90_hint_and_path_detection_return_service_contract", "library_reports_match_checked_in_golden_fixtures", "non_paid_service_contract_rows_are_exported_without_downloads"]
+
+[[fixtures]]
+id = "non_paid_synthetic_gaeb_xml_x81"
+source_url = "https://github.com/r3dlex/boq-core/blob/main/gaeb/non_paid/synthetic/gaeb_xml/x81/minimal_ava.x81"
+normalized_url = "https://github.com/r3dlex/boq-core/blob/main/gaeb/non_paid/synthetic/gaeb_xml/x81/minimal_ava.x81"
+source_family = "non_paid_synthetic"
+process_domain = "ava"
+gaeb_version = "gaeb_xml_3_3"
+phase = "x81"
+target_dir = "gaeb/non_paid/synthetic/gaeb_xml/x81"
+support_status = "supported"
+ci_policy = "repository_fixture"
+license_note = "Repository-local synthetic GAEB XML AVA fixture used for deterministic service-contract evidence; no paid standards data or external certification service."
+test_mapping = ["analyze_gaeb_xml_returns_service_json_contract_with_support_evidence", "library_reports_match_checked_in_golden_fixtures", "non_paid_service_contract_rows_are_exported_without_downloads"]
