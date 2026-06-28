@@ -23,6 +23,14 @@ The report currently includes:
   `tests/fixtures/synthetic/prezzario_computo.json`.
 - `catalogo-cuadro` — Catálogo de Conceptos and Cuadro de Precios evidence from
   `tests/fixtures/synthetic/catalogo_cuadro.json`.
+- `din276-classification` — DIN 276 classification evidence from
+  `tests/fixtures/synthetic/din276_mapping.json`.
+- `csi-masterformat-classification` — CSI MasterFormat classification evidence
+  from `tests/fixtures/synthetic/masterformat_mapping.json`.
+- `uniclass-classification` — Uniclass classification evidence from
+  `tests/fixtures/synthetic/uniclass_mapping.json`.
+- `nlsfb-classification` — NL-SfB classification evidence from
+  `tests/fixtures/synthetic/nlsfb_mapping.json`.
 - `stabu-raw` — STABU and RAW exchange evidence from
   `tests/fixtures/synthetic/stabu_raw.json`.
 - `dqe-quantity` — DQE quantity-estimate evidence from

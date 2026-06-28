@@ -23,7 +23,7 @@ fn market_overlay_readiness_report_is_stable_and_support_honest() {
         report.schema_version,
         MARKET_OVERLAY_READINESS_SCHEMA_VERSION
     );
-    assert_eq!(report.overlays.len(), 5);
+    assert_eq!(report.overlays.len(), 9);
     assert!(!report.production_ready);
     assert!(report.certification_claims.is_empty());
     assert!(!report.external_catalog_download_required);
@@ -36,6 +36,10 @@ fn market_overlay_readiness_report_is_stable_and_support_honest() {
             "sinapi-bdi",
             "prezzario-computo",
             "catalogo-cuadro",
+            "din276-classification",
+            "csi-masterformat-classification",
+            "uniclass-classification",
+            "nlsfb-classification",
             "stabu-raw",
             "dqe-quantity"
         ]
@@ -90,6 +94,10 @@ fn market_overlay_schema_and_docs_are_checked_in() {
         "sinapi-bdi",
         "prezzario-computo",
         "catalogo-cuadro",
+        "din276-classification",
+        "csi-masterformat-classification",
+        "uniclass-classification",
+        "nlsfb-classification",
         "stabu-raw",
         "dqe-quantity",
         "production_ready`: always `false`",
