@@ -23,7 +23,7 @@
     },
     "overlays": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 9,
       "items": {
         "$ref": "#/$defs/overlay"
       }
@@ -66,6 +66,10 @@
             "sinapi-bdi",
             "prezzario-computo",
             "catalogo-cuadro",
+            "din276-classification",
+            "csi-masterformat-classification",
+            "uniclass-classification",
+            "nlsfb-classification",
             "stabu-raw",
             "dqe-quantity"
           ]

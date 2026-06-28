@@ -78,6 +78,10 @@ fn overlay_rows() -> Vec<MarketOverlayReadinessRow> {
         sinapi_row(),
         prezzario_row(),
         catalogo_row(),
+        din276_row(),
+        csi_masterformat_row(),
+        uniclass_row(),
+        nlsfb_row(),
         stabu_row(),
         dqe_row(),
     ]
@@ -150,6 +154,70 @@ fn catalogo_row() -> MarketOverlayReadinessRow {
         ],
         loss_findings: vec!["catalogo_cuadro_price_table_preserved_not_normalized"],
         current_support_boundary: "synthetic fixture-backed concept/price-table annotation only; no Spain/Mexico catalog acquisition or complete market coverage",
+        promotes_support_status: false,
+        grants_adapter_support_to_parse_only: false,
+        complete_market_coverage_claimed: false,
+    }
+}
+
+fn din276_row() -> MarketOverlayReadinessRow {
+    MarketOverlayReadinessRow {
+        overlay_key: "din276-classification",
+        label: "DIN 276 cost-group classification evidence",
+        module: "boq_core::din276",
+        evidence_fixture: "tests/fixtures/synthetic/din276_mapping.json",
+        service_contracts: service_contracts(),
+        supported_metadata: vec!["match_text", "rule_index", "source_provenance"],
+        loss_findings: vec!["din276_classification_preserved_not_certified"],
+        current_support_boundary: "synthetic fixture-backed DIN 276 classification annotation only; no official DIN data acquisition, no certification, and no complete German cost-group coverage",
+        promotes_support_status: false,
+        grants_adapter_support_to_parse_only: false,
+        complete_market_coverage_claimed: false,
+    }
+}
+
+fn csi_masterformat_row() -> MarketOverlayReadinessRow {
+    MarketOverlayReadinessRow {
+        overlay_key: "csi-masterformat-classification",
+        label: "CSI MasterFormat classification evidence",
+        module: "boq_core::csi_masterformat",
+        evidence_fixture: "tests/fixtures/synthetic/masterformat_mapping.json",
+        service_contracts: service_contracts(),
+        supported_metadata: vec!["match_text", "rule_index", "source_provenance"],
+        loss_findings: vec!["masterformat_classification_preserved_not_certified"],
+        current_support_boundary: "synthetic fixture-backed CSI MasterFormat classification annotation only; no paid/external CSI data acquisition, no certification, and no complete North American market coverage",
+        promotes_support_status: false,
+        grants_adapter_support_to_parse_only: false,
+        complete_market_coverage_claimed: false,
+    }
+}
+
+fn uniclass_row() -> MarketOverlayReadinessRow {
+    MarketOverlayReadinessRow {
+        overlay_key: "uniclass-classification",
+        label: "Uniclass classification evidence",
+        module: "boq_core::uniclass",
+        evidence_fixture: "tests/fixtures/synthetic/uniclass_mapping.json",
+        service_contracts: service_contracts(),
+        supported_metadata: vec!["match_text", "rule_index", "source_provenance"],
+        loss_findings: vec!["uniclass_classification_preserved_not_certified"],
+        current_support_boundary: "synthetic fixture-backed Uniclass classification annotation only; no official Uniclass catalog acquisition, no certification, and no complete UK market coverage",
+        promotes_support_status: false,
+        grants_adapter_support_to_parse_only: false,
+        complete_market_coverage_claimed: false,
+    }
+}
+
+fn nlsfb_row() -> MarketOverlayReadinessRow {
+    MarketOverlayReadinessRow {
+        overlay_key: "nlsfb-classification",
+        label: "NL-SfB classification evidence",
+        module: "boq_core::nlsfb",
+        evidence_fixture: "tests/fixtures/synthetic/nlsfb_mapping.json",
+        service_contracts: service_contracts(),
+        supported_metadata: vec!["match_text", "rule_index", "source_provenance"],
+        loss_findings: vec!["nlsfb_classification_preserved_not_certified"],
+        current_support_boundary: "synthetic fixture-backed NL-SfB classification annotation only; no external NL-SfB catalog acquisition, no certification, and no complete Dutch market coverage",
         promotes_support_status: false,
         grants_adapter_support_to_parse_only: false,
         complete_market_coverage_claimed: false,
