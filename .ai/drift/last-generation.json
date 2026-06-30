@@ -1,0 +1,223 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-30T05:53:53Z",
+  "repo": "boq-core",
+  "audit": [
+    {
+      "path": "boq-core/.ai/matrix.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/init/repo-profile.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/init/sdlc-path.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/01-discover-decide/status.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/01-discover-decide/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/02-govern-plan/status.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/02-govern-plan/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/03-configure-generate/status.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/03-configure-generate/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/04-validate-handoff/status.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/phases/04-validate-handoff/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/GEMINI.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/RULES.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/PLANS.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/CONTRIBUTING.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/system-prompts/architect.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/system-prompts/developer.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/system-prompts/qa-engineer.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/skills/git-ops.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/skills/workspace-sync.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/workflows/repo-workflow.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/workflows/repo-workflow.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/work-intake/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/plans/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/bin/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/commands/omx/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/commands/omc/README.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/language-packs/language-packs-snapshot.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/policies/model-routing.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/observability/conventions.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/observability/audit-checklist.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/mcp/registry.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/mcp/a2a-handoff.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/reviews/ai-failure-modes.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/rules/security.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/rules/technical-bounds.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/evals/coverage-exceptions.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/evals/init-ai-repo-structural/evalset.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/evals/init-ai-repo-structural/rubric.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/evals/init-ai-repo-structural/judge-config.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/traceability/graph.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/traceability/index.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/traceability/validation-report.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/drift/migration-manifest.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/drift/last-drift.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.memory/human-override/custom-conventions.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.memory/human-override/tribal-knowledge.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.memory/self-learned/error-patterns.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.memory/self-learned/module-complexity.json",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.memory/self-learned/CHANGELOG.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/docs/architecture/adr/0001-init-ai-repo-v3-delta.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/docs/learning/troubleshooting-matrix.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/validation/report.md",
+      "action": "created"
+    },
+    {
+      "path": "boq-core/.ai/handoff/init-ai-repo-handoff.md",
+      "action": "created"
+    }
+  ]
+}

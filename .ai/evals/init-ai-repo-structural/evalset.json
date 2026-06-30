@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "name": "init-ai-repo-structural",
+  "cases": [
+    {
+      "id": "scaffold-required-files",
+      "description": "Required v3 scaffold files exist and JSON surfaces parse."
+    }
+  ]
+}

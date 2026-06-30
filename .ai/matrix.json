@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "topology_type": "standalone",
+  "max_allowed_depth": 0,
+  "current_depth": 0,
+  "sync_strategy": "physical-copy",
+  "upstream_authority": {
+    "type": "git",
+    "url": "https://github.com/r3dlex/boq-core.git",
+    "ref": "main"
+  },
+  "inherited_assets": [
+    {
+      "path": "AGENTS.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": "CLAUDE.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": "GEMINI.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": "RULES.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": "PLANS.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": ".ai/workflows/repo-workflow.md",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    },
+    {
+      "path": ".ai/policies/model-routing.json",
+      "source": "obra-workspace",
+      "mode": "physical-copy"
+    }
+  ],
+  "repo": {
+    "name": "boq-core",
+    "owner_repo": "r3dlex/boq-core",
+    "binding": "sibling-git-repo",
+    "languages": [
+      "rust"
+    ]
+  },
+  "sync_status": {
+    "last_synced_at": "2026-06-30T05:53:53Z",
+    "drift_detected": false,
+    "last_drift_report": ".ai/drift/last-drift.json"
+  },
+  "umbrella_parent": {
+    "path": "..",
+    "owner_repo": "r3dlex/obra-workspace",
+    "binding": "sibling-git-repo"
+  }
+}
