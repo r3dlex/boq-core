@@ -31,6 +31,8 @@ jobs:
         with:
           node-version: "22"
       - name: Install Rust toolchain
+        id: install-rust
+        continue-on-error: true
         run: |
           rustup toolchain install stable --component rustfmt --component clippy --component llvm-tools-preview
           rustup default stable
@@ -38,6 +40,8 @@ jobs:
           rustup component add rustfmt clippy llvm-tools-preview --toolchain "$active_toolchain"
           rustc --version --verbose
       - name: Install quality tools
+        id: install-quality-tools
+        continue-on-error: true
         run: |
           retry() {
             for attempt in 1 2 3; do
@@ -50,12 +54,20 @@ jobs:
           retry cargo install prek --locked
           retry npm install -g archgate
       - name: Format
+        id: format
+        continue-on-error: true
         run: cargo fmt --check
       - name: Clippy
+        id: clippy
+        continue-on-error: true
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Test
+        id: test
+        continue-on-error: true
         run: cargo test --all-features
       - name: Coverage threshold
+        id: coverage
+        continue-on-error: true
         run: |
           host_triple="$(rustc -vV | sed -n 's/^host: //p')"
           llvm_tools_dir="$(rustc --print sysroot)/lib/rustlib/${host_triple}/bin"
@@ -69,6 +81,8 @@ jobs:
             --fail-under-functions 95 \
             --fail-under-regions 95
       - name: Fixture manifest
+        id: fixture-manifest
+        continue-on-error: true
         run: cargo run --bin xtask -- fixtures verify
       - name: Archgate
         # No linux/arm64 archgate binary; advisory here.
@@ -76,14 +90,21 @@ jobs:
         continue-on-error: true
         run: archgate check --ci
       - name: Prek hooks
+        id: prek
+        continue-on-error: true
         run: prek run --all-files
       - name: Gate
         id: gate
-        # Explicit success() guard: gate only fires when every mandatory step above
-        # succeeded. Combined with continue-on-error at job level, this is the only
-        # mechanism that distinguishes a real pass from a silenced failure.
-        if: success()
-        run: echo "passed=true" >> "$GITHUB_OUTPUT"
+        # The self-hosted leg is a probe. It reports passed=true only when every
+        # mandatory probe step succeeds; otherwise it stays green with passed=false
+        # so the canonical GH-hosted fallback runs the full required quality gate.
+        if: always()
+        run: |
+          if [ "${{ steps.install-rust.outcome }}" = "success" ] &&              [ "${{ steps.install-quality-tools.outcome }}" = "success" ] &&              [ "${{ steps.format.outcome }}" = "success" ] &&              [ "${{ steps.clippy.outcome }}" = "success" ] &&              [ "${{ steps.test.outcome }}" = "success" ] &&              [ "${{ steps.coverage.outcome }}" = "success" ] &&              [ "${{ steps.fixture-manifest.outcome }}" = "success" ] &&              [ "${{ steps.prek.outcome }}" = "success" ]; then
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "passed=false" >> "$GITHUB_OUTPUT"
+          fi
 
   # ── Tier 2: gate router ───────────────────────────────────────────────────
   # Reads the self-hosted probe result and propagates the routing signal.
