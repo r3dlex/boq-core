@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "servers": [
+    {
+      "name": "repo-local",
+      "status": "stub",
+      "endpoint": null
+    }
+  ]
+}

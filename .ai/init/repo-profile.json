@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-30T05:53:53Z",
+  "repo": "boq-core",
+  "owner_repo": "r3dlex/boq-core",
+  "path": "boq-core",
+  "binding": "sibling-git-repo",
+  "host": "github",
+  "tracker": {
+    "adapter": "github-issues",
+    "hosted_mutation": "confirmation-gated"
+  },
+  "ci": {
+    "provider": "github-actions",
+    "policy_mutation": "checklist-only",
+    "self_hosted_preferred": true
+  },
+  "languages": [
+    "rust"
+  ],
+  "existing_ai_sdlc_surfaces": {
+    "agents_md": true,
+    "rules_ts": true,
+    "prek": true,
+    "github_workflows": true
+  }
+}

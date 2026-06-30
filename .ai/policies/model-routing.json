@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "tiers": {
+    "frontier": "requirements-architecture-hard-verification",
+    "mid": "implementation-planning",
+    "cheap": "lookups-ci-monitoring"
+  },
+  "task_classes": {
+    "architecture": "frontier",
+    "implementation": "mid",
+    "test-generation": "cheap",
+    "code-review": "frontier"
+  },
+  "host_aliases": {
+    "codex": {
+      "frontier": "configured-frontier",
+      "mid": "configured-standard",
+      "cheap": "configured-spark"
+    }
+  }
+}
